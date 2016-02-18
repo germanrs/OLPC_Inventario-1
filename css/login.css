@@ -1,0 +1,48 @@
+body{
+      overflow: hidden;
+}
+
+.login {
+  position: relative;
+  margin: 0 auto;
+  width: 310px;
+  background: white;
+  border: solid 1px #008dd3;
+  border-radius: 3px;
+  @include box-shadow(0 0 200px rgba(white, .5), 0 1px 2px rgba(black, .3));
+  bottom: 0;
+  height: 20rem;
+  left: 0;
+  margin: auto;
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 26rem;
+}
+header {
+  margin-left: 10rem;
+}
+h1 {
+  line-height: 40px;
+  font-size: 15px;
+  font-weight: bold;
+  color: #008dd3;
+  text-align: center;
+  background: #87d53a;
+  border-bottom: 1px solid #008dd3;
+  border-radius: 3px 3px 0 0;
+  margin:0;
+}
+
+
+
+.wrapper{
+  background: url('../img/intro-slide.jpg')  no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  margin:0;
+  height: 80vh;
+}
+
