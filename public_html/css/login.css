@@ -46,3 +46,9 @@ h1 {
   height: 80vh;
 }
 
+.text-danger{
+    float: left;
+    margin-left: 1.4rem;
+    margin-top: 0.8rem;
+    color: red;
+}

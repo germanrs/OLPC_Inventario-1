@@ -1,39 +1,76 @@
 <?php
 
-namespace Ikdoeict\Provider\Controller\Admin;
+namespace RNR\Provider\Controller;
 
 use Silex\Application;
 use Silex\ControllerProviderInterface;
 use Silex\ControllerCollection;
-use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class Music implements ControllerProviderInterface {
+/**
+ * Controller for the authors
+ * @author Rein Bauwens	<rein.bauwens@student.odisee.be>
+ */
+class InventoryController implements ControllerProviderInterface {
 
+	/**
+	 * Returns routes to connect to the given application.
+	 * @param Application $app An Application instance
+	 * @return ControllerCollection A ControllerCollection instance
+	 */
 	public function connect(Application $app) {
 
-		// Create new ControllerCollection
+		//@note $app['controllers_factory'] is a factory that returns a new instance of ControllerCollection when used.
+		//@see http://silex.sensiolabs.org/doc/organizing_controllers.html
 		$controllers = $app['controllers_factory'];
 
-		// Overview of blogposts
+		// Bind sub-routes
 		$controllers
-			->get('/', array($this, 'music'))
+			->get('/', array($this, 'laptops'))
 			->method('GET|POST')
-			->bind('admin.music');
+			->bind('Inventory.laptops');
 
+		// Delete a blogpost
+		$controllers
+			->post('/Laptops/{LaptopId}/delete/', array($this, 'laptopsdelete'))
+			->method('GET|POST')
+			->assert('LaptopId', '\d+')
+			->bind('inventory.Laptops.delete');
+
+		// Delete a blogpost
+		$controllers
+			->post('/Laptops/{LaptopId}/edit/', array($this, 'laptopedit'))
+			->assert('LaptopId', '\d+')
+			->method('GET|POST')
+			->bind('inventory.Laptops.edit');
+
+
+		// Return ControllerCollection
 		return $controllers;
-
 	}
 
-	public function music(Application $app) {
+	/**
+	 * home page
+	 * @param Application $app An Application instance
+	 * @return string A blob of HTML
+	 */
+	public function laptops(Application $app) {
+		$show='';
+		//check if the user is logged in
+		/*$userLogin = false;
+		if ($app['session']->get('user') && ($app['db.users']->findUserByEmail($app['session']->get('user')['Email']))) {
+			$userLogin = true;
+			$userCred = $app['session']->get('user');
+		*/
+	
 		// Get parameters
 		$params = $app['request']->query->all();
 		
 		//Get the number of items
-		$numItems = $app['db.music']->fetchAantalAlbums();
+		$numItems = $app['db.laptops']->fetchTotalLaptops();
 
 		//set the number of items per pages to 9
-		$numItemsPerPage = 9;
+		$numItemsPerPage = 20;
 
 		//get the current page number, if page is not set use 1
 		$curPage = max(1, (int) $app['request']->get('p'));
@@ -41,105 +78,31 @@ class Music implements ControllerProviderInterface {
 		//Calculate the number of pages by dividing the items count by the number of item per page 
 		$numPages = ceil($numItems / $numItemsPerPage);
 
-		//get the albums of 1 page
-		$albums = $app['db.music']->fetchAllAlbums($curPage, $numItemsPerPage);
-		
 		//get the parameters
     	$params = $app['request']->query->all();
-    	
-		// when the form is applyed the first the following code is used
-		if ($params!=null && isset($params['filterform'])) {
+		$genre = (isset($params['filterform']['genres']))?$params['filterform']['genres']:'';
+		$searchstring = isset($params['filterform']['searchstring'])?$params['filterform']['searchstring']:'';
 
-			//get all the data from the params['filterform'] and put it in data
-			$data = $params['filterform'];
-
-			//get the number of items
-			$numItems = $app['db.music']->fetchAantalFilterAlbums($data);
-
-			//set the number of items per pages to 9
-			$numItemsPerPage = 9;
-
-			//get the current page number, if page is not set use 1
-			$curPage = max(1, (int) $app['request']->get('p'));
-
-			//Calculate the number of pages by dividing the items count by the number of item per page 
-			$numPages = ceil($numItems / $numItemsPerPage);
-			
-			//get the albums of page 1
-			$albums = $app['db.music']->findFiltered($data, $curPage, $numItemsPerPage);
-
-			// get all the items from params['filterform'] and assign the to te corresponding item
-			$title = $params['filterform']['title'];
-			if((int)$params['filterform']['genres'] == null){
-				$genre = null;
-			}
-			else{
-				$genre = (int)$params['filterform']['genres'];
-			}
-			
-			$year = $params['filterform']['year'];
-		}
-
-		// when the form is applayed and the page is not 1 use the following code
-		else if($params!=null && isset($params['year'])){
-
-			//get all the data from the params and put it in data
-			$data = $params;
-
-			//get the number of items
-			$numItems = $app['db.music']->fetchAantalFilterAlbums($data);
-
-			//set the number of items per pages to 9
-			$numItemsPerPage = 9;
-
-			//get the current page number, if page is not set use 1
-			$curPage = max(1, (int) $app['request']->get('p'));
-
-			//Calculate the number of pages by dividing the items count by the number of item per page
-			$numPages = ceil($numItems / $numItemsPerPage);
-			
-			//get the albums of page 1
-			$albums = $app['db.music']->findFiltered($data, $curPage, $numItemsPerPage);
-
-			// get all the items from params and assign the to te corresponding item
-			$title = $params['title'];
-			if((int)$params['genres'] == null){
-				$genre = null;
-			}
-			else{
-				$genre = (int)$params['genres'];
-			}
-			
-			$year = $params['year'];
-		}
-		else{
-			$title = null;
-			$genre = null;
-			$year = null;
-		}
-
-		//get all the genres and put them in $genres.	
-		$genres = $app['db.genres']->FindAll();
-		
 		// Create Form
 		$filterform = $app['form.factory']
 				->createNamed('filterform', 'form')
-				->add('title', 'text', array(
+				->add('searchstring', 'text', array(
 					'attr' => array('class' => 'required'),
 					'required' => false,
-					'data' => $title
+					'data' => $searchstring
 				))
 				->add('genres', 'choice', array(
-    				'choices'  => array_column($genres, 'title'),
+    				'choices'  => array(
+    					'laptops.serial_number' => 'serial nbr',
+    					'people.lastname' => 'owner',
+    					'places.name' => 'school',
+    					'models.name' => 'model',
+    					'statuses.description' => 'status',
+    					'laptops.uuid' => 'uuid'),
     				'placeholder' => 'Choose wisely!',
     				'required' => false,
 					'attr' => array('class' => 'required'),
 					'data' => $genre,
-				))
-				->add('year', 'text', array(
-					'attr' => array('class' => 'required'),
-					'required' => false,
-					'data' => $year
 				));
 
 		//if params['filterform'] isset, use the data from it. if its not set, the data is availeble in params.		
@@ -149,18 +112,57 @@ class Music implements ControllerProviderInterface {
 		else{
 			$newparams = $params['filterform'];
 		}
-
-		// Render template
-		return $app['twig']->render('admin/music/overview.twig', array(
-			'albums' => $albums,
+		
+		//fetch all laptops
+		$laptops = (isset($params['filterform']['genres']))?$app['db.laptops']->findFiltered($params['filterform'],$curPage,$numItemsPerPage):$app['db.laptops']->fetchAllLaptops($curPage,$numItemsPerPage);
+		//return the rendered twig with parameters
+		return $app['twig']->render('inventory/Laptops.twig', array(
+			'show' => $show,
+			'filterform' => $filterform->createView(),
+			'laptops' => $laptops,
 			'curPage'=>$curPage,
 			'numPages'=>$numPages,
 			'numItems'=>$numItems, 
-			'baseUrl'=> $app['admin.base_url'],
+			'baseUrl'=> $app['Inventory.base_url'],
 			'pagination'=>generatePaginationSequence($curPage, $numPages),
-			'filterform' => $filterform->createView(),
-			'requestParams' => $newparams,
+			'requestParams' => $newparams
+			//'userLogin' => $userLogin,
 		));
+		
+	}
+
+	public function laptopsdelete(Application $app) {
+		$show='';
+		//check if the user is logged in
+		/*$userLogin = false;
+		if ($app['session']->get('user') && ($app['db.users']->findUserByEmail($app['session']->get('user')['Email']))) {
+			$userLogin = true;
+			$userCred = $app['session']->get('user');
+		*/
+
+		//return the rendered twig with parameters
+		return $app['twig']->render('inventory/Laptops.twig', array(
+			'show' => $show
+			//'userLogin' => $userLogin,
+		));
+		
+	}
+
+	public function laptopedit(Application $app) {
+		$show='';
+		//check if the user is logged in
+		/*$userLogin = false;
+		if ($app['session']->get('user') && ($app['db.users']->findUserByEmail($app['session']->get('user')['Email']))) {
+			$userLogin = true;
+			$userCred = $app['session']->get('user');
+		*/
+
+		//return the rendered twig with parameters
+		return $app['twig']->render('inventory/Laptops.twig', array(
+			'show' => $show
+			//'userLogin' => $userLogin,
+		));
+		
 	}
 }
 
@@ -261,3 +263,4 @@ function generatePaginationSequence($curPage, $numPages, $numberOfPagesAtEdges =
 		}
 
 	}
+// EOF

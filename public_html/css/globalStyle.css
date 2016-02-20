@@ -210,6 +210,7 @@ a {
 header {
     min-height: 10rem;
     margin-top: 0.5rem;
+    margin-left: 10rem;
 }
 
 header * {
@@ -459,7 +460,7 @@ select{
     width: 22.5rem;
 }
 
-input[type="submit"]{
+input[type="submit"], button[type="submit"]{
   border-radius: 5px;
   background-color: #008dd3;
   padding-left: 2rem;
@@ -476,7 +477,7 @@ input[type="submit"]{
   border-radius: 0px;
 }
 
-input[type="submit"]:hover{
+input[type="submit"]:hover, button[type="submit"]:hover{
   background: #87d53a;
   color:#008dd3;
 }
