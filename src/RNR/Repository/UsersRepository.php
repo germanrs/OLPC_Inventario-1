@@ -16,6 +16,11 @@ class UsersRepository extends \Knp\Repository {
 		return 'users';
 	}
 
+	public function fetchAll() {
+		return $this->db->fetchAll(
+				'SELECT users.id, users.usuario FROM statuses');
+	}
+
 	/**
 	 * [findUserByEmail description]
 	 * This function finds a user by e-mail

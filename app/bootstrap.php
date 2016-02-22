@@ -29,8 +29,19 @@ $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
 // Use Repository Service Provider — @note: Be sure to install RSP via Composer first!
 $app->register(new Knp\Provider\RepositoryServiceProvider(), array(
     'repository.repositories' => array(
+        'db.laptops' => 'RNR\\Repository\\LaptopsRepository',
+        'db.models' => 'RNR\\Repository\\ModelsRepository',
+        'db.movements_types' => 'RNR\\Repository\\Movements_typesRepository',
+        'db.movements' => 'RNR\\Repository\\MovementsRepository',
+        'db.people' => 'RNR\\Repository\\PeopleRepository',
+        'db.performs' => 'RNR\\Repository\\PerformsRepository',
+        'db.places_dependencies' => 'RNR\\Repository\\Places_DependenciesRepository',
+        'db.places_types' => 'RNR\\Repository\\Places_typesRepository',
+        'db.places' => 'RNR\\Repository\\PlacesRepository',
+        'db.profiles' => 'RNR\\Repository\\ProfilesRepository',
+        'db.school_infos' => 'RNR\\Repository\\School_infosRepository',
+        'db.statuses' => 'RNR\\Repository\\StatusesRepository',
         'db.users' => 'RNR\\Repository\\usersRepository',
-        'db.laptops' => 'RNR\\Repository\\LaptopsRepository'
     )
 ));
 

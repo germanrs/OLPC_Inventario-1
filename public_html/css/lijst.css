@@ -138,8 +138,18 @@
 }
 .h_search{
     float: right;
-    width: 60rem;
+    width: 68rem;
     margin-top: 1rem;
+}
+
+.h_search form{
+  float: right;
+  }
+
+.text-danger{
+      float: left;
+    color: red;
+    margin-top: 0.8rem;
 }
 
 .top-menu h1{

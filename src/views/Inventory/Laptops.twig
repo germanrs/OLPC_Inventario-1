@@ -61,11 +61,13 @@
 
 		<div class="h_search">
 			<form action="{{ baseUrl }}" method="GET" {{ form_enctype(filterform) }}  novalidate="novalidate" role="form">
+				<h2 class="text-danger">{{ form_errors(filterform.genres)|striptags }}</h2>	
 				{{ form_widget(filterform.genres, { 'attr': {'class': 'form-control'} })  }}
 				{{ form_widget(filterform.searchstring, { 'attr': {'class': 'form-control'} }) }}
 				<input type="hidden" id="filterform__token" name="filterform[_token]" value="45072b220b3b190f6f6d863b5cd2a0d55f523c54" />
 				{{ form_widget(filterform._token) }}
-				<input type="submit" class="btn btn-primary pull-right" value="Filter" />		
+				<input type="submit" class="btn btn-primary pull-right" value="Filter" />
+
 			</form>
 	</div>
 </div>
@@ -141,31 +143,41 @@
 						<fieldset>
 							<div class="form-group">
 								<div class="label">
-									FirstName
+									serial number
 								</div>
 								<div class="input">
-									<input type="text" name="login" value="" placeholder="Username">
+									<input type="text" name="login" value="" placeholder="serial number...">
 								</div>
 								<div class="clear"></div>
 								<div class="label">
-									Lastname
+									Model
 								</div>
 								<div class="input">
-									<input type="text" name="login" value="" placeholder="Username">
+									<input type="text" id="Model" list="json-datalistModel" placeholder="Models..">
 								</div>
+								<datalist id="json-datalistModel"></datalist>
 								<div class="clear"></div>
 								<div class="label">
-									City
+									owner
 								</div>
 								<div class="input">
-									<input type="text" name="login" value="" placeholder="Username">
+									<input type="text" id="People" list="json-datalistPeople" placeholder="Owner..">
 								</div>
+								<datalist id="json-datalistPeople"></datalist>
 								<div class="clear"></div>
 								<div class="label">
-									label4
+									status
 								</div>
 								<div class="input">
-									<input type="text" name="login" value="" placeholder="Username">
+									<input type="text" id="Status" list="json-datalistStatus" placeholder="Status..">
+								</div>
+								<datalist id="json-datalistStatus"></datalist>
+								<div class="clear"></div>
+								<div class="label">
+									Uuid
+								</div>
+								<div class="input">
+									<input type="text" name="login" value="" placeholder="UuId...">
 								</div>
 								<div class="clear"></div>
 							</div>
@@ -180,4 +192,5 @@
 {% endblock %}
 {% block pageScripts %}
 <script src="{{ app.request.baseUrl }}/js/dropdown.js"></script>
+<script src="{{ app.request.baseUrl }}/js/Inventory.js"></script>
 {% endblock %}

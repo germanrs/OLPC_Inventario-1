@@ -58,4 +58,5 @@ $app['twig']->addGlobal('user',$app['session']->get('user'));
 // Mount our controllers (dynamic routes)
 $app->mount('/auth/', new RNR\Provider\Controller\AuthController());
 $app->mount('/inventory/', new RNR\Provider\Controller\InventoryController());
+$app->mount('/ajax/', new RNR\Provider\Controller\AjaxController());
 

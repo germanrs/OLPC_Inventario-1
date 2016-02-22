@@ -62,26 +62,50 @@ class InventoryController implements ControllerProviderInterface {
 			$userLogin = true;
 			$userCred = $app['session']->get('user');
 		*/
-	
-		// Get parameters
-		$params = $app['request']->query->all();
-		
-		//Get the number of items
-		$numItems = $app['db.laptops']->fetchTotalLaptops();
-
 		//set the number of items per pages to 9
 		$numItemsPerPage = 20;
 
 		//get the current page number, if page is not set use 1
 		$curPage = max(1, (int) $app['request']->get('p'));
+	
+		// Get parameters
+		$params = $app['request']->query->all();
+    	// when the form is applayed and the page is not 1 use the following code
+    	if ($params!=null && isset($params['filterform']['genres']) && ''!=($params['filterform']['genres'])) {
+    		$genre = $params['filterform']['genres'];
+			$searchstring = $params['filterform']['searchstring'];
+			
+			//Get the number of items
+			$numItems = $app['db.laptops']->fetchTotalFilterLaptops($params['filterform']);	
 
-		//Calculate the number of pages by dividing the items count by the number of item per page 
+			$laptops = $app['db.laptops']->findFiltered($params['filterform'],$curPage,$numItemsPerPage);
+    	}
+
+    	else if ($params!=null && isset($params['genres'])) {
+    		$genre = $params['genres'];
+			$searchstring = $params['searchstring'];
+			
+			//Get the number of items
+			$numItems = $app['db.laptops']->fetchTotalFilterLaptops($params);
+
+			$laptops = $app['db.laptops']->findFiltered($params,$curPage,$numItemsPerPage);
+    	}
+    	else{
+    		$genre = '';
+			$searchstring = '';
+			
+
+			//Get the number of items
+			$numItems = $app['db.laptops']->fetchTotalLaptops();
+
+			$laptops = $app['db.laptops']->fetchAllLaptops($curPage,$numItemsPerPage);
+
+			// Password does not check out: add an error to the form
+            
+    	}
+
+    	//Calculate the number of pages by dividing the items count by the number of item per page 
 		$numPages = ceil($numItems / $numItemsPerPage);
-
-		//get the parameters
-    	$params = $app['request']->query->all();
-		$genre = (isset($params['filterform']['genres']))?$params['filterform']['genres']:'';
-		$searchstring = isset($params['filterform']['searchstring'])?$params['filterform']['searchstring']:'';
 
 		// Create Form
 		$filterform = $app['form.factory']
@@ -113,8 +137,11 @@ class InventoryController implements ControllerProviderInterface {
 			$newparams = $params['filterform'];
 		}
 		
-		//fetch all laptops
-		$laptops = (isset($params['filterform']['genres']))?$app['db.laptops']->findFiltered($params['filterform'],$curPage,$numItemsPerPage):$app['db.laptops']->fetchAllLaptops($curPage,$numItemsPerPage);
+		if (isset($params['filterform']['genres']) && ''==($params['filterform']['genres'])){
+				$filterform->get('genres')->addError(new \Symfony\Component\Form\FormError('Select a type'));
+		}
+		
+		
 		//return the rendered twig with parameters
 		return $app['twig']->render('inventory/Laptops.twig', array(
 			'show' => $show,
