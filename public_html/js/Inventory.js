@@ -1,21 +1,3 @@
-function showCustomer(str) {
-  var xhttp; 
-  if (str == "") {
-    document.getElementById("txtHint").innerHTML = "";
-    return;
-  }
-  xhttp = new XMLHttpRequest();
-  xhttp.onreadystatechange = function() {
-    if (xhttp.readyState == 4 && xhttp.status == 200) {
-    document.getElementById("txtHint").innerHTML = xhttp.responseText;
-    }
-  };
-  xhttp.open("GET", "getcustomer.asp?q="+str, true);
-  xhttp.send();
-}
-
-
-
 
 SetData('Model','json-datalistModel');
 SetData('People','json-datalistPeople');
@@ -71,3 +53,80 @@ function SetData(input, datalist){
   request.open('GET', 'http://localhost:8080/rein.bauwens/site%20OLPC/website/source/public_html/ajax/'+value+'/', true);
   request.send();
 }
+
+$( "#openAddModal" ).click(function() {
+   $("#openModal").css("opacity", "1");
+   $("#openModal").css("pointer-events", "auto");
+});
+
+$( "#CloseAddModal" ).click(function() {
+   $("#openModal").css("opacity", "0");
+   $("#openModal").css("pointer-events", "none");
+});
+
+
+$( "#AddLaptop" ).click(function() {
+  var Serial = document.getElementById("Serial").value;
+  var Model = document.getElementById("Model").value;
+  var People = document.getElementById("People").value;
+  var Status = document.getElementById("Status").value;
+  var Uuid = document.getElementById("Uuid").value;
+
+  if(!Serial || 0 === Serial.length ||!Model || 0 === Model.length || Model === parseInt(Model, 10) || !People || 0 === People.length || People === parseInt(People, 10) ||!Status || 0 === Status.length || Status === parseInt(Status, 10) ||!Uuid || 0 === Uuid.length){
+    $("#alert").css("display", "initial");
+    $("#alert").html("Fill in all fields!");
+  }
+  else{
+    var today = new Date();
+    var dd = today.getDate();
+    var mm = today.getMonth()+1; //January is 0!
+    var yyyy = today.getFullYear();
+
+    if(dd<10) {
+        dd='0'+dd
+    } 
+
+    if(mm<10) {
+        mm='0'+mm
+    } 
+
+    today = yyyy+'/'+mm+'/'+dd;
+
+    var postData = 
+                {
+                    "serial_number":Serial,
+                    "created_at":today,
+                    "model_id":Model,
+                    "owner_id":People,
+                    "status_id":Status,
+                    "uuid":Uuid,
+                    "registered":0,
+                    "last_activation_date":'NULL'
+                }
+
+    var dataString = JSON.stringify(postData);
+
+    $.ajax({
+            method: "POST",
+            data: {action:dataString},
+            url: "../ajax/addlaptop/",
+            success: function(data){
+                console.log(data);
+                $("#alert").html(data);
+            },
+            error: function(e){
+                console.log(e);
+                $("#alert").html(e);
+            }
+    });
+    if($("#alert").html() != 'laptop added'){
+      $("#alert").css("display", "initial");
+      
+    }
+    else{
+      $("#alert").css("display", "none");
+      $("#openModal").css("opacity", "0");
+      $("#openModal").css("pointer-events", "none");
+    }
+  }
+});

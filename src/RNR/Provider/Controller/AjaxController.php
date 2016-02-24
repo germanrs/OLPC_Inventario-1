@@ -40,6 +40,10 @@ class AjaxController implements ControllerProviderInterface {
 			->method('GET|POST')
 			->bind('Ajax.statuses');
 
+		$controllers
+			->get('/addlaptop/', array($this, 'addlaptop'))
+			->method('GET|POST')
+			->bind('Ajax.addlaptop');
 
 		// Return ControllerCollection
 		return $controllers;
@@ -78,6 +82,51 @@ class AjaxController implements ControllerProviderInterface {
 		
 		$data = $app['db.statuses']->fetchAll();
 		echo json_encode($data);
+		return $app['twig']->render('Ajax/Dump.twig');	
+	}
+
+	/**
+	 * home page
+	 * @param Application $app An Application instance
+	 * @return string A blob of HTML
+	 */
+	public function addlaptop(Application $app) {
+		if(isset($_POST['action'])){
+			$obj = json_decode($_POST['action'], true);
+			try {
+				$obj['model_id'] = $app['db.models']->getModel($obj['model_id']);
+				$obj['owner_id'] = $app['db.people']->getPerson($obj['owner_id']);
+				$obj['status_id'] = $app['db.statuses']->getStatus($obj['status_id']);
+			} catch (Exception $e) {
+			}
+			
+			if(ctype_digit($obj['model_id']) && ctype_digit($obj['owner_id']) && ctype_digit($obj['status_id'])){
+				$value = $app['db.laptops']->checkIfLaptopAlreadyExists($obj['serial_number'],$obj['uuid']);
+				if($value==0){
+					$obj['last_activation_date'] = null;
+					try {
+						$app['db.laptops']->insert($obj);
+						echo "laptop added";
+					} catch (Exception $e) {
+						echo "server down, try again later";
+					}
+				}
+				else if($value==1){
+					echo "serial and uuid already in use";
+				}
+				else if($value==2){
+					echo "uuid already in use";
+				}
+				else{
+					echo "serial already in use";
+				}		
+				
+			}
+			else{
+				echo 'Select a laptop/user/status from the list.';
+			}
+			
+		}
 		return $app['twig']->render('Ajax/Dump.twig');	
 	}
 }

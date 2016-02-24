@@ -460,6 +460,10 @@ select{
     width: 22.5rem;
 }
 
+.button{
+    cursor:pointer;
+}
+
 input[type="submit"], button[type="submit"]{
   border-radius: 5px;
   background-color: #008dd3;

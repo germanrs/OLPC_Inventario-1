@@ -79,4 +79,26 @@ class LaptopsRepository extends \Knp\Repository {
 
         		LIMIT ' . (int) (($curPage - 1) * $numItemsPerPage) . ',' . (int) ($numItemsPerPage));
 	}
+
+
+	public function checkIfLaptopAlreadyExists($serial, $uuid) {
+		$data1 = $this->db->fetchAll(
+				'SELECT * from laptops where uuid LIKE '.$this->db->quote('%'.$uuid.'%', \PDO::PARAM_STR).' AND serial_number LIKE'.$this->db->quote('%'.$serial.'%', \PDO::PARAM_STR));
+		$data2 = $this->db->fetchAll(
+				'SELECT * from laptops where uuid LIKE '.$this->db->quote('%'.$uuid.'%', \PDO::PARAM_STR));
+		$data3 = $this->db->fetchAll(
+				'SELECT * from laptops where serial_number LIKE'.$this->db->quote('%'.$serial.'%', \PDO::PARAM_STR));
+		if(empty($data1) && empty($data2) && empty($data3)){
+			return 0;
+		}
+		else if(!empty($data1)){
+			return 1;
+		}
+		else if(!empty($data2)){
+			return 2;
+		}
+		else{
+			return 3;
+		}
+	}
 }

@@ -55,7 +55,7 @@
 <div class="menu-right">
 	<div class="top-menu">
 	<h1>Laptops</h1>
-	<a class="button" href="#openModal" role="button">Add</a>
+	<a class="button" id="openAddModal"  role="button">Add</a>
 	<a class="button" href="~/Admin/Cancel/@Html.DisplayFor(modelItem => item.ID)" role="button">Export</a>
 	<a class="button" href="~/Admin/Cancel/@Html.DisplayFor(modelItem => item.ID)" role="button">Import</a>
 
@@ -135,18 +135,18 @@
 	<div class="hiden" id="hiden">/{{show}}</div>
 		<div id="openModal" class="modalDialog">
 			<div>
-				<a href="#close" title="Close" class="close">X</a>
+				<a id="CloseAddModal"  class="close">X</a>
 				<h3 id="change">Add User</h3>
 				<div class="clear"></div>
 				<div class="well clearfix" id="addUserForm">
-					<form action="{{ path('Inventory.laptops') }}" method="POST"   novalidate="novalidate" role="form">
+					<form novalidate="novalidate" role="form">
 						<fieldset>
 							<div class="form-group">
 								<div class="label">
 									serial number
 								</div>
 								<div class="input">
-									<input type="text" name="login" value="" placeholder="serial number...">
+									<input type="text" name="login" id="Serial" value="" placeholder="serial number...">
 								</div>
 								<div class="clear"></div>
 								<div class="label">
@@ -177,11 +177,12 @@
 									Uuid
 								</div>
 								<div class="input">
-									<input type="text" name="login" value="" placeholder="UuId...">
+									<input type="text" id="Uuid" name="login" value="" placeholder="UuId...">
 								</div>
 								<div class="clear"></div>
 							</div>
-							<input type="submit" class="n-button cta-blue create modal-trigger" id="button" value="Add" />
+							<a class="button" id="AddLaptop"  role="button">Add</a>
+							<p id="alert">Fill in all fields!</p>
 						</fieldset>
 					</form>
 				</div>

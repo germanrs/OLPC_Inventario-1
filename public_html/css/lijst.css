@@ -392,9 +392,10 @@ input[type="submit"]{
   -moz-box-shadow: 1px 1px 3px #000;
   -webkit-box-shadow: 1px 1px 3px #000;
   box-shadow: 1px 1px 3px #000;
+  cursor: pointer;
 }
 
-.close:hover { background: #ec7603; }
+.close:hover { background: #87d53a; }
 
 .label{
   float: left;
@@ -425,3 +426,17 @@ input[type="checkbox"]{
   margin-right:0;
 }
 
+
+#AddLaptop{
+  float: right;
+  margin-right: 0rem;
+}
+
+#alert{
+    display: none;
+    color: red;
+    float: right;
+    margin-right: 1rem;
+    margin-bottom: 0rem;
+    font-size: 2rem;
+}
