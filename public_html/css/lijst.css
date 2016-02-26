@@ -176,6 +176,10 @@
   height: 2rem;
 }
 
+#hiddenuploadform{
+  display: none;
+}
+
 /* =============== table =============== */
 
 .responstable {
@@ -439,4 +443,10 @@ input[type="checkbox"]{
     margin-right: 1rem;
     margin-bottom: 0rem;
     font-size: 2rem;
+}
+
+table .button{
+    margin: 0;
+    margin-left: 2rem;
+    margin-right: auto;
 }

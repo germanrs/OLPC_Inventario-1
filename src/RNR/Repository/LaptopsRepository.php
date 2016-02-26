@@ -101,4 +101,33 @@ class LaptopsRepository extends \Knp\Repository {
 			return 3;
 		}
 	}
+
+	public function deletelaptop($laptopID) {
+		return $this->db->delete('laptops', array('id' => $laptopID));
+	}
+
+	public function updateLaptop($laptop) {
+		if($laptop['serial_number'] == 'disabled' AND  $laptop['uuid'] == 'disabled'){
+			$result = 'UPDATE laptops SET '.
+			'model_id = '. $this->db->quote($laptop['model_id'], \PDO::PARAM_STR) . ',' .
+			'owner_id = '. $this->db->quote($laptop['owner_id'], \PDO::PARAM_STR) . ',' .
+			'status_id = '. $this->db->quote($laptop['status_id'], \PDO::PARAM_STR) .
+			' WHERE id = '.$this->db->quote($laptop['id'], \PDO::PARAM_INT);
+		}
+		else{
+			$result = 'UPDATE laptops SET '.
+			'serial_number = '. $this->db->quote($laptop['serial_number'], \PDO::PARAM_STR) . ',' .
+			'model_id = '. $this->db->quote($laptop['model_id'], \PDO::PARAM_STR) . ',' .
+			'owner_id = '. $this->db->quote($laptop['owner_id'], \PDO::PARAM_STR) . ',' .
+			'status_id = '. $this->db->quote($laptop['status_id'], \PDO::PARAM_STR) . ',' .
+			'uuid = '. $this->db->quote($laptop['uuid'], \PDO::PARAM_STR) .
+			' WHERE id = '.$this->db->quote($laptop['id'], \PDO::PARAM_INT);
+		}
+		return $this->db->executeUpdate($result);
+	}
+
+	public function FindLaptopId($laptop) {
+		return $this->db->fetchColumn('SELECT id FROM laptops where serial_number = '. $this->db->quote($laptop['serial_number'], \PDO::PARAM_STR) .'AND uuid = '. $this->db->quote($laptop['uuid'], \PDO::PARAM_STR));
+	}
 }
+

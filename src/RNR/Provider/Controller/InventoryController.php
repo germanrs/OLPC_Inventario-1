@@ -7,6 +7,9 @@ use Silex\ControllerProviderInterface;
 use Silex\ControllerCollection;
 use Symfony\Component\Validator\Constraints as Assert;
 
+require_once '/../../Classes/PHPExcel.php';
+require_once '/../../Classes/PHPExcel/IOFactory.php';
+
 /**
  * Controller for the authors
  * @author Rein Bauwens	<rein.bauwens@student.odisee.be>
@@ -30,19 +33,20 @@ class InventoryController implements ControllerProviderInterface {
 			->method('GET|POST')
 			->bind('Inventory.laptops');
 
-		// Delete a blogpost
 		$controllers
-			->post('/Laptops/{LaptopId}/delete/', array($this, 'laptopsdelete'))
+			->get('/laptops/', array($this, 'laptops'))
 			->method('GET|POST')
-			->assert('LaptopId', '\d+')
-			->bind('inventory.Laptops.delete');
+			->bind('Inventory.laptops');
 
-		// Delete a blogpost
 		$controllers
-			->post('/Laptops/{LaptopId}/edit/', array($this, 'laptopedit'))
-			->assert('LaptopId', '\d+')
+			->get('/people/', array($this, 'people'))
 			->method('GET|POST')
-			->bind('inventory.Laptops.edit');
+			->bind('Inventory.people');
+
+		$controllers
+			->get('/places/', array($this, 'places'))
+			->method('GET|POST')
+			->bind('Inventory.places');
 
 
 		// Return ControllerCollection
@@ -107,6 +111,38 @@ class InventoryController implements ControllerProviderInterface {
     	//Calculate the number of pages by dividing the items count by the number of item per page 
 		$numPages = ceil($numItems / $numItemsPerPage);
 
+		// Create a form to upload a file.
+		$uploadform = $app['form.factory']
+		->createNamed('uploadform', 'form')
+				->add('file', 'file', array(
+							'required' => true,
+							'constraints' => array(new Assert\NotBlank()),
+							'label' => 'File:'
+					));
+
+		$uploadform->handleRequest($app['request']);
+		$file = $app['request']->files->get($uploadform->getName());
+		if ($uploadform->isValid()) {
+			$data= $uploadform->getData();
+			var_dump($file['file']);
+			var_dump($data);
+			var_dump($_FILES);
+			$filename=$_FILES["uploadform"]["tmp_name"]["file"];
+			echo $filename;
+			if($_FILES["uploadform"]["size"]["file"] > 0)
+		    {
+		    	if ( $_FILES["uploadform"]["tmp_name"]['file'] )
+				{
+					$objPHPExcel = \PHPExcel_IOFactory::load($filename);
+					$sheetData = $objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
+					var_dump($sheetData);
+				}
+		    }
+		    else{
+		        echo 'Invalid File:Please Upload CSV File';
+		    }
+		}
+
 		// Create Form
 		$filterform = $app['form.factory']
 				->createNamed('filterform', 'form')
@@ -140,8 +176,7 @@ class InventoryController implements ControllerProviderInterface {
 		if (isset($params['filterform']['genres']) && ''==($params['filterform']['genres'])){
 				$filterform->get('genres')->addError(new \Symfony\Component\Form\FormError('Select a type'));
 		}
-		
-		
+
 		//return the rendered twig with parameters
 		return $app['twig']->render('inventory/Laptops.twig', array(
 			'show' => $show,
@@ -152,13 +187,19 @@ class InventoryController implements ControllerProviderInterface {
 			'numItems'=>$numItems, 
 			'baseUrl'=> $app['Inventory.base_url'],
 			'pagination'=>generatePaginationSequence($curPage, $numPages),
-			'requestParams' => $newparams
+			'requestParams' => $newparams,
+			'uploadform' => $uploadform->createView()
 			//'userLogin' => $userLogin,
 		));
 		
 	}
 
-	public function laptopsdelete(Application $app) {
+	/**
+	 * home page
+	 * @param Application $app An Application instance
+	 * @return string A blob of HTML
+	 */
+	public function people(Application $app) {
 		$show='';
 		//check if the user is logged in
 		/*$userLogin = false;
@@ -166,16 +207,138 @@ class InventoryController implements ControllerProviderInterface {
 			$userLogin = true;
 			$userCred = $app['session']->get('user');
 		*/
+		//set the number of items per pages to 9
+		$numItemsPerPage = 20;
+
+		//get the current page number, if page is not set use 1
+		$curPage = max(1, (int) $app['request']->get('p'));
+	
+		// Get parameters
+		$params = $app['request']->query->all();
+    	// when the form is applayed and the page is not 1 use the following code
+    	if ($params!=null && isset($params['filterform']['genres']) && ''!=($params['filterform']['genres'])) {
+    		$genre = $params['filterform']['genres'];
+			$searchstring = $params['filterform']['searchstring'];
+			
+			//Get the number of items
+			$numItems = $app['db.people']->fetchTotalFilterpeople($params['filterform']);	
+
+			$people = $app['db.people']->findFiltered($params['filterform'],$curPage,$numItemsPerPage);
+    	}
+
+    	else if ($params!=null && isset($params['genres'])) {
+    		$genre = $params['genres'];
+			$searchstring = $params['searchstring'];
+			
+			//Get the number of items
+			$numItems = $app['db.people']->fetchTotalFilterpeople($params);
+
+			$people = $app['db.people']->findFiltered($params,$curPage,$numItemsPerPage);
+    	}
+    	else{
+    		$genre = '';
+			$searchstring = '';
+			
+
+			//Get the number of items
+			$numItems = $app['db.people']->fetchTotalpeople();
+
+			$people = $app['db.people']->fetchAllPeople($curPage,$numItemsPerPage);
+
+			// Password does not check out: add an error to the form
+            
+    	}
+
+    	//Calculate the number of pages by dividing the items count by the number of item per page 
+		$numPages = ceil($numItems / $numItemsPerPage);
+
+		// Create a form to upload a file.
+		$uploadform = $app['form.factory']
+		->createNamed('uploadform', 'form')
+				->add('file', 'file', array(
+							'required' => true,
+							'constraints' => array(new Assert\NotBlank()),
+							'label' => 'File:'
+					));
+
+		$uploadform->handleRequest($app['request']);
+		$file = $app['request']->files->get($uploadform->getName());
+		if ($uploadform->isValid()) {
+			$data= $uploadform->getData();
+			var_dump($file['file']);
+			var_dump($data);
+			var_dump($_FILES);
+			$filename=$_FILES["uploadform"]["tmp_name"]["file"];
+			echo $filename;
+			if($_FILES["uploadform"]["size"]["file"] > 0)
+		    {
+		    	if ( $_FILES["uploadform"]["tmp_name"]['file'] )
+				{
+					$objPHPExcel = \PHPExcel_IOFactory::load($filename);
+					$sheetData = $objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
+					var_dump($sheetData);
+				}
+		    }
+		    else{
+		        echo 'Invalid File:Please Upload CSV File';
+		    }
+		}
+
+		// Create Form
+		$filterform = $app['form.factory']
+				->createNamed('filterform', 'form')
+				->add('searchstring', 'text', array(
+					'attr' => array('class' => 'required'),
+					'required' => false,
+					'data' => $searchstring
+				))
+				->add('genres', 'choice', array(
+    				'choices'  => array(
+    					'people.name' => 'name',
+    					'people.lastname' => 'lastname',
+    					'places.name' => 'school',
+    					'profiles.description' => 'profiles'),
+    				'placeholder' => 'Choose wisely!',
+    				'required' => false,
+					'attr' => array('class' => 'required'),
+					'data' => $genre
+				));
+
+		//if params['filterform'] isset, use the data from it. if its not set, the data is availeble in params.		
+		if(!isset($params['filterform'])){
+			$newparams = $params;
+		}
+		else{
+			$newparams = $params['filterform'];
+		}
+		
+		if (isset($params['filterform']['genres']) && ''==($params['filterform']['genres'])){
+				$filterform->get('genres')->addError(new \Symfony\Component\Form\FormError('Select a type'));
+		}
 
 		//return the rendered twig with parameters
-		return $app['twig']->render('inventory/Laptops.twig', array(
-			'show' => $show
+		return $app['twig']->render('inventory/people.twig', array(
+			'show' => $show,
+			'filterform' => $filterform->createView(),
+			'people' => $people,
+			'curPage'=>$curPage,
+			'numPages'=>$numPages,
+			'numItems'=>$numItems, 
+			'baseUrl'=> $app['Inventory.base_url'],
+			'pagination'=>generatePaginationSequence($curPage, $numPages),
+			'requestParams' => $newparams,
+			'uploadform' => $uploadform->createView()
 			//'userLogin' => $userLogin,
 		));
 		
 	}
 
-	public function laptopedit(Application $app) {
+	/**
+	 * home page
+	 * @param Application $app An Application instance
+	 * @return string A blob of HTML
+	 */
+	public function places(Application $app) {
 		$show='';
 		//check if the user is logged in
 		/*$userLogin = false;
@@ -183,10 +346,129 @@ class InventoryController implements ControllerProviderInterface {
 			$userLogin = true;
 			$userCred = $app['session']->get('user');
 		*/
+		//set the number of items per pages to 9
+		$numItemsPerPage = 20;
+
+		//get the current page number, if page is not set use 1
+		$curPage = max(1, (int) $app['request']->get('p'));
+	
+		// Get parameters
+		$params = $app['request']->query->all();
+    	// when the form is applayed and the page is not 1 use the following code
+    	if ($params!=null && isset($params['filterform']['genres']) && ''!=($params['filterform']['genres'])) {
+    		$genre = $params['filterform']['genres'];
+			$searchstring = $params['filterform']['searchstring'];
+			
+			//Get the number of items
+			$numItems = $app['db.laptops']->fetchTotalFilterLaptops($params['filterform']);	
+
+			$laptops = $app['db.laptops']->findFiltered($params['filterform'],$curPage,$numItemsPerPage);
+    	}
+
+    	else if ($params!=null && isset($params['genres'])) {
+    		$genre = $params['genres'];
+			$searchstring = $params['searchstring'];
+			
+			//Get the number of items
+			$numItems = $app['db.laptops']->fetchTotalFilterLaptops($params);
+
+			$laptops = $app['db.laptops']->findFiltered($params,$curPage,$numItemsPerPage);
+    	}
+    	else{
+    		$genre = '';
+			$searchstring = '';
+			
+
+			//Get the number of items
+			$numItems = $app['db.laptops']->fetchTotalLaptops();
+
+			$laptops = $app['db.laptops']->fetchAllLaptops($curPage,$numItemsPerPage);
+
+			// Password does not check out: add an error to the form
+            
+    	}
+
+    	//Calculate the number of pages by dividing the items count by the number of item per page 
+		$numPages = ceil($numItems / $numItemsPerPage);
+
+		// Create a form to upload a file.
+		$uploadform = $app['form.factory']
+		->createNamed('uploadform', 'form')
+				->add('file', 'file', array(
+							'required' => true,
+							'constraints' => array(new Assert\NotBlank()),
+							'label' => 'File:'
+					));
+
+		$uploadform->handleRequest($app['request']);
+		$file = $app['request']->files->get($uploadform->getName());
+		if ($uploadform->isValid()) {
+			$data= $uploadform->getData();
+			var_dump($file['file']);
+			var_dump($data);
+			var_dump($_FILES);
+			$filename=$_FILES["uploadform"]["tmp_name"]["file"];
+			echo $filename;
+			if($_FILES["uploadform"]["size"]["file"] > 0)
+		    {
+		    	if ( $_FILES["uploadform"]["tmp_name"]['file'] )
+				{
+					$objPHPExcel = \PHPExcel_IOFactory::load($filename);
+					$sheetData = $objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
+					var_dump($sheetData);
+				}
+		    }
+		    else{
+		        echo 'Invalid File:Please Upload CSV File';
+		    }
+		}
+
+		// Create Form
+		$filterform = $app['form.factory']
+				->createNamed('filterform', 'form')
+				->add('searchstring', 'text', array(
+					'attr' => array('class' => 'required'),
+					'required' => false,
+					'data' => $searchstring
+				))
+				->add('genres', 'choice', array(
+    				'choices'  => array(
+    					'laptops.serial_number' => 'serial nbr',
+    					'people.lastname' => 'owner',
+    					'places.name' => 'school',
+    					'models.name' => 'model',
+    					'statuses.description' => 'status',
+    					'laptops.uuid' => 'uuid'),
+    				'placeholder' => 'Choose wisely!',
+    				'required' => false,
+					'attr' => array('class' => 'required'),
+					'data' => $genre,
+				));
+
+		//if params['filterform'] isset, use the data from it. if its not set, the data is availeble in params.		
+		if(!isset($params['filterform'])){
+			$newparams = $params;
+		}
+		else{
+			$newparams = $params['filterform'];
+		}
+		
+		if (isset($params['filterform']['genres']) && ''==($params['filterform']['genres'])){
+				$filterform->get('genres')->addError(new \Symfony\Component\Form\FormError('Select a type'));
+		}
 
 		//return the rendered twig with parameters
 		return $app['twig']->render('inventory/Laptops.twig', array(
-			'show' => $show
+			'show' => $show,
+			'filterform' => $filterform->createView(),
+			'laptops' => $laptops,
+			'curPage'=>$curPage,
+			'numPages'=>$numPages,
+			'numItems'=>$numItems, 
+			'baseUrl'=> $app['Inventory.base_url'],
+			'pagination'=>generatePaginationSequence($curPage, $numPages),
+			'requestParams' => $newparams,
+			'uploadform' => $uploadform->createView()
 			//'userLogin' => $userLogin,
 		));
 		

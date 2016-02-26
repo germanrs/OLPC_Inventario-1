@@ -1,0 +1,190 @@
+{# extend the parent tpl #}
+{% extends 'layout.twig' %}
+
+{# set the pagetitle in the parent tpl #}
+{% set pageTitle = 'Inventory' %}
+
+{# Page specific css #}
+{% block pageCss %}
+	<link rel="stylesheet" media="screen" href="{{ app.request.baseUrl }}/css/lijst.css" />
+{% endblock %}
+{% block pageContent %}
+	{# Page specific content #}
+	{% include  'menu.twig' %}
+<div class="menu-right">
+	<div class="top-menu">
+	<h1>Laptops</h1>
+	<a class="button" id="openAddModal"  role="button">Add</a>
+	<form id="hiddenuploadform" method="post" action="{{ path('Inventory.laptops') }}"  {{ form_enctype(uploadform) }} novalidate="novalidate">
+	    {{ form_widget(uploadform.file , { 'attr': {'onchange': 'this.form.submit()'} }) }} 
+		{{ form_widget(uploadform._token) }}
+	</form>
+	<a class="button" id="ExportButton" role="button">Export</a>
+	<a class="button" id="ImportButton"  role="button">Import</a>
+
+		<div class="h_search">
+			<form action="{{ baseUrl }}" method="GET" {{ form_enctype(filterform) }}  novalidate="novalidate" role="form">
+				<h2 class="text-danger">{{ form_errors(filterform.genres)|striptags }}</h2>	
+				{{ form_widget(filterform.genres, { 'attr': {'class': 'form-control'} })  }}
+				{{ form_widget(filterform.searchstring, { 'attr': {'class': 'form-control'} }) }}
+				<input type="hidden" id="filterform__token" name="filterform[_token]" value="45072b220b3b190f6f6d863b5cd2a0d55f523c54" />
+				{{ form_widget(filterform._token) }}
+				<input type="submit" class="btn btn-primary pull-right" value="Filter" />
+
+			</form>
+	</div>
+</div>
+<div class="overvieuw">
+	<table class="responstable" id="table">
+		<tr>
+			<th>
+				<input type="checkbox" id="chechallboxes" name="checkbox">   
+			</th>
+			<th>
+				name
+			</th>
+			<th>
+				lastname
+			</th>
+			<th>
+				phone
+			</th>
+			<th>
+				email
+			</th>
+			<th>
+				school
+			</th>
+			<th>
+				profile
+			</th>
+			<th>
+				edit
+			</th> 
+			<th>
+				delete
+			</th>
+		</tr>
+		{% for person in people %}
+			<tr>
+				<td>
+	            	<input type="checkbox" id="{{ person.id }}" name="checkbox">    
+	        	</td>
+				<td class="serial">{{ person.name }}</td>
+				<td class="name">{{ person.lastname }} </td>
+				<td class="place">{{ person.phone }}</td>
+				<td class ="model">{{ person.email }}</td>
+				<td class="status">{{ person.namedescription }}</td>
+				<td class="uuid">{{ person.profdescription }}</td>
+
+				<td class="text-right">
+					<a class="button EditLaptop" id="Deleteperson" data="{{ person.id }}"  role="button">Edit</a>
+				</td>
+				<td class="text-right">
+					<a class="button DeleteLaptop" id="DeletePerosn" data="{{ person.id }}" role="button">delete</a>
+				</td> 
+			</tr>
+		{% endfor %}
+	</table>
+	<a class="button" id="EditSelectedPeople" role="button">Edit selected</a>
+	<a class="button" id="DeleteSelectedPeople" role="button">delete selected</a>
+	<div class="center">
+		<div class="pages">
+			{% include  'pagination.twig' %}
+		</div>
+	</div>
+	<div class="hiden" id="hiden">/{{show}}</div>
+		<div id="openModal" class="modalDialog">
+			<div>
+				<a id="CloseAddModal"  class="close">X</a>
+				<h3 id="change">Add Person</h3>
+				<div class="clear"></div>
+				<div class="well clearfix" id="addUserForm">
+					<form novalidate="novalidate" role="form">
+						<fieldset>
+							<div class="form-group">
+								<div class="label">
+									Name
+								</div>
+								<div class="input">
+									<input type="text" id="Name" placeholder="Name...">
+								</div>
+								<div class="clear"></div>
+								<div class="label">
+									Lastname
+								</div>
+								<div class="input">
+									<input type="text" id="Lastname" placeholder="Lastname...">
+								</div>
+								<div class="clear"></div>
+								<div class="label">
+									document id
+								</div>
+								<div class="input">
+									<input type="text" id="id_document" placeholder="id_document...">
+								</div>
+								<div class="clear"></div>
+								<div class="label">
+									birth_date
+								</div>
+								<div class="input">
+									<input type="text" id="birth_date" name="login" value="" placeholder="birth_date...">
+								</div>
+								<div class="clear"></div>
+								<div class="label">
+									phone
+								</div>
+								<div class="input">
+									<input type="text" id="phone" name="login" value="" placeholder="phone...">
+								</div>
+								<div class="clear"></div>
+								<div class="label">
+									email
+								</div>
+								<div class="input">
+									<input type="text" id="email" name="login" value="" placeholder="email...">
+								</div>
+								<div class="clear"></div>
+								<div class="label">
+									school name
+								</div>
+								<div class="input">
+									<input type="text" id="places" list="json-datalistplaces" placeholder="places...">
+								</div>
+								<datalist id="json-datalistplaces"></datalist>
+								<div class="clear"></div>
+								<div class="label">
+									barcode
+								</div>
+								<div class="input">
+									<input type="text" id="barcode" name="login" value="" placeholder="barcode...">
+								</div>
+								<div class="clear"></div>
+								<div class="label">
+									notes
+								</div>
+								<div class="input">
+									<input type="text" id="notes" name="login" value="" placeholder="notes...">
+								</div>
+								<div class="label">
+									profiles
+								</div>
+								<div class="input">
+									<input type="text" id="profiles" list="json-datalistprofiles" placeholder="profiles..">
+								</div>
+								<datalist id="json-datalistprofiles"></datalist>
+								<div class="clear"></div>
+							</div>
+							<a class="button" id="AddPerson" data="" role="button">Add</a>
+							<p id="alert">Fill in all fields!</p>
+						</fieldset>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}
+{% block pageScripts %}
+<script src="{{ app.request.baseUrl }}/js/People.js"></script>
+{% endblock %}

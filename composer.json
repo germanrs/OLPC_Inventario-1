@@ -9,7 +9,11 @@
 		"symfony/validator": "~2.1",
         "symfony/config": "~2.1",
         "symfony/translation": "~2.1",
-        "symfony/security-csrf": "~2.1"
+        "symfony/security-csrf": "~2.1",
+        "php": "^5.2|^7.0",
+        "ext-mbstring": "*",
+        "ext-xml": "*",
+        "ext-xmlwriter": "*"
 	},
 	"autoload": {
 		"psr-0": {

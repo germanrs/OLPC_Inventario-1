@@ -18,6 +18,6 @@ class ProfilesRepository extends \Knp\Repository {
 
 	public function fetchAll() {
 		return $this->db->fetchAll(
-				'SELECT profiles.* FROM profiles');
+				'SELECT profiles.id as id, profiles.description as name FROM profiles');
 	}
 }

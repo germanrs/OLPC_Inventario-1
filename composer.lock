@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "9399a3f1ff08f2db988d628a79f1772a",
+    "hash": "3aa9b95710e30dfd69254d43c75ae80c",
     "packages": [
         {
             "name": "doctrine/common",
@@ -1761,6 +1761,11 @@
     },
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
+    "platform": {
+        "php": "^5.2|^7.0",
+        "ext-mbstring": "*",
+        "ext-xml": "*",
+        "ext-xmlwriter": "*"
+    },
     "platform-dev": []
 }
