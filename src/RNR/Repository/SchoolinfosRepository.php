@@ -5,7 +5,7 @@ namespace RNR\Repository;
 /**
  * @author Robin Staes <robin.staes@student.odisee.be>
  */
-class School_infosRepository extends \Knp\Repository {
+class SchoolinfosRepository extends \Knp\Repository {
 
 	/**
 	 * [getTableName description]

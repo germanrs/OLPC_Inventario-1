@@ -20,4 +20,19 @@ class PerformsRepository extends \Knp\Repository {
 		return $this->db->fetchAll(
 				'SELECT performs.* FROM performs');
 	}
+
+	public function deleteperson($peopleID) {
+		return $this->db->delete('performs', array('person_id' => $peopleID));
+	}
+
+	public function updatePerform($perform) {
+		
+		$result = 'UPDATE performs SET '.
+		'place_id = '. $this->db->quote($perform['place_id'], \PDO::PARAM_STR) . ',' .
+		'profile_id = '. $this->db->quote($perform['profile_id'], \PDO::PARAM_STR) .
+		' WHERE person_id = '.$this->db->quote($perform['person_id'], \PDO::PARAM_INT);
+		
+		return $this->db->executeUpdate($result);
+	}
+
 }

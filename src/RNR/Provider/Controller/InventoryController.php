@@ -360,9 +360,9 @@ class InventoryController implements ControllerProviderInterface {
 			$searchstring = $params['filterform']['searchstring'];
 			
 			//Get the number of items
-			$numItems = $app['db.laptops']->fetchTotalFilterLaptops($params['filterform']);	
+			$numItems = $app['db.places']->fetchTotalFilterPlaces($params['filterform']);	
 
-			$laptops = $app['db.laptops']->findFiltered($params['filterform'],$curPage,$numItemsPerPage);
+			$places = $app['db.places']->findFiltered($params['filterform'],$curPage,$numItemsPerPage);
     	}
 
     	else if ($params!=null && isset($params['genres'])) {
@@ -370,9 +370,9 @@ class InventoryController implements ControllerProviderInterface {
 			$searchstring = $params['searchstring'];
 			
 			//Get the number of items
-			$numItems = $app['db.laptops']->fetchTotalFilterLaptops($params);
+			$numItems = $app['db.places']->fetchTotalFilterPlaces($params);
 
-			$laptops = $app['db.laptops']->findFiltered($params,$curPage,$numItemsPerPage);
+			$places = $app['db.places']->findFiltered($params,$curPage,$numItemsPerPage);
     	}
     	else{
     		$genre = '';
@@ -380,14 +380,14 @@ class InventoryController implements ControllerProviderInterface {
 			
 
 			//Get the number of items
-			$numItems = $app['db.laptops']->fetchTotalLaptops();
+			$numItems = $app['db.places']->fetchTotalPlaces();
 
-			$laptops = $app['db.laptops']->fetchAllLaptops($curPage,$numItemsPerPage);
+			$places = $app['db.places']->fetchAllPlaces($curPage,$numItemsPerPage);
 
 			// Password does not check out: add an error to the form
             
     	}
-
+    	
     	//Calculate the number of pages by dividing the items count by the number of item per page 
 		$numPages = ceil($numItems / $numItemsPerPage);
 
@@ -422,7 +422,6 @@ class InventoryController implements ControllerProviderInterface {
 		        echo 'Invalid File:Please Upload CSV File';
 		    }
 		}
-
 		// Create Form
 		$filterform = $app['form.factory']
 				->createNamed('filterform', 'form')
@@ -433,12 +432,9 @@ class InventoryController implements ControllerProviderInterface {
 				))
 				->add('genres', 'choice', array(
     				'choices'  => array(
-    					'laptops.serial_number' => 'serial nbr',
-    					'people.lastname' => 'owner',
-    					'places.name' => 'school',
-    					'models.name' => 'model',
-    					'statuses.description' => 'status',
-    					'laptops.uuid' => 'uuid'),
+    					'places.name' => 'place name',
+    					'place_types.name' => 'place type',
+    					'school_infos.id' => 'school'),
     				'placeholder' => 'Choose wisely!',
     				'required' => false,
 					'attr' => array('class' => 'required'),
@@ -458,10 +454,10 @@ class InventoryController implements ControllerProviderInterface {
 		}
 
 		//return the rendered twig with parameters
-		return $app['twig']->render('inventory/Laptops.twig', array(
+		return $app['twig']->render('inventory/places.twig', array(
 			'show' => $show,
 			'filterform' => $filterform->createView(),
-			'laptops' => $laptops,
+			'places' => $places,
 			'curPage'=>$curPage,
 			'numPages'=>$numPages,
 			'numItems'=>$numItems, 

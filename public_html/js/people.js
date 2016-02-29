@@ -1,6 +1,7 @@
 
 SetData('places','json-datalistplaces');
 SetData('profiles','json-datalistprofiles');
+SetData('grade','json-datalistgrade');
 
 function SetData(input, datalist){
   var value = input.toLowerCase();
@@ -21,7 +22,6 @@ function SetData(input, datalist){
 
         // Parse the JSON
         var jsonOptions = JSON.parse(request.responseText);
-      
         // Loop over the JSON array.
         jsonOptions.forEach(function(item) {
           // Create a new <option> element.
@@ -85,6 +85,7 @@ $( "#openAddModal" ).click(function() {
   document.getElementById("notes").value = '';
   document.getElementById("profiles").value = '';
   document.getElementById("barcode").value = '';
+  document.getElementById("grade").value = '';
   document.getElementById("AddPerson").text = 'Add';
   $("#alert").css("display", "none");
    $("#openModal").css("opacity", "1");
@@ -97,11 +98,11 @@ $( "#CloseAddModal" ).click(function() {
 });
 
 $( ".Editperson" ).click(function() {
-  editlaptop(this);
+  editperson(this);
 });
 
-$( ".Deleteperson" ).click(function() {
-  deletelaptop(this);
+$( ".DeletePerson" ).click(function() {
+  deleteperson(this);
 });
 
 $( "#ImportButton" ).click(function() {
@@ -118,15 +119,26 @@ $( "#EditSelectedPeople" ).click(function() {
   for (box in checkedBoxes) {
     id = id +  checkedBoxes[box].id + ', ' ;
   }
-  console.log(id);
   if(id !=''){
     $("#alert").css("display", "none");
-    document.getElementById("AddLaptop").text = 'Edit';
-    document.getElementById("AddLaptop").setAttribute("data", id);
-    document.getElementById("Serial").disabled=true;
-    document.getElementById("Uuid").disabled=true;
-    document.getElementById("Serial").value='disabled';
-    document.getElementById("Uuid").value='disabled';
+    document.getElementById("AddPerson").text = 'Edit';
+    document.getElementById("AddPerson").setAttribute("data", id);
+    document.getElementById("Name").disabled=true;
+    document.getElementById("Lastname").disabled=true;
+    document.getElementById("id_document").disabled=true;
+    document.getElementById("birth_date").disabled=true;
+    document.getElementById("phone").disabled=true;
+    document.getElementById("email").disabled=true;
+    document.getElementById("barcode").disabled=true;
+    document.getElementById("notes").disabled=true;
+    document.getElementById("Name").value='disabled';
+    document.getElementById("Lastname").value='disabled';
+    document.getElementById("id_document").value='disabled';
+    document.getElementById("birth_date").value='disabled';
+    document.getElementById("phone").value='disabled';
+    document.getElementById("email").value='disabled';
+    document.getElementById("barcode").value='disabled';
+    document.getElementById("notes").value='disabled';
     $("#openModal").css("opacity", "1");
     $("#openModal").css("pointer-events", "auto");
   }
@@ -136,14 +148,9 @@ $( "#DeleteSelectedPeople" ).click(function() {
   var checkedBoxes = getCheckedBoxes("checkbox");
   console.log(checkedBoxes);
   for (box in checkedBoxes) {
-    deletelaptop(checkedBoxes[box]);
+    deleteperson(checkedBoxes[box]);
   }
 });
-
-
-
-
-
 
 $( "#AddPerson" ).click(function() {
   var name = document.getElementById("Name").value;
@@ -156,24 +163,21 @@ $( "#AddPerson" ).click(function() {
   var notes = document.getElementById("notes").value;
   var barcode = document.getElementById("barcode").value;
   var profiles = document.getElementById("profiles").value;
+  var grade = document.getElementById("grade").value;
   if(!name || 0 === name.length ||
     !lastname || 0 === lastname.length || 
-    !id_document || 0 === id_document.length || id_document === parseInt(id_document, 10) ||
-    !birth_date || 0 === birth_date.length || 
-    !phone || 0 === phone.length || phone === parseInt(phone, 10) ||
-    !email || 0 === email.length || 
     !places || 0 === places.length || 
-    !notes || 0 === notes.length || 
+    !grade || 0 === grade.length || 
     !barcode || 0 === barcode.length || barcode === parseInt(barcode, 10) ||
-    !profiles || 0 === profiles.length ||{
+    !profiles || 0 === profiles.length){
     $("#alert").css("display", "initial");
     $("#alert").html("Fill in all fields!");
   }
   else{
     var created_at = new Date();
-    var dd = today.getDate();
-    var mm = today.getMonth()+1; //January is 0!
-    var yyyy = today.getFullYear();
+    var dd = created_at.getDate();
+    var mm = created_at.getMonth()+1; //January is 0!
+    var yyyy = created_at.getFullYear();
 
     if(dd<10) {
         dd='0'+dd
@@ -183,10 +187,10 @@ $( "#AddPerson" ).click(function() {
         mm='0'+mm
     } 
 
-    today = yyyy+'/'+mm+'/'+dd;
+    created_at = yyyy+'/'+mm+'/'+dd;
 
     //add 1 laptop
-    if(document.getElementById("AddLaptop").text == 'Add'){
+    if(document.getElementById("AddPerson").text == 'Add'){
       var postData = 
                   {
                       "created_at":created_at,
@@ -196,13 +200,14 @@ $( "#AddPerson" ).click(function() {
                       "birth_date":birth_date,
                       "phone":phone,
                       "email":email,
-                      "position":NULL,
+                      "position":'NULL',
                       "school_name":places,
                       "barcode":barcode,
-                      "id_document_created_at":NULL,
+                      "id_document_created_at":'NULL',
                       "notes":notes,
                       "places":places,
-                      "profiles":profiles
+                      "profiles":profiles,
+                      "grade":grade
                   }
 
       var dataString = JSON.stringify(postData);
@@ -210,7 +215,7 @@ $( "#AddPerson" ).click(function() {
       $.ajax({
               method: "POST",
               data: {action:dataString},
-              url: "../ajax/addperson/",
+              url: "../../ajax/addperson/",
               success: function(data){
                   $("#alert").html(data);
                   var table = document.getElementById("table");
@@ -233,19 +238,22 @@ $( "#AddPerson" ).click(function() {
                   $.ajax({
                         method: "POST",
                         data: {action:dataString},
-                        url: "../ajax/getidofperson/",
-                        success: function(data){
+                        url: "../../ajax/getidofperson/",
+                        success: function(data){                          
+                            console.log(data);
                             var data2 = data
                             cell1.innerHTML = '<input type="checkbox" id="'+data2+'" name="checkbox"> '
                             cell8.innerHTML = '<a class="button EditLaptop" onclick="Editperson(this)"  id="EditLaptop" data="'+data2+'"  role="button">Edit</a>';
                             cell9.innerHTML = '<a class="button DeleteLaptop" onclick="Deleteperson(this)" id="Deleteperson" data="'+data2+'" role="button">delete</a>';
                         },
                         error: function(e){
+                          console.log(e);
                         }
                   });
               },
               error: function(e){
                   $("#alert").html(e);
+                  console.log(e);
               }
       });
       if($("#alert").html() != 'Person added'){
@@ -254,8 +262,8 @@ $( "#AddPerson" ).click(function() {
       }
 
     }
-    else if(document.getElementById("AddLaptop").text == 'Edit'){
-      var Ids = $('#AddLaptop').attr("data");
+    else if(document.getElementById("AddPerson").text == 'Edit'){
+      var Ids = $('#AddPerson').attr("data");
 
       //edit multiple laptops
       if(Ids.indexOf(',') > -1){
@@ -266,71 +274,81 @@ $( "#AddPerson" ).click(function() {
           var postData = 
                 {
                     "id": res[Id],
-                    "serial_number":Serial,
-                    "model_id":Model,
-                    "owner_id":People,
-                    "status_id":Status,
-                    "uuid":Uuid,
+                    "places":places,
+                    "profiles":profiles,
+                    "grade":grade
                 }
           var dataString = JSON.stringify(postData);
           $.ajax({
                   method: "POST",
                   data: {action:dataString},
-                  url: "../ajax/editlaptop/",
+                  url: "../../ajax/editperson/",
                   success: function(data){
                       $("#alert").html(data); 
                       var index = $("#"+res[teller]).closest("tr").index();
-                      console.log('res3'+res[teller]);
                       var table = document.getElementById("table");
-                      table.rows[index].cells[2].innerHTML = People;
-                      table.rows[index].cells[4].innerHTML = Model;
-                      table.rows[index].cells[5].innerHTML = Status;
+                      table.rows[index].cells[6].innerHTML = places;
+                      table.rows[index].cells[7].innerHTML = profiles;
                       teller++;
+                      console.log(data);
                   },
                   error: function(e){
                       $("#alert").html(e);
+                      console.log(e);
                   }
           });
           if($("#alert").html() != 'laptops edited'){
             $("#alert").css("display", "initial");
             
           }
-          
         }
       }
 
       //edit 1 laptop
       else{
-        var index = $('#AddLaptop').attr("index");
+        var index = $('#AddPerson').attr("index");
         var postData = 
-                    {
-                        "id": ID,
-                        "serial_number":Serial,
-                        "model_id":Model,
-                        "owner_id":People,
-                        "status_id":Status,
-                        "uuid":Uuid,
-                    }
+                  {
+                      "id":Ids,
+                      "created_at":created_at,
+                      "name":name,
+                      "lastname":lastname,
+                      "id_document":id_document,
+                      "birth_date":birth_date,
+                      "phone":phone,
+                      "email":email,
+                      "position":'NULL',
+                      "school_name":places,
+                      "barcode":barcode,
+                      "id_document_created_at":'NULL',
+                      "notes":notes,
+                      "places":places,
+                      "profiles":profiles,
+                      "grade":grade
+                  }
 
         var dataString = JSON.stringify(postData);
         $.ajax({
                 method: "POST",
                 data: {action:dataString},
-                url: "../ajax/editlaptop/",
+                url: "../../ajax/editperson/",
                 success: function(data){
                     $("#alert").html(data);
                     var table = document.getElementById("table");
-                    table.rows[index].cells[1].innerHTML = Serial;
-                    table.rows[index].cells[2].innerHTML = People;
-                    table.rows[index].cells[4].innerHTML = Model;
-                    table.rows[index].cells[5].innerHTML = Status;
-                    table.rows[index].cells[6].innerHTML = Uuid;
+                    table.rows[index].cells[1].innerHTML = name;
+                    table.rows[index].cells[2].innerHTML = lastname;
+                    table.rows[index].cells[3].innerHTML = phone;
+                    table.rows[index].cells[4].innerHTML = email;
+                    table.rows[index].cells[5].innerHTML = places;
+                    table.rows[index].cells[6].innerHTML = profiles;
+                    console.log(data);
                 },
                 error: function(e){
                     $("#alert").html(e);
+                    console.log(e);
                 }
         });
-        if($("#alert").html() != 'laptop edited'){
+        if($("#alert").html() != 'Person edited'){
           $("#alert").css("display", "initial");
           
         }
@@ -345,9 +363,9 @@ $( "#AddPerson" ).click(function() {
 });
 
 
-function deletelaptop(datainput){
+function deleteperson(datainput){
   var id = $(datainput).closest("tr")   // Finds the closest row <tr> 
-                       .find(".EditLaptop")     // Gets a descendent with class="nr"
+                       .find(".Editperson")     // Gets a descendent with class="nr"
                        .attr("data");
   
   var index = $(datainput).closest("tr").index();
@@ -363,38 +381,52 @@ function deletelaptop(datainput){
   $.ajax({
           method: "POST",
           data: {action:dataString},
-          url: "../ajax/deletelaptop/",
+          url: "../../ajax/deleteperson/",
           success: function(data){
               $("#alert").html(data);
+              console.log(data);
               var index = $(datainput).closest("tr").index();
               document.getElementById("table").deleteRow(index); 
           },
           error: function(e){
               $("#alert").html(e);
+              console.log(e);
           }
   });
 }
 
-function editlaptop(datainput){
-  document.getElementById("Serial").disabled=true;
-  document.getElementById("Uuid").disabled=true;
+function editperson(datainput){
   $("#alert").css("display", "none");
-  document.getElementById("AddLaptop").text = 'Edit';
+  document.getElementById("AddPerson").text = 'Edit';
   var element = document.getElementById($(datainput).attr("data"));
   var index = $(element).closest("tr").index();
   var $ID = $(datainput).attr("data");
-  var $serial = table.rows[index].cells[1].innerHTML;
-  var $name = table.rows[index].cells[2].innerHTML;
-  var $model = table.rows[index].cells[4].innerHTML;
-  var $status = table.rows[index].cells[5].innerHTML;
-  var $uuid = table.rows[index].cells[6].innerHTML;
-  document.getElementById("AddLaptop").setAttribute("data", $ID);
-  document.getElementById("AddLaptop").setAttribute("index", index);
-  document.getElementById("Serial").value = $serial;
-  document.getElementById("Model").value = $model;
-  document.getElementById("People").value = $name;
-  document.getElementById("Status").value = $status;
-  document.getElementById("Uuid").value = $uuid;
+  var $Name = table.rows[index].cells[1].innerHTML;
+  var $Lastname = table.rows[index].cells[2].innerHTML;
+  var $phone = table.rows[index].cells[3].innerHTML;
+  var $email = table.rows[index].cells[4].innerHTML;
+  var $namedescription = table.rows[index].cells[5].innerHTML;
+  var $profdescription = table.rows[index].cells[6].innerHTML;
+  var $id_document = table.rows[index].cells[7].innerHTML;
+  var $birth_date = table.rows[index].cells[8].innerHTML;
+  var $position = table.rows[index].cells[9].innerHTML;
+  var $school_name = table.rows[index].cells[10].innerHTML;
+  var $barcode = table.rows[index].cells[11].innerHTML;
+  var $notes = table.rows[index].cells[13].innerHTML;
+  var $typedescription = table.rows[index].cells[14].innerHTML;
+  document.getElementById("AddPerson").setAttribute("data", $ID);
+  document.getElementById("AddPerson").setAttribute("index", index);
+  document.getElementById("Name").value = $Name;
+  document.getElementById("Lastname").value = $Lastname;
+  document.getElementById("id_document").value = $id_document;
+  document.getElementById("birth_date").value = $birth_date;
+  document.getElementById("phone").value = $phone;
+  document.getElementById("email").value = $email;
+  document.getElementById("notes").value = $notes;
+  document.getElementById("profiles").value = $profdescription;
+  document.getElementById("barcode").value = $barcode;
+  document.getElementById("grade").value = $typedescription;
+  document.getElementById("places").value = $namedescription;
   $("#openModal").css("opacity", "1");
   $("#openModal").css("pointer-events", "auto");
 }

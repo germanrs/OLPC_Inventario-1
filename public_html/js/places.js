@@ -1,7 +1,6 @@
 
-SetData('Model','json-datalistModel');
-SetData('People','json-datalistPeople');
-SetData('Status','json-datalistStatus');
+SetData('place_type','json-datalistplace_type');
+SetData('ancestor','json-datalistancestor');
 
 function SetData(input, datalist){
   var value = input.toLowerCase();
@@ -13,6 +12,7 @@ function SetData(input, datalist){
 
   // Create a new XMLHttpRequest.
   var request = new XMLHttpRequest();
+
   // Handle state changes for the request.
   request.onreadystatechange = function(response) {
     
@@ -21,7 +21,6 @@ function SetData(input, datalist){
 
         // Parse the JSON
         var jsonOptions = JSON.parse(request.responseText);
-      
         // Loop over the JSON array.
         jsonOptions.forEach(function(item) {
           // Create a new <option> element.
@@ -75,14 +74,11 @@ $( "#chechallboxes" ).click(function() {
 
 
 $( "#openAddModal" ).click(function() {
-  document.getElementById("Serial").value = '';
-  document.getElementById("Model").value = '';
-  document.getElementById("People").value = '';
-  document.getElementById("Status").value = '';
-  document.getElementById("Uuid").value = '';
-  document.getElementById("AddLaptop").text = 'Add';
-  document.getElementById("Serial").disabled=false;
-    document.getElementById("Uuid").disabled=false;
+  document.getElementById("Name").value = '';
+  document.getElementById("place_type").value = '';
+  document.getElementById("server_hostname").value = '';
+  document.getElementById("ancestor").value = '';
+  document.getElementById("AddPlace").text = 'Add';
   $("#alert").css("display", "none");
    $("#openModal").css("opacity", "1");
    $("#openModal").css("pointer-events", "auto");
@@ -93,12 +89,12 @@ $( "#CloseAddModal" ).click(function() {
    $("#openModal").css("pointer-events", "none");
 });
 
-$( ".EditLaptop" ).click(function() {
-  editlaptop(this);
+$( ".Editplace" ).click(function() {
+  Editplace(this);
 });
 
-$( ".DeleteLaptop" ).click(function() {
-  deletelaptop(this);
+$( ".Deleteplace" ).click(function() {
+  Deleteplace(this);
 });
 
 $( "#ImportButton" ).click(function() {
@@ -108,56 +104,62 @@ $( "#ImportButton" ).click(function() {
 
 
 
-$( "#EditSelectedLaptops" ).click(function() {
+$( "#EditSelectedplaces" ).click(function() {
   var checkedBoxes = getCheckedBoxes("checkbox");
   console.log(checkedBoxes);
   var id ='';
   for (box in checkedBoxes) {
     id = id +  checkedBoxes[box].id + ', ' ;
   }
-  console.log(id);
   if(id !=''){
     $("#alert").css("display", "none");
-    document.getElementById("AddLaptop").text = 'Edit';
-    document.getElementById("AddLaptop").setAttribute("data", id);
-    document.getElementById("Serial").disabled=true;
-    document.getElementById("Uuid").disabled=true;
-    document.getElementById("Serial").value='disabled';
-    document.getElementById("Uuid").value='disabled';
+    document.getElementById("AddPerson").text = 'Edit';
+    document.getElementById("AddPerson").setAttribute("data", id);
+    document.getElementById("Name").disabled=true;
+    document.getElementById("Lastname").disabled=true;
+    document.getElementById("id_document").disabled=true;
+    document.getElementById("birth_date").disabled=true;
+    document.getElementById("phone").disabled=true;
+    document.getElementById("email").disabled=true;
+    document.getElementById("barcode").disabled=true;
+    document.getElementById("notes").disabled=true;
+    document.getElementById("Name").value='disabled';
+    document.getElementById("Lastname").value='disabled';
+    document.getElementById("id_document").value='disabled';
+    document.getElementById("birth_date").value='disabled';
+    document.getElementById("phone").value='disabled';
+    document.getElementById("email").value='disabled';
+    document.getElementById("barcode").value='disabled';
+    document.getElementById("notes").value='disabled';
     $("#openModal").css("opacity", "1");
     $("#openModal").css("pointer-events", "auto");
   }
 });
 
-$( "#DeleteSelectedLaptops" ).click(function() {
+$( "#DeleteSelectedplaces" ).click(function() {
   var checkedBoxes = getCheckedBoxes("checkbox");
   console.log(checkedBoxes);
   for (box in checkedBoxes) {
-    deletelaptop(checkedBoxes[box]);
+    deleteperson(checkedBoxes[box]);
   }
 });
 
-
-
-
-
-
-$( "#AddLaptop" ).click(function() {
-  var Serial = document.getElementById("Serial").value;
-  var Model = document.getElementById("Model").value;
-  var People = document.getElementById("People").value;
-  var Status = document.getElementById("Status").value;
-  var Uuid = document.getElementById("Uuid").value;
-
-  if(!Serial || 0 === Serial.length ||!Model || 0 === Model.length || Model === parseInt(Model, 10) || !People || 0 === People.length || People === parseInt(People, 10) ||!Status || 0 === Status.length || Status === parseInt(Status, 10) ||!Uuid || 0 === Uuid.length){
+$( "#AddPlace" ).click(function() {
+  var name = document.getElementById("Name").value;
+  var place_type = document.getElementById("place_type").value;
+  var server_hostname = document.getElementById("server_hostname").value;
+  var ancestor = document.getElementById("ancestor").value;
+  if(!name || 0 === name.length ||
+    !place_type || 0 === place_type.length || 
+    !ancestor || 0 === ancestor.length){
     $("#alert").css("display", "initial");
-    $("#alert").html("Fill in all fields!");
+    $("#alert").html("Fill in the fields: name, server-hostname and ancestor!");
   }
   else{
-    var today = new Date();
-    var dd = today.getDate();
-    var mm = today.getMonth()+1; //January is 0!
-    var yyyy = today.getFullYear();
+    var created_at = new Date();
+    var dd = created_at.getDate();
+    var mm = created_at.getMonth()+1; //January is 0!
+    var yyyy = created_at.getFullYear();
 
     if(dd<10) {
         dd='0'+dd
@@ -167,20 +169,17 @@ $( "#AddLaptop" ).click(function() {
         mm='0'+mm
     } 
 
-    today = yyyy+'/'+mm+'/'+dd;
+    created_at = yyyy+'/'+mm+'/'+dd;
 
     //add 1 laptop
-    if(document.getElementById("AddLaptop").text == 'Add'){
+    if(document.getElementById("AddPlace").text == 'Add'){
       var postData = 
                   {
-                      "serial_number":Serial,
-                      "created_at":today,
-                      "model_id":Model,
-                      "owner_id":People,
-                      "status_id":Status,
-                      "uuid":Uuid,
-                      "registered":0,
-                      "last_activation_date":'NULL'
+                      "created_at":created_at,
+                      "name":name,
+                      "place_type":place_type,
+                      "server_hostname":server_hostname,
+                      "ancestor":ancestor
                   }
 
       var dataString = JSON.stringify(postData);
@@ -188,7 +187,7 @@ $( "#AddLaptop" ).click(function() {
       $.ajax({
               method: "POST",
               data: {action:dataString},
-              url: "../../ajax/addlaptop/",
+              url: "../../ajax/addplace/",
               success: function(data){
                   $("#alert").html(data);
                   var table = document.getElementById("table");
@@ -199,41 +198,37 @@ $( "#AddLaptop" ).click(function() {
                   var cell4 = row.insertCell(3);
                   var cell5 = row.insertCell(4);
                   var cell6 = row.insertCell(5);
-                  var cell7 = row.insertCell(6);
-                  var cell8 = row.insertCell(7);
-                  var cell9 = row.insertCell(8);
-                  var cell10 = row.insertCell(9);
-                  cell2.innerHTML = Serial;
-                  cell3.innerHTML = People;
-                  cell5.innerHTML = Model;
-                  cell6.innerHTML = Status;
-                  cell7.innerHTML = Uuid;
+                  cell2.innerHTML = name;
+                  cell3.innerHTML = place_type;
+                  cell4.innerHTML = server_hostname;
                   $.ajax({
                         method: "POST",
                         data: {action:dataString},
-                        url: "../ajax/getidoflaptop/",
+                        url: "../../ajax/getidofplace/",
                         success: function(data){
                             var data2 = data
                             cell1.innerHTML = '<input type="checkbox" id="'+data2+'" name="checkbox"> '
-                            cell8.innerHTML = '<a class="button EditLaptop" onclick="editlaptop(this)"  id="EditLaptop" data="'+data2+'"  role="button">Edit</a>';
-                            cell9.innerHTML = '<a class="button DeleteLaptop" onclick="deletelaptop(this)" id="DeleteLaptop" data="'+data2+'" role="button">delete</a>';
+                            cell5.innerHTML = '<a class="button EditLaptop" onclick="Editplace(this)"  id="EditLaptop" data="'+data2+'"  role="button">Edit</a>';
+                            cell6.innerHTML = '<a class="button DeleteLaptop" onclick="Deleteplace(this)" id="Deleteperson" data="'+data2+'" role="button">delete</a>';
                         },
                         error: function(e){
+                          console.log(e);
                         }
                   });
               },
               error: function(e){
                   $("#alert").html(e);
+                  console.log(e);
               }
       });
-      if($("#alert").html() != 'laptop added'){
+      if($("#alert").html() != 'Person added'){
         $("#alert").css("display", "initial");
         
       }
 
     }
-    else if(document.getElementById("AddLaptop").text == 'Edit'){
-      var Ids = $('#AddLaptop').attr("data");
+    else if(document.getElementById("AddPlace").text == 'Edit'){
+      var Ids = $('#AddPlace').attr("data");
 
       //edit multiple laptops
       if(Ids.indexOf(',') > -1){
@@ -244,71 +239,67 @@ $( "#AddLaptop" ).click(function() {
           var postData = 
                 {
                     "id": res[Id],
-                    "serial_number":Serial,
-                    "model_id":Model,
-                    "owner_id":People,
-                    "status_id":Status,
-                    "uuid":Uuid,
+                    "place_type":place_type,
+                    "ancestor":ancestor
                 }
           var dataString = JSON.stringify(postData);
           $.ajax({
                   method: "POST",
                   data: {action:dataString},
-                  url: "../../ajax/editlaptop/",
+                  url: "../../ajax/editperson/",
                   success: function(data){
                       $("#alert").html(data); 
                       var index = $("#"+res[teller]).closest("tr").index();
-                      console.log('res3'+res[teller]);
                       var table = document.getElementById("table");
-                      table.rows[index].cells[2].innerHTML = People;
-                      table.rows[index].cells[4].innerHTML = Model;
-                      table.rows[index].cells[5].innerHTML = Status;
+                      table.rows[index].cells[6].innerHTML = places;
+                      table.rows[index].cells[7].innerHTML = profiles;
                       teller++;
+                      console.log(data);
                   },
                   error: function(e){
                       $("#alert").html(e);
+                      console.log(e);
                   }
           });
           if($("#alert").html() != 'laptops edited'){
             $("#alert").css("display", "initial");
             
           }
-          
         }
       }
 
       //edit 1 laptop
       else{
-        var index = $('#AddLaptop').attr("index");
+        var index = $('#AddPerson').attr("index");
         var postData = 
-                    {
-                        "id": ID,
-                        "serial_number":Serial,
-                        "model_id":Model,
-                        "owner_id":People,
-                        "status_id":Status,
-                        "uuid":Uuid,
-                    }
+                  {
+                      "id":Ids,
+                      "name":name,
+                      "place_type":place_type,
+                      "server_hostname":server_hostname,
+                      "ancestor":ancestor
+                  }
 
         var dataString = JSON.stringify(postData);
         $.ajax({
                 method: "POST",
                 data: {action:dataString},
-                url: "../../ajax/editlaptop/",
+                url: "../../ajax/editplace/",
                 success: function(data){
                     $("#alert").html(data);
                     var table = document.getElementById("table");
-                    table.rows[index].cells[1].innerHTML = Serial;
-                    table.rows[index].cells[2].innerHTML = People;
-                    table.rows[index].cells[4].innerHTML = Model;
-                    table.rows[index].cells[5].innerHTML = Status;
-                    table.rows[index].cells[6].innerHTML = Uuid;
+                    table.rows[index].cells[1].innerHTML = name;
+                    table.rows[index].cells[2].innerHTML = place_type;
+                    table.rows[index].cells[3].innerHTML = server_hostname;
+                    table.rows[index].cells[4].innerHTML = ancestor;
+                    console.log(data);
                 },
                 error: function(e){
                     $("#alert").html(e);
+                    console.log(e);
                 }
         });
-        if($("#alert").html() != 'laptop edited'){
+        if($("#alert").html() != 'Person edited'){
           $("#alert").css("display", "initial");
           
         }
@@ -323,9 +314,9 @@ $( "#AddLaptop" ).click(function() {
 });
 
 
-function deletelaptop(datainput){
+function Deleteplace(datainput){
   var id = $(datainput).closest("tr")   // Finds the closest row <tr> 
-                       .find(".EditLaptop")     // Gets a descendent with class="nr"
+                       .find(".Editperson")     // Gets a descendent with class="nr"
                        .attr("data");
   
   var index = $(datainput).closest("tr").index();
@@ -341,38 +332,47 @@ function deletelaptop(datainput){
   $.ajax({
           method: "POST",
           data: {action:dataString},
-          url: "../../ajax/deletelaptop/",
+          url: "../../ajax/deleteperson/",
           success: function(data){
               $("#alert").html(data);
+              console.log(data);
               var index = $(datainput).closest("tr").index();
               document.getElementById("table").deleteRow(index); 
           },
           error: function(e){
               $("#alert").html(e);
+              console.log(e);
           }
   });
 }
 
-function editlaptop(datainput){
-  document.getElementById("Serial").disabled=true;
-  document.getElementById("Uuid").disabled=true;
+function Editplace(datainput){
   $("#alert").css("display", "none");
-  document.getElementById("AddLaptop").text = 'Edit';
+  document.getElementById("AddPlace").text = 'Edit';
+  var table = document.getElementById("table");
   var element = document.getElementById($(datainput).attr("data"));
+  
   var index = $(element).closest("tr").index();
+  console.log(datainput);
   var $ID = $(datainput).attr("data");
-  var $serial = table.rows[index].cells[1].innerHTML;
-  var $name = table.rows[index].cells[2].innerHTML;
-  var $model = table.rows[index].cells[4].innerHTML;
-  var $status = table.rows[index].cells[5].innerHTML;
-  var $uuid = table.rows[index].cells[6].innerHTML;
-  document.getElementById("AddLaptop").setAttribute("data", $ID);
-  document.getElementById("AddLaptop").setAttribute("index", index);
-  document.getElementById("Serial").value = $serial;
-  document.getElementById("Model").value = $model;
-  document.getElementById("People").value = $name;
-  document.getElementById("Status").value = $status;
-  document.getElementById("Uuid").value = $uuid;
+  var $Name = table.rows[index].cells[1].innerHTML;
+  var $place_type = table.rows[index].cells[2].innerHTML;
+  var $server_hostname = table.rows[index].cells[3].innerHTML;
+  var $ancestor = table.rows[index].cells[4].innerHTML;
+  var datalist = document.getElementById("json-datalistancestor");
+  var datalength = datalist.getElementsByTagName("option");
+  for(var i=0;i<datalength.length;i++){
+    if(datalength[i].text==$ancestor){
+      $ancestor = datalength[i].value;
+    }
+  }
+  
+  document.getElementById("AddPlace").setAttribute("data", $ID);
+  document.getElementById("AddPlace").setAttribute("index", index);
+  document.getElementById("Name").value = $Name;
+  document.getElementById("place_type").value = $place_type;
+  document.getElementById("server_hostname").value = $server_hostname;
+  document.getElementById("ancestor").value = $ancestor;
   $("#openModal").css("opacity", "1");
   $("#openModal").css("pointer-events", "auto");
 }

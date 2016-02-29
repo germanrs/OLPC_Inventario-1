@@ -13,9 +13,9 @@
 	{% include  'menu.twig' %}
 <div class="menu-right">
 	<div class="top-menu">
-	<h1>Laptops</h1>
+	<h1>Places</h1>
 	<a class="button" id="openAddModal"  role="button">Add</a>
-	<form id="hiddenuploadform" method="post" action="{{ path('Inventory.laptops') }}"  {{ form_enctype(uploadform) }} novalidate="novalidate">
+	<form id="hiddenuploadform" method="post" action="{{ path('Inventory.places') }}"  {{ form_enctype(uploadform) }} novalidate="novalidate">
 	    {{ form_widget(uploadform.file , { 'attr': {'onchange': 'this.form.submit()'} }) }} 
 		{{ form_widget(uploadform._token) }}
 	</form>
@@ -41,53 +41,41 @@
 				<input type="checkbox" id="chechallboxes" name="checkbox">   
 			</th>
 			<th>
-				serial nbr
+				name
 			</th>
 			<th>
-				owner
+				place_type
 			</th>
 			<th>
-				school
-			</th>
-			<th>
-				model
-			</th>
-			<th>
-				status
-			</th>
-			<th>
-				uuid
+				school server hostname
 			</th>
 			<th>
 				edit
-			</th>{# 
+			</th>
 			<th>
 				delete
-			</th> #}
+			</th> 
 		</tr>
-		{% for laptop in laptops %}
+		{% for place in places %}
 			<tr>
 				<td>
-	            	<input type="checkbox" id="{{ laptop.laptopID }}" name="checkbox">    
+	            	<input type="checkbox" id="{{ place.ider }}" name="checkbox">    
 	        	</td>
-				<td class="serial">{{ laptop.serial_number }}</td>
-				<td class="name">{{ laptop.firstname }} {{ laptop.lastname }}</td>
-				<td class="place">{{ laptop.placename }}</td>
-				<td class ="model">{{ laptop.modelName }}</td>
-				<td class="status">{{ laptop.description }}</td>
-				<td class="uuid">{{ laptop.uuid }}</td>
-
+				<td class="serial">{{ place.name }}</td>
+				<td class="place">{{ place.placename }}</td>
+				<td class="status">{{ place.server_hostname }}</td>
+				<td class="status displaynone">{{ place.ancestor_id }}</td>
 				<td class="text-right">
-					<a class="button EditLaptop" id="EditLaptop" data="{{ laptop.laptopID }}"  role="button">Edit</a>
-				</td>{# 
+					<a class="button Editplace" id="Editplace" data="{{ place.ider }}"  role="button">Edit</a>
+				</td>
 				<td class="text-right">
-					<a class="button DeleteLaptop" id="DeleteLaptop" data="{{ laptop.laptopID }}" role="button">delete</a>
-				</td> #}
+					<a class="button Deleteplace" id="Deleteplace" data="{{ place.ider }}" role="button">delete</a>
+				</td>
 			</tr>
 		{% endfor %}
 	</table>
-	<a class="button" id="EditSelectedLaptops" role="button">Edit selected</a>
-	{# <a class="button" id="DeleteSelectedLaptops" role="button">delete selected</a> #}
+	<a class="button" id="EditSelectedplaces" role="button">Edit selected</a>
+    <a class="button" id="DeleteSelectedplaces" role="button">delete selected</a>
 	<div class="center">
 		<div class="pages">
 			{% include  'pagination.twig' %}
@@ -104,45 +92,37 @@
 						<fieldset>
 							<div class="form-group">
 								<div class="label">
-									serial number
+									Name
 								</div>
 								<div class="input">
-									<input type="text" name="login" id="Serial" value="" placeholder="serial number...">
+									<input type="text" name="login" id="Name" value="" placeholder="Name...">
 								</div>
 								<div class="clear"></div>
 								<div class="label">
-									Model
+									Place type
 								</div>
 								<div class="input">
-									<input type="text" id="Model" list="json-datalistModel" placeholder="Models..">
+									<input type="text" id="place_type" list="json-datalistplace_type" placeholder="Place type...">
 								</div>
-								<datalist id="json-datalistModel"></datalist>
+								<datalist id="json-datalistplace_type"></datalist>
 								<div class="clear"></div>
 								<div class="label">
-									owner
+									School server hostname
 								</div>
 								<div class="input">
-									<input type="text" id="People" list="json-datalistPeople" placeholder="Owner..">
+									<input type="text" id="server_hostname" placeholder="Server hostname...">
 								</div>
-								<datalist id="json-datalistPeople"></datalist>
 								<div class="clear"></div>
 								<div class="label">
-									status
+									Ancestor
 								</div>
 								<div class="input">
-									<input type="text" id="Status" list="json-datalistStatus" placeholder="Status..">
+									<input type="text" id="ancestor" list="json-datalistancestor" placeholder="Ancestor...">
 								</div>
-								<datalist id="json-datalistStatus"></datalist>
-								<div class="clear"></div>
-								<div class="label">
-									Uuid
-								</div>
-								<div class="input">
-									<input type="text" id="Uuid" name="login" value="" placeholder="UuId...">
-								</div>
+								<datalist id="json-datalistancestor"></datalist>
 								<div class="clear"></div>
 							</div>
-							<a class="button" id="AddLaptop" data="" role="button">Add</a>
+							<a class="button" id="AddPlace" data="" role="button">Add</a>
 							<p id="alert">Fill in all fields!</p>
 						</fieldset>
 					</form>
@@ -153,5 +133,5 @@
 </div>
 {% endblock %}
 {% block pageScripts %}
-<script src="{{ app.request.baseUrl }}/js/Inventory.js"></script>
+<script src="{{ app.request.baseUrl }}/js/places.js"></script>
 {% endblock %}

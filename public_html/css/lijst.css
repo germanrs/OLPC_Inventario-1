@@ -261,6 +261,10 @@ input[type="submit"]{
       vertical-align:middle;
   }
 
+  .displaynone{
+    display: none;
+  }
+
 /* =============== pagination =============== */
 
 .center{
