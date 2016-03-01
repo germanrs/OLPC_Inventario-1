@@ -13,7 +13,7 @@
 	{% include  'menu.twig' %}
 <div class="menu-right">
 	<div class="top-menu">
-	<h1>Laptops</h1>
+	<h1><a href="{{ path('Inventory.laptops') }}">Laptops</a></h1>
 	<a class="button" id="openAddModal"  role="button">Add</a>
 	<form id="hiddenuploadform" method="post" action="{{ path('Inventory.laptops') }}"  {{ form_enctype(uploadform) }} novalidate="novalidate">
 	    {{ form_widget(uploadform.file , { 'attr': {'onchange': 'this.form.submit()'} }) }} 

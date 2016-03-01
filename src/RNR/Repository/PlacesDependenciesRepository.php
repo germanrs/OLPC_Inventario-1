@@ -23,6 +23,11 @@ class PlacesDependenciesRepository extends \Knp\Repository {
 
 	public function fetchAllAncestors($ancestor) {
 		return $this->db->fetchAll(
-				'SELECT place_dependencies.* FROM place_dependencies where descendant_id ='.$ancestor);
+				'SELECT place_dependencies.* FROM place_dependencies where descendant_id ='.$ancestor.' AND ancestor_id <='.$ancestor.' ORDER BY ancestor_id DESC' );
+	}
+
+	public function DeleteALL($id) {
+		return $this->db->delete('place_dependencies', array('descendant_id' => $id));
 	}
 }
+

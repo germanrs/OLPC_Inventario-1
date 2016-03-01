@@ -67,9 +67,9 @@ class PlacesRepository extends \Knp\Repository {
 
 	    // Title set via Filter
 	    if ($filter['searchstring'] != '') {
-	        $extraWhere .= ' AND '.$filter['genres'].' LIKE ' . $this->db->quote('%'.$filter['searchstring'].'%', \PDO::PARAM_STR);
+	        $extraWhere .= ' WHERE '.$filter['genres'].' LIKE ' . $this->db->quote('%'.$filter['searchstring'].'%', \PDO::PARAM_STR);
 	    }
-	    if($filter['genres']=='school_infos.id'){
+	    if($filter['genres']=='school_infos.server_hostname'){
 	    	return $this->db->fetchColumn(
 					'SELECT COUNT(*) FROM places
 					LEFT JOIN place_types on place_types.id = places.place_type_id
@@ -81,12 +81,13 @@ class PlacesRepository extends \Knp\Repository {
 	    }
 	    else{
 		    return $this->db->fetchColumn(
-					'SELECT COUNT(*) FROM places
-					LEFT JOIN place_types on place_types.id = places.place_type_id
-					LEFT JOIN school_infos on school_infos.place_id = places.id
-					'. $extraWhere .'
-					ORDER BY '.$filter['genres'].' DESC
-
+					'SELECT COUNT(*) FROM 
+						(SELECT places.id as ider, place_dependencies.*, place_types.name as placename from places
+						LEFT JOIN place_dependencies ON place_dependencies.descendant_id = places.id 
+						LEFT JOIN place_types on place_types.id = places.place_type_id
+						'. $extraWhere .'
+						group by places.name
+						ORDER BY '.$filter['genres'].' DESC) as test
 	        		');
 	    }
 	}
@@ -99,9 +100,8 @@ class PlacesRepository extends \Knp\Repository {
 
 	    // Title set via Filter
 	    if ($filter['searchstring'] != '') {
-	        $extraWhere .= ' AND '.$filter['genres'].' LIKE ' . $this->db->quote('%'.$filter['searchstring'].'%', \PDO::PARAM_STR);
+	        $extraWhere .= ' WHERE '.$filter['genres'].' LIKE ' . $this->db->quote('%'.$filter['searchstring'].'%', \PDO::PARAM_STR);
 	    }
-
 	    return $this->db->fetchAll(
 				'SELECT places.*, places.id as ider, place_dependencies.*, place_types.name as placename, school_infos.id as schoolid, school_infos.* from places
 				LEFT JOIN place_dependencies ON place_dependencies.descendant_id = places.id 
@@ -149,6 +149,17 @@ class PlacesRepository extends \Knp\Repository {
 		' WHERE id = '.$this->db->quote($place['id'], \PDO::PARAM_INT);
 		return $this->db->executeUpdate($result);
 	}
+
+	public function updateSmallPlace($place) {
+		
+		$result = 'UPDATE places SET '.
+		'place_type_id = '. $this->db->quote($place['place_type_id'], \PDO::PARAM_STR) .
+		' WHERE id = '.$this->db->quote($place['id'], \PDO::PARAM_INT);
+		return $this->db->executeUpdate($result);
+	}
+
+
+
 
 	public function FindPlaceId($place) {
 		return $this->db->fetchColumn('SELECT id FROM places where serial_number = '. $this->db->quote($place['serial_number'], \PDO::PARAM_STR) .'AND uuid = '. $this->db->quote($laptop['uuid'], \PDO::PARAM_STR));

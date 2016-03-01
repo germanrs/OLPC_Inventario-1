@@ -106,31 +106,20 @@ $( "#ImportButton" ).click(function() {
 
 $( "#EditSelectedplaces" ).click(function() {
   var checkedBoxes = getCheckedBoxes("checkbox");
-  console.log(checkedBoxes);
   var id ='';
   for (box in checkedBoxes) {
     id = id +  checkedBoxes[box].id + ', ' ;
   }
   if(id !=''){
     $("#alert").css("display", "none");
-    document.getElementById("AddPerson").text = 'Edit';
-    document.getElementById("AddPerson").setAttribute("data", id);
+    document.getElementById("AddPlace").text = 'Edit';
+    document.getElementById("AddPlace").setAttribute("data", id);
     document.getElementById("Name").disabled=true;
-    document.getElementById("Lastname").disabled=true;
-    document.getElementById("id_document").disabled=true;
-    document.getElementById("birth_date").disabled=true;
-    document.getElementById("phone").disabled=true;
-    document.getElementById("email").disabled=true;
-    document.getElementById("barcode").disabled=true;
-    document.getElementById("notes").disabled=true;
+    document.getElementById("server_hostname").disabled=true;
+    document.getElementById("ancestor").disabled=true;
     document.getElementById("Name").value='disabled';
-    document.getElementById("Lastname").value='disabled';
-    document.getElementById("id_document").value='disabled';
-    document.getElementById("birth_date").value='disabled';
-    document.getElementById("phone").value='disabled';
-    document.getElementById("email").value='disabled';
-    document.getElementById("barcode").value='disabled';
-    document.getElementById("notes").value='disabled';
+    document.getElementById("server_hostname").value='disabled';
+    document.getElementById("ancestor").value='disabled';
     $("#openModal").css("opacity", "1");
     $("#openModal").css("pointer-events", "auto");
   }
@@ -138,9 +127,8 @@ $( "#EditSelectedplaces" ).click(function() {
 
 $( "#DeleteSelectedplaces" ).click(function() {
   var checkedBoxes = getCheckedBoxes("checkbox");
-  console.log(checkedBoxes);
   for (box in checkedBoxes) {
-    deleteperson(checkedBoxes[box]);
+    Deleteplace(checkedBoxes[box]);
   }
 });
 
@@ -198,9 +186,12 @@ $( "#AddPlace" ).click(function() {
                   var cell4 = row.insertCell(3);
                   var cell5 = row.insertCell(4);
                   var cell6 = row.insertCell(5);
+                  var cell7 = row.insertCell(6);
                   cell2.innerHTML = name;
                   cell3.innerHTML = place_type;
                   cell4.innerHTML = server_hostname;
+                  cell5.innerHTML = ancestor;
+                  cell5.className ='status displaynone';
                   $.ajax({
                         method: "POST",
                         data: {action:dataString},
@@ -208,17 +199,15 @@ $( "#AddPlace" ).click(function() {
                         success: function(data){
                             var data2 = data
                             cell1.innerHTML = '<input type="checkbox" id="'+data2+'" name="checkbox"> '
-                            cell5.innerHTML = '<a class="button EditLaptop" onclick="Editplace(this)"  id="EditLaptop" data="'+data2+'"  role="button">Edit</a>';
-                            cell6.innerHTML = '<a class="button DeleteLaptop" onclick="Deleteplace(this)" id="Deleteperson" data="'+data2+'" role="button">delete</a>';
+                            cell6.innerHTML = '<a class="button EditLaptop" onclick="Editplace(this)"  id="EditLaptop" data="'+data2+'"  role="button">Edit</a>';
+                            cell7.innerHTML = '<a class="button DeleteLaptop" onclick="Deleteplace(this)" id="Deleteperson" data="'+data2+'" role="button">delete</a>';
                         },
                         error: function(e){
-                          console.log(e);
                         }
                   });
               },
               error: function(e){
                   $("#alert").html(e);
-                  console.log(e);
               }
       });
       if($("#alert").html() != 'Person added'){
@@ -238,27 +227,23 @@ $( "#AddPlace" ).click(function() {
         for (Id in res) {
           var postData = 
                 {
-                    "id": res[Id],
-                    "place_type":place_type,
-                    "ancestor":ancestor
+                    "id":res[Id],
+                    "place_type":place_type
                 }
           var dataString = JSON.stringify(postData);
           $.ajax({
                   method: "POST",
                   data: {action:dataString},
-                  url: "../../ajax/editperson/",
+                  url: "../../ajax/editplace/",
                   success: function(data){
                       $("#alert").html(data); 
                       var index = $("#"+res[teller]).closest("tr").index();
                       var table = document.getElementById("table");
-                      table.rows[index].cells[6].innerHTML = places;
-                      table.rows[index].cells[7].innerHTML = profiles;
+                      table.rows[index].cells[2].innerHTML = place_type;
                       teller++;
-                      console.log(data);
                   },
                   error: function(e){
                       $("#alert").html(e);
-                      console.log(e);
                   }
           });
           if($("#alert").html() != 'laptops edited'){
@@ -270,7 +255,7 @@ $( "#AddPlace" ).click(function() {
 
       //edit 1 laptop
       else{
-        var index = $('#AddPerson').attr("index");
+        
         var postData = 
                   {
                       "id":Ids,
@@ -287,16 +272,15 @@ $( "#AddPlace" ).click(function() {
                 url: "../../ajax/editplace/",
                 success: function(data){
                     $("#alert").html(data);
+                    var index = $('#AddPlace').attr("index");
                     var table = document.getElementById("table");
                     table.rows[index].cells[1].innerHTML = name;
                     table.rows[index].cells[2].innerHTML = place_type;
                     table.rows[index].cells[3].innerHTML = server_hostname;
                     table.rows[index].cells[4].innerHTML = ancestor;
-                    console.log(data);
                 },
                 error: function(e){
                     $("#alert").html(e);
-                    console.log(e);
                 }
         });
         if($("#alert").html() != 'Person edited'){
@@ -316,12 +300,10 @@ $( "#AddPlace" ).click(function() {
 
 function Deleteplace(datainput){
   var id = $(datainput).closest("tr")   // Finds the closest row <tr> 
-                       .find(".Editperson")     // Gets a descendent with class="nr"
+                       .find(".Editplace")     // Gets a descendent with class="nr"
                        .attr("data");
   
   var index = $(datainput).closest("tr").index();
-  console.log(id);
-  console.log(index);
   var postData = 
           {
               "id":id
@@ -332,16 +314,14 @@ function Deleteplace(datainput){
   $.ajax({
           method: "POST",
           data: {action:dataString},
-          url: "../../ajax/deleteperson/",
+          url: "../../ajax/deleteplace/",
           success: function(data){
               $("#alert").html(data);
-              console.log(data);
               var index = $(datainput).closest("tr").index();
               document.getElementById("table").deleteRow(index); 
           },
           error: function(e){
               $("#alert").html(e);
-              console.log(e);
           }
   });
 }
@@ -353,7 +333,6 @@ function Editplace(datainput){
   var element = document.getElementById($(datainput).attr("data"));
   
   var index = $(element).closest("tr").index();
-  console.log(datainput);
   var $ID = $(datainput).attr("data");
   var $Name = table.rows[index].cells[1].innerHTML;
   var $place_type = table.rows[index].cells[2].innerHTML;

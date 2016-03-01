@@ -51,6 +51,12 @@ h3 {
 
 a {
     text-decoration: none;
+    
+}
+
+h1 a{
+    color: green;
+    font-size: 2.2rem;
 }
 
 .fake-link {
@@ -498,6 +504,7 @@ input[type="submit"]:hover, button[type="submit"]:hover{
   color:white;
   float: left;
   margin-top: 1.3rem;
+  margin-bottom: 2rem;
 }
 
 .button:hover{

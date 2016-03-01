@@ -13,7 +13,7 @@
 	{% include  'menu.twig' %}
 <div class="menu-right">
 	<div class="top-menu">
-	<h1>Places</h1>
+	<h1><a href="{{ path('Inventory.places') }}">Places</a></h1>
 	<a class="button" id="openAddModal"  role="button">Add</a>
 	<form id="hiddenuploadform" method="post" action="{{ path('Inventory.places') }}"  {{ form_enctype(uploadform) }} novalidate="novalidate">
 	    {{ form_widget(uploadform.file , { 'attr': {'onchange': 'this.form.submit()'} }) }} 
@@ -61,7 +61,7 @@
 				<td>
 	            	<input type="checkbox" id="{{ place.ider }}" name="checkbox">    
 	        	</td>
-				<td class="serial">{{ place.name }}</td>
+				<td class="name">{{ place.name }}</td>
 				<td class="place">{{ place.placename }}</td>
 				<td class="status">{{ place.server_hostname }}</td>
 				<td class="status displaynone">{{ place.ancestor_id }}</td>

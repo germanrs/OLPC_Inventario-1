@@ -306,7 +306,6 @@ class AjaxController implements ControllerProviderInterface {
 	public function deletelaptop(Application $app) {
 		if(isset($_POST['action'])){
 			$obj = json_decode($_POST['action'], true);
-			var_dump($obj);
 			try {
 				echo $app['db.laptops']->deletelaptop($obj['id']);
 				echo "laptop deleted";
@@ -428,7 +427,6 @@ class AjaxController implements ControllerProviderInterface {
 	public function deleteperson(Application $app) {
 		if(isset($_POST['action'])){
 			$obj = json_decode($_POST['action'], true);
-			var_dump($obj);
 			try {
 				$app['db.performs']->deleteperson($obj['id']);
 				$app['db.people']->deleteperson($obj['id']);
@@ -479,13 +477,13 @@ class AjaxController implements ControllerProviderInterface {
 				try {
 					$app['db.places']->insert($insertplace);
 					$place_id = $app['db.places']->FindnewestId();
-					$dependency = array('descendant_id' => $place_id, 'ancestor_id' => $place_id);
-					$app['db.places_dependencies']->insert($dependency);
 					$Ancestors=$app['db.places_dependencies']->fetchAllAncestors($place);
 					foreach ($Ancestors as $waarde) {
 					 	$dependency = array('descendant_id' => $place_id, 'ancestor_id' => $waarde['ancestor_id']);
 						$app['db.places_dependencies']->insert($dependency);
-					} 
+					}
+					$dependency = array('descendant_id' => $place_id, 'ancestor_id' => $place_id);
+					$app['db.places_dependencies']->insert($dependency); 
 					if(!empty($obj['server_hostname'])){
 						$schoolinfo = array('lease_duration' => null, 'server_hostname' => $obj['server_hostname'], 'place_id' => $place_id);
 						$app['db.school_infos']->insert($schoolinfo);
@@ -513,46 +511,54 @@ class AjaxController implements ControllerProviderInterface {
 			$obj = json_decode($_POST['action'], true);
 			$place_type="";
 			$ancestor="";
-			try {
-				$grade = $app['db.place_types']->getGrade($obj['place_type']);
-				$place= $app['db.places']->getPlaceByName($obj['ancestor']) ;
-
-			} catch (Exception $e) {
-			}
-			if(ctype_digit($grade) && ctype_digit($place)){
-				$insertplace = array('id' => $obj['id'], 'name' => $obj['name'], 'place_id' => $place,'place_type_id' => $grade);
+			if(!empty($obj['ancestor']) && !empty($obj['id'])){
 				try {
-					$oldplace = $app['db.places']->getPlaceById($obj['id']);
-					$app['db.places']->updatePlace($insertplace);
-
-					/*$dependency = array('descendant_id' => $place_id, 'ancestor_id' => $place_id);
-					$app['db.places_dependencies']->insert($dependency);
-					$Ancestors=$app['db.places_dependencies']->fetchAllAncestors($place);
-					foreach ($Ancestors as $waarde) {
-					 	$dependency = array('descendant_id' => $place_id, 'ancestor_id' => $waarde['ancestor_id']);
-						$app['db.places_dependencies']->insert($dependency);
-					} 
-					if(!empty($obj['server_hostname'])){
-						$schoolinfo = array('lease_duration' => null, 'server_hostname' => $obj['server_hostname'], 'place_id' => $place_id);
-						$app['db.school_infos']->insert($schoolinfo);
-					}*/
-				}catch (Exception $e) {
-					echo "server down, try again later";
-				}	
-			}
-			else if(empty($obj['name'])){
-				try {
-					$app['db.people']->updatesmallPerson($obj);
-					$perform = array('person_id' => $obj['id'], 'place_id' => $place, 'profile_id' => $profile);
-					$app['db.performs']->updatePerform($perform);
-					echo "laptop edited";
+					$grade = $app['db.place_types']->getGrade($obj['place_type']);
+					$place= $app['db.places']->getPlaceByName($obj['ancestor']) ;
 				} catch (Exception $e) {
-					echo "server down, try again later";
+				}
+				if(ctype_digit($grade) && ctype_digit($place) && !empty($obj['ancestor'])){
+					$insertplace = array('id' => $obj['id'], 'name' => $obj['name'], 'place_id' => $place,'place_type_id' => $grade);
+					try {
+						$oldplace = $app['db.places']->getPlaceById($obj['id']);
+						$app['db.places']->updatePlace($insertplace);
+						if($place!=$oldplace[0]['place_id']){
+							$app['db.places_dependencies']->DeleteALL($obj['id']);
+							$Ancestors=$app['db.places_dependencies']->fetchAllAncestors($place);
+							foreach ($Ancestors as $waarde) {
+							 	$dependency = array('descendant_id' => $obj['id'], 'ancestor_id' => $waarde['ancestor_id']);
+								$app['db.places_dependencies']->insert($dependency);
+							}
+							$dependency = array('descendant_id' => $obj['id'], 'ancestor_id' => $obj['id']);
+							$app['db.places_dependencies']->insert($dependency); 
+
+						} 
+						if(!empty($obj['server_hostname'])){
+							$schoolinfo = array('lease_duration' => null, 'server_hostname' => $obj['server_hostname'], 'place_id' => $obj['id']);
+							$app['db.school_infos']->updateSchool($schoolinfo);
+						}
+						else if(empty($obj['server_hostname'])){
+							$app['db.school_infos']->deleteSchool($obj['id']);
+						}
+						echo "place updated";
+					}catch (Exception $e) {
+						echo "server down, try again later";
+					}	
+				}
+			}
+			else if(empty($obj['ancestor'])){
+				try {
+					$grade = $app['db.place_types']->getGrade($obj['place_type']);
+					$insertplace = array('id' => $obj['id'],'place_type_id' => $grade);
+					$app['db.places']->updateSmallPlace($insertplace);
+					echo "place edited";
+				} catch (Exception $e) {
+					echo "Server down, try again later";
 				}
 
 			}
 			else{
-				echo 'The grade doesnt fit the school.';
+				echo 'Internal error, reload page';
 			}
 			
 		}
@@ -567,13 +573,13 @@ class AjaxController implements ControllerProviderInterface {
 	public function deleteplace(Application $app) {
 		if(isset($_POST['action'])){
 			$obj = json_decode($_POST['action'], true);
-			var_dump($obj);
 			try {
-				$app['db.performs']->deleteperson($obj['id']);
-				$app['db.people']->deleteperson($obj['id']);
-				echo "person deleted";
+				$app['db.places_dependencies']->DeleteALL($obj['id']);
+				$app['db.school_infos']->deleteSchool($obj['id']);
+				$app['db.places']->deletePlace($obj['id']);
+				echo "place deleted";
 			} catch (Exception $e) {
-				echo "person already deleted";
+				echo "place was already deleted";
 			}
 		}
 		return $app['twig']->render('Ajax/Dump.twig');	

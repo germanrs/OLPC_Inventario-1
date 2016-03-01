@@ -434,7 +434,7 @@ class InventoryController implements ControllerProviderInterface {
     				'choices'  => array(
     					'places.name' => 'place name',
     					'place_types.name' => 'place type',
-    					'school_infos.id' => 'school'),
+    					'school_infos.server_hostname' => 'school'),
     				'placeholder' => 'Choose wisely!',
     				'required' => false,
 					'attr' => array('class' => 'required'),
