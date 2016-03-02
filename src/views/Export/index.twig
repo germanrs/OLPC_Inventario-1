@@ -20,32 +20,33 @@
 						<h3>include</h3>
 						<form action="includelaptops" id="laptopsForm">
 							<div class="checkboxes">
-								<input type="checkbox" name="laptops" value="model"><div class="boxlabel">serial_number</div>
-								<input type="checkbox" name="laptops" value="model"><div class="boxlabel">model</div>
-								<input type="checkbox" name="laptops" value="owner"><div class="boxlabel">owner</div>
-								<input type="checkbox" name="laptops" value="status"><div class="boxlabel">status</div>
-								<input type="checkbox" name="laptops" value="uuid"><div class="boxlabel">uuid</div>
-								<input type="checkbox" name="laptops" value="place"><div class="boxlabel">place</div>
+								<input type="checkbox" name="laptops" value="laptops.serial_number"><div class="boxlabel">serial_number</div>
+								<input type="checkbox" name="laptops" value="models.name as model"><div class="boxlabel">model</div>
+								<input type="checkbox" name="laptops" value="CONCAT(people.name,' ',people.lastname) as name"><div class="boxlabel">owner</div>
+								<input type="checkbox" name="laptops" value="statuses.description as status"><div class="boxlabel">status</div>
+								<input type="checkbox" name="laptops" value="laptops.uuid"><div class="boxlabel">uuid</div>
+								<input type="checkbox" name="laptops" value="places.name as place"><div class="boxlabel">place</div>
 							</div>
 							<div class="order">
 								<h3>Order by</h3>
-								<select>
+								<select id='orderByTerm'>
 									<option value="null">Choose wisely!</option>
 									<option value="serial_number">serial_number</option>
 									<option value="model">model</option>
+									<option value="name">name</option>
 									<option value="status">status</option>
 									<option value="uuid">uuid</option>
 									<option value="place">place</option>
 								</select>
-								<select>
-									<option value="Ascending">Ascending</option>
-									<option value="Descending">Descending</option>
+								<select id='orderList'>
+									<option value="ASC">Ascending</option>
+									<option value="DESC">Descending</option>
 								</select>
-								<a href="default.asp">
-								  <img src="{{ app.request.baseUrl }}/img/plus.png">
+								{#<a href="default.asp">
+								  <img id='buttonPlus1' class='buttonplus'  src="{{ app.request.baseUrl }}/img/plus.png">
 								</a>
 								<a href="default.asp">
-								  <img src="{{ app.request.baseUrl }}/img/minus.png">
+								  <img id='buttonminus1' class='buttonMinus' src="{{ app.request.baseUrl }}/img/minus.png">
 								</a>
 								<div class="clear"></div>
 								<select>
@@ -59,19 +60,20 @@
 								<select>
 									<option value="Ascending">Ascending</option>
 									<option value="Descending">Descending</option>
-								</select>
+								</select>#}
 							</div>
 							<div class="filter">
 								<h3>Filter</h3>
-								<select>
+								<select id='GroupByTerm'>
 									<option value="null">Choose wisely!</option>
-									<option value="serial_number">serial_number</option>
-									<option value="model">model</option>
-									<option value="status">status</option>
-									<option value="uuid">uuid</option>
-									<option value="place">place</option>
+									<option value="laptops.serial_number">serial_number</option>
+									<option value="models.name">model</option>
+									<option value="CONCAT(people.name,' ',people.lastname)">name</option>
+									<option value="statuses.description">status</option>
+									<option value="laptops.uuid">uuid</option>
+									<option value="places.name">place</option>
 								</select>
-								<input type="text" name="fname" value="search field..."><br>
+								<input type="text" name="fname" id="inputfield" value="search field..."><br>
 								<a class="button" id="submitlaptop" role="button">Preview</a>
 							</div>
 						</form>
@@ -93,7 +95,7 @@
 							</div>
 							<div class="order">
 								<h3>Order by</h3>
-								<select>
+								<select id="orderbyterm">
 									<option value="null">Choose wisely!</option>
 									<option value="serial_number">serial_number</option>
 									<option value="model">model</option>
@@ -101,7 +103,7 @@
 									<option value="uuid">uuid</option>
 									<option value="place">place</option>
 								</select>
-								<select>
+								<select id='orderby'>
 									<option value="Ascending">Ascending</option>
 									<option value="Descending">Descending</option>
 								</select>
@@ -257,8 +259,20 @@
 	<div class="preview">
 		<h1>preview</h1>
 		<div class="clear"></div>
+		<div id="pdfcontent">
+			<h2>Titel</h2>
+			<h3 id="totalitems"></h3>
+			<table id="exportTable">
+				
+			</table>
+			<a class="button" id="DownloadFile" role="button">Download PDF</a>
+		</div>
 	</div>
 {% endblock %}
 {% block pageScripts %}
+	
+	<script src="{{ app.request.baseUrl }}/js/jspdf.min.js"></script>
+	<script src="{{ app.request.baseUrl }}/js/jspdf.debug.js"></script>
+	<script src="{{ app.request.baseUrl }}/js/jspdf.plugin.autotable.js"></script>
 	<script src="{{ app.request.baseUrl }}/js/Export.js"></script>
 {% endblock %}

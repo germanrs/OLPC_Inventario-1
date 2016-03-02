@@ -32,11 +32,11 @@ class LaptopsRepository extends \Knp\Repository {
 
 	    // Title set via Filter
 	    if ($filter['searchstring'] != '' && $filter['genres']!='people.lastname') {
-	        $extraWhere .= ' AND '.$filter['genres'].' LIKE ' . $this->db->quote('%'.$filter['searchstring'].'%', \PDO::PARAM_STR);
+	        $extraWhere .= ' WHERE '.$filter['genres'].' LIKE ' . $this->db->quote('%'.$filter['searchstring'].'%', \PDO::PARAM_STR);
 
 	    }
 	    else if ($filter['searchstring'] != '' && $filter['genres']=='people.lastname'){
-	    	$extraWhere .= ' AND CONCAT(people.name," ",people.lastname) LIKE ' . $this->db->quote('%'.$filter['searchstring'].'%', \PDO::PARAM_STR);
+	    	$extraWhere .= ' WHERE CONCAT(people.name," ",people.lastname) LIKE ' . $this->db->quote('%'.$filter['searchstring'].'%', \PDO::PARAM_STR);
 	    }
 
 	    return $this->db->fetchColumn(
@@ -60,11 +60,11 @@ class LaptopsRepository extends \Knp\Repository {
 
 	    // Title set via Filter
 	    if ($filter['searchstring'] != '' && $filter['genres']!='people.lastname') {
-	        $extraWhere .= ' AND '.$filter['genres'].' LIKE ' . $this->db->quote('%'.$filter['searchstring'].'%', \PDO::PARAM_STR);
+	        $extraWhere .= ' WHERE '.$filter['genres'].' LIKE ' . $this->db->quote('%'.$filter['searchstring'].'%', \PDO::PARAM_STR);
 
 	    }
 	    else if ($filter['searchstring'] != '' && $filter['genres']=='people.lastname'){
-	    	$extraWhere .= ' AND CONCAT(people.name," ",people.lastname) LIKE ' . $this->db->quote('%'.$filter['searchstring'].'%', \PDO::PARAM_STR);
+	    	$extraWhere .= ' WHERE CONCAT(people.name," ",people.lastname) LIKE ' . $this->db->quote('%'.$filter['searchstring'].'%', \PDO::PARAM_STR);
 	    }
 
 	    return $this->db->fetchAll(
@@ -129,5 +129,27 @@ class LaptopsRepository extends \Knp\Repository {
 	public function FindLaptopId($laptop) {
 		return $this->db->fetchColumn('SELECT id FROM laptops where serial_number = '. $this->db->quote($laptop['serial_number'], \PDO::PARAM_STR) .'AND uuid = '. $this->db->quote($laptop['uuid'], \PDO::PARAM_STR));
 	}
+
+
+	public function fetchList($obj) {
+
+	    $extraWhere = '';
+	    $orderby ='';
+	    // Title set via Filter
+	    if ($obj['OrderByTerm'] != 'null') {
+	        $orderby .= ' ORDER BY '.$obj['OrderByTerm'].' '.$obj['orderList'];
+	    }
+	    if ($obj['GroupByTerm'] != 'null' && $obj['inputfield']!='search field...'){
+	    	$extraWhere .= ' WHERE '.$obj['GroupByTerm'].' LIKE ' . $this->db->quote('%'.$obj['inputfield'].'%', \PDO::PARAM_STR);
+	    }
+	    //return 'SELECT '.$obj['coloms'].' FROM laptops INNER JOIN statuses ON statuses.id = laptops.status_Id INNER JOIN models on models.id = laptops.model_id INNER JOIN people on people.id = laptops.owner_id INNER JOIN performs on performs.person_id = laptops.owner_id INNER JOIN places on performs.place_id = places.id' . $extraWhere .' ' . $orderby;
+	
+	    return $this->db->fetchAll(
+				'SELECT '.$obj['coloms'].' FROM laptops INNER JOIN statuses ON statuses.id = laptops.status_Id INNER JOIN models on models.id = laptops.model_id INNER JOIN people on people.id = laptops.owner_id INNER JOIN performs on performs.person_id = laptops.owner_id INNER JOIN places on performs.place_id = places.id' . $extraWhere . ' ' . $orderby);
+	
+	}
+
+
+	
 }
 

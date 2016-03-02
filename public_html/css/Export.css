@@ -9,7 +9,7 @@ body{
 
 
 .left{
-	width: 45%;
+	width: 35%;
 	float: left;
 	border-right: grey 1px solid;
 	margin-left: 12rem;
@@ -17,10 +17,15 @@ body{
 }
 
 .preview{
-	width: 46%;
+	width: 55%;
 	float: right;
 	margin-left: 2rem;
+	margin-right: 4rem;
 	height: 80vh;
+}
+
+#pdfcontent{
+  display: none;
 }
 
 section{
@@ -101,7 +106,7 @@ input[type="submit"], button[type="submit"]{
     box-shadow:0px 1px 3px rgba(0,0,0,0.25);
     border-radius:3px;
     margin-bottom: 3rem;
-    width: 90%;
+    width: 95%;
     background:#f7f7f7;
 }
 
@@ -144,3 +149,89 @@ a img{
     padding:15px;
     display:none;
 }
+
+
+/* =============== table =============== */
+
+#exportTable {
+margin: 1em 0;
+width: 100%;
+overflow: hidden;  
+background: #FFF;
+color: #024457;
+ } 
+#exportTable tr {
+    border:  1px solid #D9E4E6; 
+}
+
+
+#exportTable tr:nth-child(odd){
+    background-color:  #EAF3F3;
+}
+  
+#exportTable th {
+    border: 1px solid #FFF;
+    background-color: #167F92;
+    color: #FFF;
+    padding: 1em;  
+}
+
+input[type="submit"]{
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#exportTable th :first-child {
+    display: table-cell;
+    text-align: center;
+}
+
+#exportTable th:nth-child(2) {
+    display: table-cell;
+    
+}
+
+#exportTable span {display:none;}
+
+  
+#exportTable td {
+    word-wrap: break-word;
+    text-align:center;
+    vertical-align:middle
+    }
+#exportTable tbody tr img{
+    width:5rem;
+    height:5rem;
+    border-radius: 150px;
+    -webkit-border-radius: 150px;
+    -o-border-radius: 150px;
+    -moz-border-radius: 150px;
+    margin-top:0.5rem;
+}
+
+#exportTable td:first-child {
+    display: table-cell; 
+    text-align: center;
+    border-right: 1px solid #D9E4E6;
+}
+  
+#exportTable th, td {
+    text-align: center;
+    margin: .5em 1em;  
+    }
+
+
+  #exportTable .find{
+      font-size : 1rem;
+      padding-top:0rem;
+      padding-bottom: 0rem;
+      margin-top:0.5rem;
+      margin-bottom:0.5rem;
+      text-transform: none;
+      vertical-align:middle;
+  }
+
+  .displaynone{
+    display: none;
+  }

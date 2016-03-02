@@ -11,6 +11,7 @@
         "symfony/translation": "~2.1",
         "symfony/security-csrf": "~2.1",
         "php": "^5.2|^7.0",
+        "dompdf/dompdf": "dev-master",
         "ext-mbstring": "*",
         "ext-xml": "*",
         "ext-xmlwriter": "*"

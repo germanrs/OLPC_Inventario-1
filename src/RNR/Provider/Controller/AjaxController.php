@@ -66,6 +66,11 @@ class AjaxController implements ControllerProviderInterface {
 			->bind('Ajax.ancestor');
 
 		$controllers
+			->get('/getList/', array($this, 'getList'))
+			->method('GET|POST')
+			->bind('Ajax.getList');
+
+		$controllers
 			->get('/addlaptop/', array($this, 'addlaptop'))
 			->method('GET|POST')
 			->bind('Ajax.addlaptop');
@@ -218,6 +223,22 @@ class AjaxController implements ControllerProviderInterface {
 	 */
 	public function ancestor(Application $app) {
 		$data = $app['db.places']->fetchAll();
+		echo json_encode($data);
+		return $app['twig']->render('Ajax/Dump.twig');	
+	}
+
+	/**
+	 * home page
+	 * @param Application $app An Application instance
+	 * @return string A blob of HTML
+	 */
+	public function getList(Application $app) {
+		if(isset($_POST['action'])){
+			$obj = json_decode($_POST['action'], true);
+			if($obj['formname']=='laptopsForm'){
+				$data = $app['db.laptops']->fetchList($obj);
+			}
+		}
 		echo json_encode($data);
 		return $app['twig']->render('Ajax/Dump.twig');	
 	}
