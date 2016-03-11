@@ -15,12 +15,7 @@
 	<div class="top-menu">
 	<h1><a href="{{ path('Inventory.places') }}">Places</a></h1>
 	<a class="button" id="openAddModal"  role="button">Add</a>
-	<form id="hiddenuploadform" method="post" action="{{ path('Inventory.places') }}"  {{ form_enctype(uploadform) }} novalidate="novalidate">
-	    {{ form_widget(uploadform.file , { 'attr': {'onchange': 'this.form.submit()'} }) }} 
-		{{ form_widget(uploadform._token) }}
-	</form>
-	<a class="button" id="ExportButton" role="button">Export</a>
-	<a class="button" id="ImportButton"  role="button">Import</a>
+
 
 		<div class="h_search">
 			<form action="{{ baseUrl }}" method="GET" {{ form_enctype(filterform) }}  novalidate="novalidate" role="form">

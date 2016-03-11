@@ -15,14 +15,7 @@
 	<div class="top-menu">
 	<h1><a href="{{ path('Inventory.people') }}">People</a></h1>
 	<a class="button" id="openAddModal"  role="button">Add</a>
-	<form id="hiddenuploadform" method="post" action="{{ path('Inventory.laptops') }}"  {{ form_enctype(uploadform) }} novalidate="novalidate">
-	    {{ form_widget(uploadform.file , { 'attr': {'onchange': 'this.form.submit()'} }) }} 
-		{{ form_widget(uploadform._token) }}
-	</form>
-	<a class="button" id="ExportButton" role="button">Export</a>
-	<a class="button" id="ImportButton"  role="button">Import</a>
-
-		<div class="h_search">
+			<div class="h_search">
 			<form action="{{ baseUrl }}" method="GET" {{ form_enctype(filterform) }}  novalidate="novalidate" role="form">
 				<h2 class="text-danger">{{ form_errors(filterform.genres)|striptags }}</h2>	
 				{{ form_widget(filterform.genres, { 'attr': {'class': 'form-control'} })  }}
@@ -53,6 +46,9 @@
 				email
 			</th>
 			<th>
+				region
+			</th>
+			<th>
 				school
 			</th>
 			<th>
@@ -74,6 +70,7 @@
 				<td class="lastname">{{ person.lastname }} </td>
 				<td class="phone">{{ person.phone }}</td>
 				<td class ="email">{{ person.email }}</td>
+				<td class="place">{{ person.region }}</td>
 				<td class="namedescription">{{ person.namedescription }}</td>
 				<td class="profdescription">{{ person.profdescription }}</td>
 				<td class="id_document displaynone">{{ person.id_document }}</td>
@@ -122,13 +119,6 @@
 								</div>
 								<div class="input">
 									<input type="text" id="Lastname" placeholder="Lastname...">
-								</div>
-								<div class="clear"></div>
-								<div class="label">
-									document id
-								</div>
-								<div class="input">
-									<input type="text" id="id_document" placeholder="id_document...">
 								</div>
 								<div class="clear"></div>
 								<div class="label">

@@ -60,5 +60,6 @@ $app->mount('/auth/', new RNR\Provider\Controller\AuthController());
 $app->mount('/inventory/', new RNR\Provider\Controller\InventoryController());
 $app->mount('/ajax/', new RNR\Provider\Controller\AjaxController());
 $app->mount('/export/', new RNR\Provider\Controller\ExportController());
+$app->mount('/import/', new RNR\Provider\Controller\ImportController());
 
 

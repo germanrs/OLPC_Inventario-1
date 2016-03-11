@@ -27,11 +27,19 @@ $(document).ready(function() {
 });
 
 $( "#submitlaptop" ).click(function() {
-    GetData(this, 'laptopsForm');
-       
+    GetData(this, 'laptopsForm');      
+});
+
+$( "#submitpeople" ).click(function() {
+    GetData(this, 'peopleForm');  
+});
+
+$( "#submitplaces" ).click(function() {
+    GetData(this, 'placesForm');  
 });
 
 function GetData(datainput, formname){
+
     columns = [];
     rows = [];
     var boxlist = '';
@@ -58,6 +66,7 @@ function GetData(datainput, formname){
     var inputfield = $(datainput).closest("form")   
                        .find("#inputfield")
                        .val();
+    console.log(boxlist.length);
     if(0<boxlist.length){
         var postData = 
                     {
@@ -70,21 +79,21 @@ function GetData(datainput, formname){
                     }
 
         var dataString = JSON.stringify(postData);
+        console.log(dataString);
         $.ajax({
                 method: "POST",
                 data: {action:dataString},
                 url: "../ajax/getList/",
                 success: function(data){
-                    
+                    console.log(data);
                     var table = document.getElementById("exportTable");
                     var jsonOptions = JSON.parse(data);
                     // Loop over the JSON array.
                     var row = table.insertRow(0);
-                    document.getElementById("totalitems").innerHTML = "total items:"+jsonOptions.length;
                     
                     var i = 0;
-                    for (var k in jsonOptions[1]){
-                        if (jsonOptions[1].hasOwnProperty(k)) {
+                    for (var k in jsonOptions[0]){
+                        if (jsonOptions[0].hasOwnProperty(k)) {
                              var cell1 = row.insertCell(i);
                              cell1.innerHTML = k;
                              i++;
@@ -93,7 +102,6 @@ function GetData(datainput, formname){
                     }
                     
                     rows = jsonOptions.slice(0,200); 
-                    document.getElementById("totalitems").setAttribute("data",i);
                     $width = [0,0,0,0,0,0,0,0];
                     var j = 1;
                     for(var i = 0; i < jsonOptions.length; ++i) {
@@ -116,6 +124,7 @@ function GetData(datainput, formname){
                     console.log(e);
                 }
         });
+        console.log("einde");
     }
 }
 

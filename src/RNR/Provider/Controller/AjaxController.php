@@ -6,7 +6,7 @@ use Silex\Application;
 use Silex\ControllerProviderInterface;
 use Silex\ControllerCollection;
 use Symfony\Component\Validator\Constraints as Assert;
-
+$typesort ='';
 /**
  * Controller for the authors
  * @author Rein Bauwens	<rein.bauwens@student.odisee.be>
@@ -44,6 +44,21 @@ class AjaxController implements ControllerProviderInterface {
 			->get('/places/', array($this, 'places'))
 			->method('GET|POST')
 			->bind('Ajax.places');
+
+		$controllers
+			->get('/placescountries/', array($this, 'placescountries'))
+			->method('GET|POST')
+			->bind('Ajax.placescountries');
+
+		$controllers
+			->get('/placescitys/', array($this, 'placescitys'))
+			->method('GET|POST')
+			->bind('Ajax.placescitys');
+
+		$controllers
+			->get('/placesstates/', array($this, 'placesstates'))
+			->method('GET|POST')
+			->bind('Ajax.placesstates');
 
 		$controllers
 			->get('/profiles/', array($this, 'profiles'))
@@ -187,6 +202,64 @@ class AjaxController implements ControllerProviderInterface {
 	 * @param Application $app An Application instance
 	 * @return string A blob of HTML
 	 */
+	public function placescountries(Application $app) {
+		$data = $app['db.places']->fetchcountry();
+		echo json_encode($data);			
+		return $app['twig']->render('Ajax/Dump.twig');	
+	}
+
+
+	/**
+	 * home page
+	 * @param Application $app An Application instance
+	 * @return string A blob of HTML
+	 */
+	public function placesstates(Application $app) {
+		if(isset($_POST['action'])){
+
+			$obj = json_decode($_POST['action'], true);
+			$id = $app['db.places']->getPlaceByName($obj['name']);
+			$data = $app['db.places']->fetchstate($id);
+			echo json_encode($data);	
+		}
+		return $app['twig']->render('Ajax/Dump.twig');	
+	}
+
+	/**
+	 * home page
+	 * @param Application $app An Application instance
+	 * @return string A blob of HTML
+	 */
+	public function placescitys(Application $app) {
+		if(isset($_POST['action'])){
+			$obj = json_decode($_POST['action'], true);
+			$id = $app['db.places']->getPlaceByName($obj['name']);
+			$data = $app['db.places']->fetchCity($id);
+			echo json_encode($data);			
+		}
+		return $app['twig']->render('Ajax/Dump.twig');	
+	}
+
+
+	/**
+	 * home page
+	 * @param Application $app An Application instance
+	 * @return string A blob of HTML
+	 */
+	public function fetchCity(Application $app) {
+		if(isset($_POST['action'])){
+			$obj = json_decode($_POST['action'], true);
+			$data = $app['db.places']->fetchAll($obj['id']);
+			echo json_encode($data);			
+		}
+		return $app['twig']->render('Ajax/Dump.twig');	
+	}
+
+	/**
+	 * home page
+	 * @param Application $app An Application instance
+	 * @return string A blob of HTML
+	 */
 	public function profiles(Application $app) {
 		
 		$data = $app['db.profiles']->fetchAll();
@@ -233,13 +306,53 @@ class AjaxController implements ControllerProviderInterface {
 	 * @return string A blob of HTML
 	 */
 	public function getList(Application $app) {
+		$peoplearray = array();
 		if(isset($_POST['action'])){
 			$obj = json_decode($_POST['action'], true);
 			if($obj['formname']=='laptopsForm'){
 				$data = $app['db.laptops']->fetchList($obj);
+				echo json_encode($data);
 			}
+			else if($obj['formname']=='peopleForm'){	
+				$data = $app['db.people']->fetchList2($obj);
+				if(!empty($data[0]['placename'])){
+					foreach ($data as $person) {
+						$datadump= $app['db.performs']->fetchAllByPersonId($person['peopleid']);	
+						$datadump = $app['db.places_dependencies']->fetchAllAncestorsFromSchool($datadump[0]['place_id']);
+						if(!empty($datadump)){
+							foreach ($datadump as $data) {
+								$place_type_id=0;
+								if(!empty($data)){
+									$person['region'] ='';
+									if(2==$data['place_type_id']){
+										$person['region'] = $data['name'];
+									}
+									else if(4==$data['place_type_id']){
+										$person['school'] = $data['name'];
+									}
+								}
+							}
+						}
+						else{
+							$person['region'] = $person['placename'];
+							$person['school'] ='';
+						}
+						array_push($peoplearray,$person);
+						
+					}
+					echo json_encode($peoplearray);
+				}
+				else{
+				echo json_encode($data);
+				}	
+			}
+			else if($obj['formname']=='placesForm'){
+				$data = $app['db.places']->fetchList($obj);
+				echo json_encode($data);
+			}
+			
 		}
-		echo json_encode($data);
+		
 		return $app['twig']->render('Ajax/Dump.twig');	
 	}
 
@@ -365,11 +478,14 @@ class AjaxController implements ControllerProviderInterface {
 			$place="";
 			$profile="";
 			$grade="";
+			var_dump($obj);
 			try {
 				$grade = $app['db.place_types']->getGrade($obj['grade']);
 				$place= $app['db.places']->getPlace($obj['places'],$grade) ;
 				$profile = $app['db.profiles']->getProfile($obj['profiles']);
-
+				var_dump($grade);
+				var_dump($place);
+				var_dump($profile);
 			} catch (Exception $e) {
 			}
 			
@@ -622,4 +738,17 @@ class AjaxController implements ControllerProviderInterface {
 		}
 		return $app['twig']->render('Ajax/Dump.twig');	
 	}
+
+
+
 }
+
+	function sort_objects_by_school($a, $b) {
+	if($a->school == $b->school){ return 0 ; }
+	return ($a->school < $b->school) ? -1 : 1;
+	}
+
+	function sort_objects_by_region($a, $b) {
+		if($a->region == $b->region){ return 0 ; }
+		return ($a->region < $b->region) ? -1 : 1;
+	}

@@ -1,0 +1,274 @@
+{# extend the parent tpl #}
+{% extends 'layout.twig' %}
+{# set the pagetitle in the parent tpl #}
+{% set pageTitle = 'Import' %}
+{# Page specific css #}
+{% block pageCss %}
+	<link rel="stylesheet" media="screen" href="{{ app.request.baseUrl }}/css/Import.css" />
+{% endblock %}
+{% block pageContent %}
+	<div class="left">
+		{# Page specific content #}
+		<h1>Import</h1>
+		<div class="clear"></div>
+		<section class="active">
+			<div class="accordion">
+				<div class="accordion-section">
+					<a class="accordion-section-title active" href="#accordion-1">Importar estudiantes</a>
+					<div id="accordion-1" style="display: block;" class="accordion-section-content">
+						<p>El spreadsheet .xls de los datos de estudiantes tiene que tener las columnas:</p>
+						<ul>
+							<li>
+								Nombre
+							</li>
+							<li>
+								Apellido
+							</li>
+							<li>
+								CI (opcional)
+							</li>
+							<li>
+								Escuela
+							</li>
+							<li>
+								Grado (1, 2, 3, 4, 5, 6, 7, 8, 9, o k para prescolar o special para educacion especial)
+							</li>
+							<li>
+								Turno (opcional) (m para mañana, t para tarde, c para completo)
+							</li>
+							<li>
+								Sección (opcional) (a, b, c o d)
+							</li>
+							<li>
+								Serial de la laptop asignada (opcional)
+							</li>
+						</ul>
+						<p>El spreadsheet tiene que tener solo los datos - nada más (ningún comentario, ningún titulo de las columnas, nada).</p>
+						<div class="clear"></div>
+						<div class="label">
+							Pais
+						</div>
+						<div class="input">
+							<input type="text" id="Pais" class="Pais" list="json-datalistPais" placeholder="Pais..">
+						</div>
+						<datalist id="json-datalistPais"></datalist>
+						<div class="label Departamentohidden">
+							Departamento
+						</div>
+						<div class="input Departamentohidden">
+							<input type="text" id="Departamento" class="Departamento" list="json-datalistDepartamento" placeholder="Departamento..">
+						</div>
+						<datalist id="json-datalistDepartamento"></datalist>
+						<div class="label Ciudadhidden">
+							Ciudad
+						</div>
+						<div class="input Ciudadhidden">
+							<input type="text" id="Ciudad" class="ciudad" list="json-datalistCiudad" placeholder="Ciudad..">
+						</div>
+						<datalist id="json-datalistCiudad"></datalist>
+						<a class="button" id="ImportButtonEstudiantes"  role="button">Import</a>
+						<form id="hiddenuploadform" method="post" action="{{ path('Import') }}"  {{ form_enctype(uploadformstudents) }} novalidate="novalidate">
+							{{ form_widget(uploadformstudents.file , { 'attr': {'onchange': 'this.form.submit()'} }) }}
+							{{ form_widget(uploadformstudents.PaisID, { 'attr': {'class': 'PaisID', 'id': 'PaisID'}}) }}
+							{{ form_widget(uploadformstudents.DepartamentoID, { 'attr': {'class': 'DepartamentoID', 'id': 'DepartamentoID'} }) }}
+							{{ form_widget(uploadformstudents.CiudadID, { 'attr': {'class': 'CiudadID', 'id': 'CiudadID'} }) }}
+							{{ form_widget(uploadformstudents._token) }}
+						</form>
+						
+					</div><!--end .accordion-section-content-->
+				</div><!--end .accordion-section-->
+				<div class="accordion-section">
+					<a class="accordion-section-title" href="#accordion-2">Importar profesores</a>
+						<div id="accordion-2" class="accordion-section-content">
+							<div class="clear"></div>
+							<p>El procedimiento de importar profesores es parecido a lo del Zamora Teran/Inventario/Importar estudiantes.</p>
+							<ul>
+								<li>
+									Nombre
+								</li>
+								<li>
+									Apellido
+								</li>
+								<li>
+									CI (opcional)
+								</li>
+								<li>
+									Nombre de la escuela
+								</li>
+								<li>
+									Serial de la laptop asignada (opcional)
+								</li>
+							</ul>
+							<p>Un punto interesante es que no hay que poner el grado donde trabaja el profesor. Los profesores se cargan directamente hasta la localidad de la escuela.</p>
+							<div class="clear"></div>
+							<div class="label">
+								Pais
+							</div>
+							<div class="input">
+								<input type="text" id="Pais" class="Pais" list="json-datalistPais" placeholder="Pais..">
+							</div>
+							<datalist id="json-datalistPais"></datalist>
+							<div class="label Departamentohidden">
+								Departamento
+							</div>
+							<div class="input Departamentohidden">
+								<input type="text" id="Departamento" class="Departamento" list="json-datalistDepartamento" placeholder="Departamento..">
+							</div>
+							<datalist id="json-datalisDepartamento"></datalist>
+							<div class="label Ciudadhidden">
+								Ciudad
+							</div>
+							<div class="input Ciudadhidden">
+								<input type="text" id="Ciudad" class="ciudad" list="json-datalistCiudad" placeholder="Ciudad..">
+							</div>
+							<datalist id="json-datalistCiudad"></datalist>
+							<a class="button" id="ImportButtonProfesores"  role="button">Import</a>
+							<form id="hiddenuploadform" method="post" action="{{ path('Import') }}"  {{ form_enctype(uploadformteachers) }} novalidate="novalidate">
+								{{ form_widget(uploadformteachers.file , { 'attr': {'onchange': 'this.form.submit()'} }) }}
+								{{ form_widget(uploadformteachers.PaisID, { 'attr': {'class': 'PaisID', 'id': 'PaisID'}}) }}
+								{{ form_widget(uploadformteachers.DepartamentoID, { 'attr': {'class': 'DepartamentoID', 'id': 'DepartamentoID'} }) }}
+								{{ form_widget(uploadformteachers.CiudadID, { 'attr': {'class': 'CiudadID', 'id': 'CiudadID'} }) }}
+								{{ form_widget(uploadformteachers._token) }}
+							</form>
+						</div><!--end .accordion-section-content-->
+					</div><!--end .accordion-section-->
+					<div class="accordion-section">
+						<a class="accordion-section-title" href="#accordion-3">Importar laptops</a>
+						<div id="accordion-3" class="accordion-section-content">
+							<div class="clear"></div>
+							<section class="active">
+								<p>Crear un spreadsheet (formato .xls) y rellenar con los datos de las laptops en estas columnas:</p>
+								<ul>
+									<li>
+										Serial de la laptop (SHC005008C0)
+									</li>
+									<li>
+										UUID (02D96DE5-3253-FBE4-FC7C-F6E9F4799C87)
+									</li>
+									<li>
+										Type (XO-1.75 o XO-4 o ...)
+									</li>
+								</ul>
+								<p>El spreadsheet tiene que tener solo los datos - nada más (ningún comentario, ningún titulo de las columnas, nada).</p>
+								<div class="clear"></div>
+								<a class="button" id="ImportButtonLaptops"  role="button" style="display:inherit">Import</a>
+								<form id="hiddenuploadform" method="post" action="{{ path('Import') }}"  {{ form_enctype(uploadformlaptops) }} novalidate="novalidate">
+									{{ form_widget(uploadformlaptops.file , { 'attr': {'onchange': 'this.form.submit()'} }) }}
+									{{ form_widget(uploadformlaptops._token) }}
+								</form>
+								</div><!--end .accordion-section-content-->
+							</div><!--end .accordion-section-->
+						</div><!--end .accordion-->
+					</section>
+		<div class="clear"></div>
+	</div>
+	<div class="preview">
+		<h1>preview</h1>
+		<div class="clear"></div>
+		<div class="error">{{placename}} {{ error }}</div>
+		<div class="clear"></div>
+		<div id="pdfcontent">
+			<table id="exportTable">
+				{% if value == 1 %}
+					
+					<tr>
+						<th>
+							Nombre
+						</th>
+						<th>
+							Apellido
+						</th>
+						<th>
+							CI
+						</th>
+						<th>
+							Escuela
+						</th>
+						<th>
+							Grado
+						</th>
+						<th>
+							Turno
+						</th>
+						<th>
+							Sección
+						</th>
+						<th>
+							Serial
+						</th>
+					</tr>
+					{% for object in data %}
+						<tr>
+							<td class="serial">{{ object.A }}</td>
+							<td class="name">{{ object.B }}</td>
+							<td class="place">{{ object.C }}</td>
+							<td class="place">{{ object.D }}</td>
+							<td class ="model">{{ object.E }}</td>
+							<td class="status">{{ object.F }}</td>
+							<td class="uuid">{{ object.G }}</td>
+							{% if object.H is defined %}
+							    <td class="uuid">{{ object.H }}</td>
+							{% else %}
+							    <td class="uuid"></td>
+							{% endif %}
+							
+						</tr>
+					{% endfor %}
+					{% endif %}
+				{% if value == 2 %}
+					
+					<tr>
+						<th>
+							Nombre
+						</th>
+						<th>
+							Apellido
+						</th>
+						<th>
+							CI
+						</th>
+						<th>
+							escuela
+						</th>
+						<th>
+							Serial
+						</th>
+					</tr>
+					{% for object in data %}
+						<tr>
+							<td class="serial">{{ object.A }}</td>
+							<td class="name">{{ object.B }}</td>
+							<td class="place">{{ object.C }}</td>
+							<td class="place">{{ object.D }}</td>
+							<td class ="model">{{ object.E }}</td>
+						</tr>
+					{% endfor %}
+				{% endif %}
+				{% if value == 3 %}
+					
+					<tr>
+						<th>
+							Serial de la laptop
+						</th>
+						<th>
+							UUID
+						</th>
+						<th>
+							Type
+						</th>
+					</tr>
+					{% for object in data %}
+						<tr>
+							<td class="serial">{{ object.A }}</td>
+							<td class="UUID">{{ object.B }}</td>
+							<td class="Type">{{ object.C }}</td>
+						</tr>
+					{% endfor %}
+				{% endif %}
+			</table>
+		</div>
+	</div>
+{% endblock %}
+{% block pageScripts %}
+	<script src="{{ app.request.baseUrl }}/js/Import.js"></script>
+{% endblock %}

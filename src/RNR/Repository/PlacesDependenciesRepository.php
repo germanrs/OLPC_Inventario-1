@@ -29,5 +29,14 @@ class PlacesDependenciesRepository extends \Knp\Repository {
 	public function DeleteALL($id) {
 		return $this->db->delete('place_dependencies', array('descendant_id' => $id));
 	}
+
+	public function fetchAllAncestorsFromSchool($ancestor) {
+		return $this->db->fetchAll(
+				'SELECT place_dependencies.ancestor_id, places.name, place_type_id, places.id FROM place_dependencies
+				inner Join places on places.id = place_dependencies.ancestor_id
+				where descendant_id ='.$ancestor.' AND ancestor_id <='.$ancestor.' 
+				And  (place_type_id = 2 OR place_type_id = 4)
+				ORDER BY ancestor_id DESC');
+	}
 }
 

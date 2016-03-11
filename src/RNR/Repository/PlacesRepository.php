@@ -26,8 +26,17 @@ class PlacesRepository extends \Knp\Repository {
 	 * @param String $PersonName
 	 * @return The requested person
 	 */
-	public function getPlace($placename, $grade) {
-		$query = 'SELECT id FROM places WHERE name = ' . $this->db->quote($placename, \PDO::PARAM_INT).'AND place_type_id = '. $this->db->quote($grade, \PDO::PARAM_INT);
+	public function getPlace($placename, $place_type_id) {
+		$query = 'SELECT id FROM places WHERE name = ' . $this->db->quote($placename, \PDO::PARAM_INT).'AND place_type_id = '. $this->db->quote($place_type_id, \PDO::PARAM_INT);
+		return $this->db->fetchColumn($query);
+	}
+
+	public function getSchool($placename, $id) {
+		$query = 'SELECT places.id FROM places 
+		Inner join place_dependencies on places.id = descendant_id
+		WHERE `ancestor_id`= '. $this->db->quote($id, \PDO::PARAM_STR).'
+		and place_type_id = 4 
+		and name = '.$this->db->quote($placename, \PDO::PARAM_STR).' limit 1';
 		return $this->db->fetchColumn($query);
 	}
 
@@ -158,10 +167,82 @@ class PlacesRepository extends \Knp\Repository {
 		return $this->db->executeUpdate($result);
 	}
 
-
-
-
 	public function FindPlaceId($place) {
 		return $this->db->fetchColumn('SELECT id FROM places where serial_number = '. $this->db->quote($place['serial_number'], \PDO::PARAM_STR) .'AND uuid = '. $this->db->quote($laptop['uuid'], \PDO::PARAM_STR));
+	}
+
+	public function getTimeOfPlace($id, $name) {
+		return $this->db->fetchColumn('SELECT places.id FROM `place_dependencies`
+		Inner join places on places.id = descendant_id
+		WHERE `ancestor_id`= '. $this->db->quote($id, \PDO::PARAM_STR).' 
+		and name = '.$this->db->quote($name, \PDO::PARAM_STR).' limit 1');
+	}
+
+	public function getgradeOfPlace($id, $name) {
+		return $this->db->fetchColumn('SELECT places.id FROM `place_dependencies`
+		Inner join places on places.id = descendant_id
+		WHERE `ancestor_id`= '. $this->db->quote($id, \PDO::PARAM_STR).' 
+		and name = '.$this->db->quote($name, \PDO::PARAM_STR));
+	}
+
+	public function getSeccionOfPlace($id, $name) {
+		return $this->db->fetchColumn('SELECT places.id FROM `place_dependencies`
+		Inner join places on places.id = descendant_id
+		WHERE `ancestor_id`= '. $this->db->quote($id, \PDO::PARAM_STR).' 
+		and name = '.$this->db->quote($name, \PDO::PARAM_STR));
+	}
+
+
+
+	public function getalldescendants($id) {
+		return $this->db->fetchAll('SELECT place_dependencies.*, places.* FROM `place_dependencies`
+		Inner join places on places.id = descendant_id
+		WHERE `ancestor_id`= '. $this->db->quote($id, \PDO::PARAM_STR));
+	}
+
+	public function fetchList($obj) {
+		$extraWhere = '';
+	    $orderby ='';
+
+	    // Title set via Filter
+	    if ($obj['OrderByTerm'] != 'null') {
+	        $orderby .= ' ORDER BY '.$obj['OrderByTerm'].' '.$obj['orderList'];
+	    }
+	    if ($obj['GroupByTerm'] != 'null' && $obj['inputfield']!='search field...'){
+	    	$extraWhere .= ' WHERE '.$obj['GroupByTerm'].' LIKE ' . $this->db->quote('%'.$obj['inputfield'].'%', \PDO::PARAM_STR);
+	    }
+
+		return $this->db->fetchAll(
+				'SELECT '.$obj['coloms'].' from places
+				LEFT JOIN place_dependencies ON place_dependencies.descendant_id = places.id 
+				LEFT JOIN place_types on place_types.id = places.place_type_id
+				LEFT JOIN school_infos on school_infos.place_id = places.id
+				'. $extraWhere . ' ' . $orderby);
+	}
+
+	public function fetchcountry() {
+		return $this->db->fetchAll(
+				'SELECT places.id, places.name from places
+				where places.place_type_id = 1');
+	}
+
+	public function Lastadded() {
+		return $this->db->fetchColumn('SELECT id FROM places order BY ID DESC');
+	}
+
+	public function fetchstate($idcountry) {
+		return $this->db->fetchAll(
+				'SELECT places.id, places.name from places
+				inner join place_dependencies on descendant_id = places.id
+				where places.place_type_id = 2
+				and ancestor_id ='.$idcountry.' order by name');
+	}
+
+	public function fetchCity($idstate) {
+		return $this->db->fetchAll(
+				'SELECT places.id, places.name from places
+				inner join place_dependencies on descendant_id = places.id
+				where places.place_type_id = 3
+				and ancestor_id ='.$idstate.' order by name');
 	}
 }

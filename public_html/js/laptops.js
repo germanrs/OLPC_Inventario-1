@@ -101,12 +101,6 @@ $( ".DeleteLaptop" ).click(function() {
   deletelaptop(this);
 });
 
-$( "#ImportButton" ).click(function() {
-  var fileinput = document.getElementById("uploadform_file")
-  fileinput.click();
-});
-
-
 
 $( "#EditSelectedLaptops" ).click(function() {
   var checkedBoxes = getCheckedBoxes("checkbox");
@@ -234,7 +228,7 @@ $( "#AddLaptop" ).click(function() {
     }
     else if(document.getElementById("AddLaptop").text == 'Edit'){
       var Ids = $('#AddLaptop').attr("data");
-
+      
       //edit multiple laptops
       if(Ids.indexOf(',') > -1){
         var res = Ids.split(", ");
@@ -279,6 +273,7 @@ $( "#AddLaptop" ).click(function() {
 
       //edit 1 laptop
       else{
+        var ID = $('#AddLaptop').attr("data");
         var index = $('#AddLaptop').attr("index");
         var postData = 
                     {
@@ -300,9 +295,9 @@ $( "#AddLaptop" ).click(function() {
                     var table = document.getElementById("table");
                     table.rows[index].cells[1].innerHTML = Serial;
                     table.rows[index].cells[2].innerHTML = People;
-                    table.rows[index].cells[4].innerHTML = Model;
-                    table.rows[index].cells[5].innerHTML = Status;
-                    table.rows[index].cells[6].innerHTML = Uuid;
+                    table.rows[index].cells[5].innerHTML = Model;
+                    table.rows[index].cells[6].innerHTML = Status;
+                    table.rows[index].cells[7].innerHTML = Uuid;
                 },
                 error: function(e){
                     $("#alert").html(e);
@@ -363,9 +358,9 @@ function editlaptop(datainput){
   var $ID = $(datainput).attr("data");
   var $serial = table.rows[index].cells[1].innerHTML;
   var $name = table.rows[index].cells[2].innerHTML;
-  var $model = table.rows[index].cells[4].innerHTML;
-  var $status = table.rows[index].cells[5].innerHTML;
-  var $uuid = table.rows[index].cells[6].innerHTML;
+  var $model = table.rows[index].cells[5].innerHTML;
+  var $status = table.rows[index].cells[6].innerHTML;
+  var $uuid = table.rows[index].cells[7].innerHTML;
   document.getElementById("AddLaptop").setAttribute("data", $ID);
   document.getElementById("AddLaptop").setAttribute("index", index);
   document.getElementById("Serial").value = $serial;

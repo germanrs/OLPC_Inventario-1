@@ -77,7 +77,6 @@ $( "#chechallboxes" ).click(function() {
 $( "#openAddModal" ).click(function() {
   document.getElementById("Name").value = '';
   document.getElementById("Lastname").value = '';
-  document.getElementById("id_document").value = '';
   document.getElementById("birth_date").value = '';
   document.getElementById("phone").value = '';
   document.getElementById("email").value = '';
@@ -125,7 +124,6 @@ $( "#EditSelectedPeople" ).click(function() {
     document.getElementById("AddPerson").setAttribute("data", id);
     document.getElementById("Name").disabled=true;
     document.getElementById("Lastname").disabled=true;
-    document.getElementById("id_document").disabled=true;
     document.getElementById("birth_date").disabled=true;
     document.getElementById("phone").disabled=true;
     document.getElementById("email").disabled=true;
@@ -133,7 +131,6 @@ $( "#EditSelectedPeople" ).click(function() {
     document.getElementById("notes").disabled=true;
     document.getElementById("Name").value='disabled';
     document.getElementById("Lastname").value='disabled';
-    document.getElementById("id_document").value='disabled';
     document.getElementById("birth_date").value='disabled';
     document.getElementById("phone").value='disabled';
     document.getElementById("email").value='disabled';
@@ -155,7 +152,7 @@ $( "#DeleteSelectedPeople" ).click(function() {
 $( "#AddPerson" ).click(function() {
   var name = document.getElementById("Name").value;
   var lastname = document.getElementById("Lastname").value;
-  var id_document = document.getElementById("id_document").value;
+  var id_document = ''
   var birth_date = document.getElementById("birth_date").value;
   var phone = document.getElementById("phone").value;
   var email = document.getElementById("email").value;
@@ -218,38 +215,40 @@ $( "#AddPerson" ).click(function() {
               url: "../../ajax/addperson/",
               success: function(data){
                   $("#alert").html(data);
-                  var table = document.getElementById("table");
-                  var row = table.insertRow(1);
-                  var cell1 = row.insertCell(0);
-                  var cell2 = row.insertCell(1);
-                  var cell3 = row.insertCell(2);
-                  var cell4 = row.insertCell(3);
-                  var cell5 = row.insertCell(4);
-                  var cell6 = row.insertCell(5);
-                  var cell7 = row.insertCell(6);
-                  var cell8 = row.insertCell(7);
-                  var cell9 = row.insertCell(8);
-                  cell2.innerHTML = name;
-                  cell3.innerHTML = lastname;
-                  cell4.innerHTML = phone;
-                  cell4.innerHTML = email;
-                  cell6.innerHTML = places;
-                  cell7.innerHTML = profiles;
-                  $.ajax({
-                        method: "POST",
-                        data: {action:dataString},
-                        url: "../../ajax/getidofperson/",
-                        success: function(data){                          
-                            console.log(data);
-                            var data2 = data
-                            cell1.innerHTML = '<input type="checkbox" id="'+data2+'" name="checkbox"> '
-                            cell8.innerHTML = '<a class="button EditLaptop" onclick="Editperson(this)"  id="EditLaptop" data="'+data2+'"  role="button">Edit</a>';
-                            cell9.innerHTML = '<a class="button DeleteLaptop" onclick="Deleteperson(this)" id="Deleteperson" data="'+data2+'" role="button">delete</a>';
-                        },
-                        error: function(e){
-                          console.log(e);
-                        }
-                  });
+                    if(data == 'person added'){
+                    var table = document.getElementById("table");
+                    var row = table.insertRow(1);
+                    var cell1 = row.insertCell(0);
+                    var cell2 = row.insertCell(1);
+                    var cell3 = row.insertCell(2);
+                    var cell4 = row.insertCell(3);
+                    var cell5 = row.insertCell(4);
+                    var cell6 = row.insertCell(5);
+                    var cell7 = row.insertCell(6);
+                    var cell8 = row.insertCell(7);
+                    var cell9 = row.insertCell(8);
+                    cell2.innerHTML = name;
+                    cell3.innerHTML = lastname;
+                    cell4.innerHTML = phone;
+                    cell4.innerHTML = email;
+                    cell6.innerHTML = places;
+                    cell7.innerHTML = profiles;
+                    $.ajax({
+                          method: "POST",
+                          data: {action:dataString},
+                          url: "../../ajax/getidofperson/",
+                          success: function(data){                          
+                              console.log(data);
+                              var data2 = data
+                              cell1.innerHTML = '<input type="checkbox" id="'+data2+'" name="checkbox"> '
+                              cell8.innerHTML = '<a class="button EditLaptop" onclick="Editperson(this)"  id="EditLaptop" data="'+data2+'"  role="button">Edit</a>';
+                              cell9.innerHTML = '<a class="button DeleteLaptop" onclick="Deleteperson(this)" id="Deleteperson" data="'+data2+'" role="button">delete</a>';
+                          },
+                          error: function(e){
+                            console.log(e);
+                          }
+                    });
+                  }
               },
               error: function(e){
                   $("#alert").html(e);
@@ -313,7 +312,7 @@ $( "#AddPerson" ).click(function() {
                       "created_at":created_at,
                       "name":name,
                       "lastname":lastname,
-                      "id_document":id_document,
+                      "id_document":'',
                       "birth_date":birth_date,
                       "phone":phone,
                       "email":email,
@@ -407,18 +406,16 @@ function editperson(datainput){
   var $email = table.rows[index].cells[4].innerHTML;
   var $namedescription = table.rows[index].cells[5].innerHTML;
   var $profdescription = table.rows[index].cells[6].innerHTML;
-  var $id_document = table.rows[index].cells[7].innerHTML;
-  var $birth_date = table.rows[index].cells[8].innerHTML;
-  var $position = table.rows[index].cells[9].innerHTML;
-  var $school_name = table.rows[index].cells[10].innerHTML;
-  var $barcode = table.rows[index].cells[11].innerHTML;
-  var $notes = table.rows[index].cells[13].innerHTML;
-  var $typedescription = table.rows[index].cells[14].innerHTML;
+  var $birth_date = table.rows[index].cells[7].innerHTML;
+  var $position = table.rows[index].cells[8].innerHTML;
+  var $school_name = table.rows[index].cells[9].innerHTML;
+  var $barcode = table.rows[index].cells[10].innerHTML;
+  var $notes = table.rows[index].cells[12].innerHTML;
+  var $typedescription = table.rows[index].cells[13].innerHTML;
   document.getElementById("AddPerson").setAttribute("data", $ID);
   document.getElementById("AddPerson").setAttribute("index", index);
   document.getElementById("Name").value = $Name;
   document.getElementById("Lastname").value = $Lastname;
-  document.getElementById("id_document").value = $id_document;
   document.getElementById("birth_date").value = $birth_date;
   document.getElementById("phone").value = $phone;
   document.getElementById("email").value = $email;

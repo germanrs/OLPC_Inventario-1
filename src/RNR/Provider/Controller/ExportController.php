@@ -7,9 +7,6 @@ use Silex\ControllerProviderInterface;
 use Silex\ControllerCollection;
 use Symfony\Component\Validator\Constraints as Assert;
 
-require_once '/../../Classes/PHPExcel.php';
-require_once '/../../Classes/PHPExcel/IOFactory.php';
-
 /**
  * Controller for the authors
  * @author Rein Bauwens	<rein.bauwens@student.odisee.be>

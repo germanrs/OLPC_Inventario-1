@@ -111,37 +111,31 @@ class InventoryController implements ControllerProviderInterface {
     	//Calculate the number of pages by dividing the items count by the number of item per page 
 		$numPages = ceil($numItems / $numItemsPerPage);
 
-		// Create a form to upload a file.
-		$uploadform = $app['form.factory']
-		->createNamed('uploadform', 'form')
-				->add('file', 'file', array(
-							'required' => true,
-							'constraints' => array(new Assert\NotBlank()),
-							'label' => 'File:'
-					));
-
-		$uploadform->handleRequest($app['request']);
-		$file = $app['request']->files->get($uploadform->getName());
-		if ($uploadform->isValid()) {
-			$data= $uploadform->getData();
-			var_dump($file['file']);
-			var_dump($data);
-			var_dump($_FILES);
-			$filename=$_FILES["uploadform"]["tmp_name"]["file"];
-			echo $filename;
-			if($_FILES["uploadform"]["size"]["file"] > 0)
-		    {
-		    	if ( $_FILES["uploadform"]["tmp_name"]['file'] )
-				{
-					$objPHPExcel = \PHPExcel_IOFactory::load($filename);
-					$sheetData = $objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
-					var_dump($sheetData);
+		$laptoparray = array();
+		foreach ($laptops as $laptop) {
+			$datadump= $app['db.performs']->fetchAllByPersonId($laptop['peopleID']);	
+			$datadump = $app['db.places_dependencies']->fetchAllAncestorsFromSchool($datadump[0]['place_id']);
+			if(!empty($datadump)){
+				foreach ($datadump as $data) {
+					$place_type_id=0;
+					if(!empty($data)){
+						$laptop['region'] ='';
+						if(2==$data['place_type_id']){
+							$laptop['region'] = $data['name'];
+						}
+						else if(4==$data['place_type_id']){
+							$laptop['placename'] = $data['name'];
+						}
+					}
 				}
-		    }
-		    else{
-		        echo 'Invalid File:Please Upload CSV File';
-		    }
+			}
+			else{
+				$laptop['region'] =$laptop['placename'];
+				$laptop['placename'] ='';
+			}
+			array_push($laptoparray,$laptop);
 		}
+
 
 		// Create Form
 		$filterform = $app['form.factory']
@@ -181,14 +175,13 @@ class InventoryController implements ControllerProviderInterface {
 		return $app['twig']->render('inventory/Laptops.twig', array(
 			'show' => $show,
 			'filterform' => $filterform->createView(),
-			'laptops' => $laptops,
+			'laptops' => $laptoparray,
 			'curPage'=>$curPage,
 			'numPages'=>$numPages,
 			'numItems'=>$numItems, 
 			'baseUrl'=> $app['Inventory.base_url'],
 			'pagination'=>generatePaginationSequence($curPage, $numPages),
-			'requestParams' => $newparams,
-			'uploadform' => $uploadform->createView()
+			'requestParams' => $newparams
 			//'userLogin' => $userLogin,
 		));
 		
@@ -249,40 +242,34 @@ class InventoryController implements ControllerProviderInterface {
             
     	}
 
+    	$peoplearray = array();
+		foreach ($people as $person) {
+			$datadump= $app['db.performs']->fetchAllByPersonId($person['id']);	
+			$datadump = $app['db.places_dependencies']->fetchAllAncestorsFromSchool($datadump[0]['place_id']);
+			if(!empty($datadump)){
+				foreach ($datadump as $data) {
+					$place_type_id=0;
+					if(!empty($data)){
+						$person['region'] ='';
+						if(2==$data['place_type_id']){
+							$person['region'] = $data['name'];
+						}
+						else if(4==$data['place_type_id']){
+							$person['namedescription'] = $data['name'];
+						}
+					}
+				}
+			}
+			else{
+				$person['region'] =$person['namedescription'];
+				$person['namedescription'] ='';
+			}
+			array_push($peoplearray,$person);
+		}
+
     	//Calculate the number of pages by dividing the items count by the number of item per page 
 		$numPages = ceil($numItems / $numItemsPerPage);
 
-		// Create a form to upload a file.
-		$uploadform = $app['form.factory']
-		->createNamed('uploadform', 'form')
-				->add('file', 'file', array(
-							'required' => true,
-							'constraints' => array(new Assert\NotBlank()),
-							'label' => 'File:'
-					));
-
-		$uploadform->handleRequest($app['request']);
-		$file = $app['request']->files->get($uploadform->getName());
-		if ($uploadform->isValid()) {
-			$data= $uploadform->getData();
-			var_dump($file['file']);
-			var_dump($data);
-			var_dump($_FILES);
-			$filename=$_FILES["uploadform"]["tmp_name"]["file"];
-			echo $filename;
-			if($_FILES["uploadform"]["size"]["file"] > 0)
-		    {
-		    	if ( $_FILES["uploadform"]["tmp_name"]['file'] )
-				{
-					$objPHPExcel = \PHPExcel_IOFactory::load($filename);
-					$sheetData = $objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
-					var_dump($sheetData);
-				}
-		    }
-		    else{
-		        echo 'Invalid File:Please Upload CSV File';
-		    }
-		}
 
 		// Create Form
 		$filterform = $app['form.factory']
@@ -294,8 +281,7 @@ class InventoryController implements ControllerProviderInterface {
 				))
 				->add('genres', 'choice', array(
     				'choices'  => array(
-    					'people.name' => 'name',
-    					'people.lastname' => 'lastname',
+    					'CONCAT(people.name," ",people.lastname)' => 'name',
     					'places.name' => 'school',
     					'profiles.description' => 'profiles'),
     				'placeholder' => 'Choose wisely!',
@@ -320,14 +306,13 @@ class InventoryController implements ControllerProviderInterface {
 		return $app['twig']->render('inventory/people.twig', array(
 			'show' => $show,
 			'filterform' => $filterform->createView(),
-			'people' => $people,
+			'people' => $peoplearray,
 			'curPage'=>$curPage,
 			'numPages'=>$numPages,
 			'numItems'=>$numItems, 
 			'baseUrl'=> $app['Inventory.base_url'],
 			'pagination'=>generatePaginationSequence($curPage, $numPages),
-			'requestParams' => $newparams,
-			'uploadform' => $uploadform->createView()
+			'requestParams' => $newparams
 			//'userLogin' => $userLogin,
 		));
 		
@@ -391,37 +376,6 @@ class InventoryController implements ControllerProviderInterface {
     	//Calculate the number of pages by dividing the items count by the number of item per page 
 		$numPages = ceil($numItems / $numItemsPerPage);
 
-		// Create a form to upload a file.
-		$uploadform = $app['form.factory']
-		->createNamed('uploadform', 'form')
-				->add('file', 'file', array(
-							'required' => true,
-							'constraints' => array(new Assert\NotBlank()),
-							'label' => 'File:'
-					));
-
-		$uploadform->handleRequest($app['request']);
-		$file = $app['request']->files->get($uploadform->getName());
-		if ($uploadform->isValid()) {
-			$data= $uploadform->getData();
-			var_dump($file['file']);
-			var_dump($data);
-			var_dump($_FILES);
-			$filename=$_FILES["uploadform"]["tmp_name"]["file"];
-			echo $filename;
-			if($_FILES["uploadform"]["size"]["file"] > 0)
-		    {
-		    	if ( $_FILES["uploadform"]["tmp_name"]['file'] )
-				{
-					$objPHPExcel = \PHPExcel_IOFactory::load($filename);
-					$sheetData = $objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
-					var_dump($sheetData);
-				}
-		    }
-		    else{
-		        echo 'Invalid File:Please Upload CSV File';
-		    }
-		}
 		// Create Form
 		$filterform = $app['form.factory']
 				->createNamed('filterform', 'form')
@@ -463,8 +417,7 @@ class InventoryController implements ControllerProviderInterface {
 			'numItems'=>$numItems, 
 			'baseUrl'=> $app['Inventory.base_url'],
 			'pagination'=>generatePaginationSequence($curPage, $numPages),
-			'requestParams' => $newparams,
-			'uploadform' => $uploadform->createView()
+			'requestParams' => $newparams
 			//'userLogin' => $userLogin,
 		));
 		

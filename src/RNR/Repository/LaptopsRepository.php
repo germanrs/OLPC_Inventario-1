@@ -126,9 +126,23 @@ class LaptopsRepository extends \Knp\Repository {
 		return $this->db->executeUpdate($result);
 	}
 
+	
+	public function updatelaptopbyID($laptopID, $userid) {
+		$result = 'UPDATE laptops SET '.
+			'owner_id = '. $this->db->quote($userid, \PDO::PARAM_STR) .
+			'WHERE id = '.$this->db->quote($laptopID, \PDO::PARAM_INT);
+		return $this->db->executeUpdate($result);
+	}
+
 	public function FindLaptopId($laptop) {
 		return $this->db->fetchColumn('SELECT id FROM laptops where serial_number = '. $this->db->quote($laptop['serial_number'], \PDO::PARAM_STR) .'AND uuid = '. $this->db->quote($laptop['uuid'], \PDO::PARAM_STR));
 	}
+
+	public function GetLaptopId($laptopserial) {
+		return $this->db->fetchColumn('SELECT id FROM laptops where serial_number = '. $this->db->quote($laptopserial, \PDO::PARAM_STR));
+	}
+
+	
 
 
 	public function fetchList($obj) {

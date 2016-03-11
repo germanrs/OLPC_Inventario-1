@@ -47,20 +47,7 @@
 								</a>
 								<a href="default.asp">
 								  <img id='buttonminus1' class='buttonMinus' src="{{ app.request.baseUrl }}/img/minus.png">
-								</a>
-								<div class="clear"></div>
-								<select>
-									<option value="null">Choose wisely!</option>
-									<option value="serial_number">serial_number</option>
-									<option value="model">model</option>
-									<option value="status">status</option>
-									<option value="uuid">uuid</option>
-									<option value="place">place</option>
-								</select>
-								<select>
-									<option value="Ascending">Ascending</option>
-									<option value="Descending">Descending</option>
-								</select>#}
+								</a>#}
 							</div>
 							<div class="filter">
 								<h3>Filter</h3>
@@ -73,7 +60,7 @@
 									<option value="laptops.uuid">uuid</option>
 									<option value="places.name">place</option>
 								</select>
-								<input type="text" name="fname" id="inputfield" value="search field..."><br>
+								<input type="text" name="fname" id="inputfield" placeholder="search field..."><br>
 								<a class="button" id="submitlaptop" role="button">Preview</a>
 							</div>
 						</form>
@@ -84,171 +71,95 @@
 					
 					<div id="accordion-2" class="accordion-section-content">
 						<h3>include</h3>
-						<form action="includePeople">
+						<form action="includelaptops" id="peopleForm">
 							<div class="checkboxes">
-								<input type="checkbox" name="laptops" value="model"><div class="boxlabel">serial_number</div>
-								<input type="checkbox" name="laptops" value="model"><div class="boxlabel">model</div>
-								<input type="checkbox" name="laptops" value="owner"><div class="boxlabel">owner</div>
-								<input type="checkbox" name="laptops" value="status"><div class="boxlabel">status</div>
-								<input type="checkbox" name="laptops" value="uuid"><div class="boxlabel">uuid</div>
-								<input type="checkbox" name="laptops" value="place"><div class="boxlabel">place</div>
+								<input type="checkbox" name="laptops" value="CONCAT(people.name,' ',people.lastname) as name"><div class="boxlabel">Name</div>
+								<input type="checkbox" name="laptops" value="people.id_document"><div class="boxlabel">document id</div>
+								<input type="checkbox" name="laptops" value="people.birth_date"><div class="boxlabel">birthday</div>
+								<input type="checkbox" name="laptops" value="people.phone"><div class="boxlabel">phone</div>
+								<input type="checkbox" name="laptops" value="people.region"><div class="boxlabel">region</div>
+								<div class="clear"></div>
+								<input type="checkbox" name="laptops" value="people.school_name"><div class="boxlabel">school</div>
+								<input type="checkbox" name="laptops" value="people.barcode"><div class="boxlabel">barcode</div>
 							</div>
 							<div class="order">
 								<h3>Order by</h3>
-								<select id="orderbyterm">
+								<select id='orderByTerm'>
 									<option value="null">Choose wisely!</option>
-									<option value="serial_number">serial_number</option>
-									<option value="model">model</option>
+									<option value="Name">Name</option>
+									<option value="id_document">document id</option>
+									<option value="phone">phone</option>
 									<option value="status">status</option>
-									<option value="uuid">uuid</option>
-									<option value="place">place</option>
+									<option value="places.name">place name</option>
+									<option value="barcode">barcode</option>
 								</select>
-								<select id='orderby'>
-									<option value="Ascending">Ascending</option>
-									<option value="Descending">Descending</option>
+								<select id='orderList'>
+									<option value="ASC">Ascending</option>
+									<option value="DESC">Descending</option>
 								</select>
-								<div class="clear"></div>
-								<select>
-									<option value="null">Choose wisely!</option>
-									<option value="serial_number">serial_number</option>
-									<option value="model">model</option>
-									<option value="status">status</option>
-									<option value="uuid">uuid</option>
-									<option value="place">place</option>
-								</select>
-								<select>
-									<option value="Ascending">Ascending</option>
-									<option value="Descending">Descending</option>
-								</select>
+								{#<a href="default.asp">
+								  <img id='buttonPlus1' class='buttonplus'  src="{{ app.request.baseUrl }}/img/plus.png">
+								</a>
+								<a href="default.asp">
+								  <img id='buttonminus1' class='buttonMinus' src="{{ app.request.baseUrl }}/img/minus.png">
+								</a>#}
 							</div>
 							<div class="filter">
 								<h3>Filter</h3>
-								<select>
+								<select id='GroupByTerm'>
 									<option value="null">Choose wisely!</option>
-									<option value="serial_number">serial_number</option>
-									<option value="model">model</option>
+									<option value="CONCAT(people.name,' ',people.lastname)">Name</option>
+									<option value="people.id_document">document id</option>
+									<option value="people.phone">phone</option>
 									<option value="status">status</option>
-									<option value="uuid">uuid</option>
-									<option value="place">place</option>
+									<option value="places.name">place name</option>
+									<option value="people.barcode">barcode</option>
 								</select>
-								<input type="text" name="fname" value="search field..."><br>
-								<input type="submit" value="Submit">
+								<input type="text" name="fname" id="inputfield" placeholder="search field..."><br>
+								<a class="button" id="submitpeople" role="button">Preview</a>
 							</div>
 						</form>
 					</div><!--end .accordion-section-content-->
 				</div><!--end .accordion-section-->
 				<div class="accordion-section">
 					<a class="accordion-section-title" href="#accordion-3">Places</a>
-					
 					<div id="accordion-3" class="accordion-section-content">
-						<h3>include</h3>
-						<form action="includelaptops">
+						<h3>places</h3>
+						<form action="includelaptops" id="placesForm">
 							<div class="checkboxes">
-								<input type="checkbox" name="laptops" value="model"><div class="boxlabel">serial_number</div>
-								<input type="checkbox" name="laptops" value="model"><div class="boxlabel">model</div>
-								<input type="checkbox" name="laptops" value="owner"><div class="boxlabel">owner</div>
-								<input type="checkbox" name="laptops" value="status"><div class="boxlabel">status</div>
-								<input type="checkbox" name="laptops" value="uuid"><div class="boxlabel">uuid</div>
-								<input type="checkbox" name="laptops" value="place"><div class="boxlabel">place</div>
+								<input type="checkbox" name="laptops" value="places.name"><div class="boxlabel">Name</div>
+								<input type="checkbox" name="laptops" value="place_types.name as typename"><div class="boxlabel">type</div>
+								<input type="checkbox" name="laptops" value="school_infos.server_hostname"><div class="boxlabel">server_hostname</div>
 							</div>
 							<div class="order">
 								<h3>Order by</h3>
-								<select>
+								<select id='orderByTerm'>
 									<option value="null">Choose wisely!</option>
-									<option value="serial_number">serial_number</option>
-									<option value="model">model</option>
-									<option value="status">status</option>
-									<option value="uuid">uuid</option>
-									<option value="place">place</option>
+									<option value="places.name">Name</option>
+									<option value="typename">type</option>
+									<option value="server_hostname">server_hostname</option>
 								</select>
-								<select>
-									<option value="Ascending">Ascending</option>
-									<option value="Descending">Descending</option>
+								<select id='orderList'>
+									<option value="ASC">Ascending</option>
+									<option value="DESC">Descending</option>
 								</select>
-								<div class="clear"></div>
-								<select>
-									<option value="null">Choose wisely!</option>
-									<option value="serial_number">serial_number</option>
-									<option value="model">model</option>
-									<option value="status">status</option>
-									<option value="uuid">uuid</option>
-									<option value="place">place</option>
-								</select>
-								<select>
-									<option value="Ascending">Ascending</option>
-									<option value="Descending">Descending</option>
-								</select>
+								{#<a href="default.asp">
+								  <img id='buttonPlus1' class='buttonplus'  src="{{ app.request.baseUrl }}/img/plus.png">
+								</a>
+								<a href="default.asp">
+								  <img id='buttonminus1' class='buttonMinus' src="{{ app.request.baseUrl }}/img/minus.png">
+								</a>#}
 							</div>
 							<div class="filter">
 								<h3>Filter</h3>
-								<select>
-									<option value="null">Choose wisely!</option>
-									<option value="serial_number">serial_number</option>
-									<option value="model">model</option>
-									<option value="status">status</option>
-									<option value="uuid">uuid</option>
-									<option value="place">place</option>
+								<select id='GroupByTerm'>
+									<<option value="null">Choose wisely!</option>
+									<option value="places.name">Name</option>
+									<option value="place_types.name">type</option>
+									<option value="school_infos.server_hostname">server_hostname</option>
 								</select>
-								<input type="text" name="fname" value="search field..."><br>
-								<input type="submit" value="Submit">
-							</div>
-						</form>
-					</div><!--end .accordion-section-content-->
-				</div><!--end .accordion-section-->
-				<div class="accordion-section">
-					<a class="accordion-section-title" href="#accordion-4">movements</a>
-					
-					<div id="accordion-4" class="accordion-section-content">
-						<h3>include</h3>
-						<form action="includelaptops">
-							<div class="checkboxes">
-								<input type="checkbox" name="laptops" value="model"><div class="boxlabel">serial_number</div>
-								<input type="checkbox" name="laptops" value="model"><div class="boxlabel">model</div>
-								<input type="checkbox" name="laptops" value="owner"><div class="boxlabel">owner</div>
-								<input type="checkbox" name="laptops" value="status"><div class="boxlabel">status</div>
-								<input type="checkbox" name="laptops" value="uuid"><div class="boxlabel">uuid</div>
-								<input type="checkbox" name="laptops" value="place"><div class="boxlabel">place</div>
-							</div>
-							<div class="order">
-								<h3>Order by</h3>
-								<select>
-									<option value="null">Choose wisely!</option>
-									<option value="serial_number">serial_number</option>
-									<option value="model">model</option>
-									<option value="status">status</option>
-									<option value="uuid">uuid</option>
-									<option value="place">place</option>
-								</select>
-								<select>
-									<option value="Ascending">Ascending</option>
-									<option value="Descending">Descending</option>
-								</select>
-								<div class="clear"></div>
-								<select>
-									<option value="null">Choose wisely!</option>
-									<option value="serial_number">serial_number</option>
-									<option value="model">model</option>
-									<option value="status">status</option>
-									<option value="uuid">uuid</option>
-									<option value="place">place</option>
-								</select>
-								<select>
-									<option value="Ascending">Ascending</option>
-									<option value="Descending">Descending</option>
-								</select>
-							</div>
-							<div class="filter">
-								<h3>Filter</h3>
-								<select>
-									<option value="null">Choose wisely!</option>
-									<option value="serial_number">serial_number</option>
-									<option value="model">model</option>
-									<option value="status">status</option>
-									<option value="uuid">uuid</option>
-									<option value="place">place</option>
-								</select>
-								<input type="text" name="fname" value="search field..."><br>
-								<input type="submit" value="Submit">
+								<input type="text" name="fname" id="inputfield" placeholder="search field..."><br>
+								<a class="button" id="submitplaces" role="button">Preview</a>
 							</div>
 						</form>
 					</div><!--end .accordion-section-content-->
@@ -260,8 +171,6 @@
 		<h1>preview</h1>
 		<div class="clear"></div>
 		<div id="pdfcontent">
-			<h2>Titel</h2>
-			<h3 id="totalitems"></h3>
 			<table id="exportTable">
 				
 			</table>

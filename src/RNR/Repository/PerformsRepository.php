@@ -35,4 +35,10 @@ class PerformsRepository extends \Knp\Repository {
 		return $this->db->executeUpdate($result);
 	}
 
+	public function fetchAllByPersonId($person_id) {
+		return $this->db->fetchAll(
+				'SELECT performs.* FROM performs where performs.person_id ='.  $this->db->quote($person_id, \PDO::PARAM_STR));
+	}
+
+
 }
