@@ -227,6 +227,15 @@ input[type="submit"]{
       vertical-align:middle;
   }
 
-  .displaynone{
-    display: none;
-  }
+
+
+  
+  
+.Departamentohidden, .Ciudadhidden, .Paishidden, .displaynone, .Seccionhidden, .gradohidden, .Turnohidden, .Escuelahidden{
+  display: none;
+}
+  
+.label{
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}

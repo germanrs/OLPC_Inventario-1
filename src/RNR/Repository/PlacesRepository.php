@@ -46,9 +46,22 @@ class PlacesRepository extends \Knp\Repository {
 	}
 
 	public function getPlaceByName($placename) {
-		$query = 'SELECT id FROM places WHERE name = ' . $this->db->quote($placename, \PDO::PARAM_INT)	;
+		$query = 'SELECT id FROM places where name = ' . $this->db->quote($placename, \PDO::PARAM_INT)	;
 		return $this->db->fetchColumn($query);
 	}
+
+	public function getCityByName($placename) {
+		$query = 'SELECT id FROM places WHERE place_type_id = 3 AND name = ' . $this->db->quote($placename, \PDO::PARAM_INT)	;
+		return $this->db->fetchColumn($query);
+	}
+
+	
+
+	public function getitemByNameandAncestorID($placename, $cityid) {
+		$query = 'SELECT id FROM places WHERE name = ' . $this->db->quote($placename, \PDO::PARAM_INT).' and place_id = '. $this->db->quote($cityid, \PDO::PARAM_INT);
+		return $this->db->fetchColumn($query);
+	}
+
 
 	public function FindnewestId() {
 		$query = 'SELECT id FROM places ORDER BY id DESC';
@@ -244,5 +257,33 @@ class PlacesRepository extends \Knp\Repository {
 				inner join place_dependencies on descendant_id = places.id
 				where places.place_type_id = 3
 				and ancestor_id ='.$idstate.' order by name');
+	}
+
+	public function fetchSchool($idcity) {
+		return $this->db->fetchAll(
+				'SELECT places.id, places.name from places
+				inner join place_dependencies on descendant_id = places.id
+				where places.place_type_id = 4
+				and ancestor_id ='.$idcity.' order by name');
+	}
+
+	public function fetchTurno($idschool) {
+		return $this->db->fetchAll(
+				'SELECT places.id, places.name from places
+				inner join place_dependencies on descendant_id = places.id
+				where places.place_type_id = 12
+				and ancestor_id ='.$idschool.' order by name');
+	}
+
+	public function fetchGrade($idTurno) {
+		return $this->db->fetchAll(
+				'SELECT places.id, places.name from places
+				where place_id ='.$idTurno.' order by name');
+	}
+
+	public function fetchSeccion($idSeccion) {
+		return $this->db->fetchAll(
+				'SELECT places.id, places.name from places
+				where place_id ='.$idSeccion.' order by name');
 	}
 }

@@ -18,15 +18,65 @@
 					
 					<div id="accordion-1" style="display: block;" class="accordion-section-content">
 						<h3>include</h3>
-						<form action="includelaptops" id="laptopsForm">
+						<form action="includelaptops" id="laptopsForm"  autocomplete="off" >
 							<div class="checkboxes">
 								<input type="checkbox" name="laptops" value="laptops.serial_number"><div class="boxlabel">serial_number</div>
 								<input type="checkbox" name="laptops" value="models.name as model"><div class="boxlabel">model</div>
 								<input type="checkbox" name="laptops" value="CONCAT(people.name,' ',people.lastname) as name"><div class="boxlabel">owner</div>
 								<input type="checkbox" name="laptops" value="statuses.description as status"><div class="boxlabel">status</div>
 								<input type="checkbox" name="laptops" value="laptops.uuid"><div class="boxlabel">uuid</div>
-								<input type="checkbox" name="laptops" value="places.name as place"><div class="boxlabel">place</div>
+								<input type="checkbox" onclick="ShowCountry()" name="laptops" value="places.name as place"><div class="boxlabel">place</div>
 							</div>
+							<div class="clear"></div>
+							<div class="label Paishidden">
+								Pais
+							</div>
+							<div class="input Paishidden">
+								<input  type="text" id="Pais" class="Pais" list="json-datalistPais" placeholder="Pais..." onmousedown="">
+							</div>
+							<datalist id="json-datalistPais"></datalist>
+							<div class="label Departamentohidden">
+								Departamento
+							</div>
+							<div class="input Departamentohidden">
+								<input type="text" id="Departamento" class="Departamento" list="json-datalistDepartamento" placeholder="Departamento..">
+							</div>
+							<datalist id="json-datalistDepartamento"></datalist>
+							<div class="label Ciudadhidden">
+								Ciudad
+							</div>
+							<div class="input Ciudadhidden">
+								<input type="text" id="Ciudad" class="ciudad" list="json-datalistCiudad" placeholder="Ciudad..">
+							</div>
+							<datalist id="json-datalistCiudad"></datalist>
+							<div class="label Escuelahidden">
+								Escuela
+							</div>
+							<div class="input Escuelahidden">
+								<input type="text" id="Escuela" class="Escuela" list="json-datalistEscuela" placeholder="Ciudad..">
+							</div>
+							<datalist id="json-datalistEscuela"></datalist>
+							<div class="label Turnohidden">
+								Turno
+							</div>
+							<div class="input Turnohidden">
+								<input type="text" id="Turno" class="Turno" list="json-datalistTurno" placeholder="Ciudad..">
+							</div>
+							<datalist id="json-datalistTurno"></datalist>
+							<div class="label gradohidden">
+								grado
+							</div>
+							<div class="input gradohidden">
+								<input type="text" id="grado" class="grado" list="json-datalistgrado" placeholder="Ciudad..">
+							</div>
+							<datalist id="json-datalistgrado"></datalist>
+							<div class="label Seccionhidden">
+								Seccion
+							</div>
+							<div class="input Seccionhidden">
+								<input type="text" id="Seccion" class="Seccion" list="json-datalistSeccion" placeholder="Ciudad..">
+							</div>
+							<datalist id="json-datalistSeccion"></datalist>
 							<div class="order">
 								<h3>Order by</h3>
 								<select id='orderByTerm'>
@@ -77,9 +127,8 @@
 								<input type="checkbox" name="laptops" value="people.id_document"><div class="boxlabel">document id</div>
 								<input type="checkbox" name="laptops" value="people.birth_date"><div class="boxlabel">birthday</div>
 								<input type="checkbox" name="laptops" value="people.phone"><div class="boxlabel">phone</div>
-								<input type="checkbox" name="laptops" value="people.region"><div class="boxlabel">region</div>
+								<input type="checkbox" onclick="ShowCountry()" name="laptops" value="places.name as place"><div class="boxlabel">place</div>
 								<div class="clear"></div>
-								<input type="checkbox" name="laptops" value="people.school_name"><div class="boxlabel">school</div>
 								<input type="checkbox" name="laptops" value="people.barcode"><div class="boxlabel">barcode</div>
 							</div>
 							<div class="order">

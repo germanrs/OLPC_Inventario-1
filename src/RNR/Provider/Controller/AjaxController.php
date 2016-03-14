@@ -61,6 +61,26 @@ class AjaxController implements ControllerProviderInterface {
 			->bind('Ajax.placesstates');
 
 		$controllers
+			->get('/placesschools/', array($this, 'placesschools'))
+			->method('GET|POST')
+			->bind('Ajax.placesschools');
+
+		$controllers
+			->get('/placesturnos/', array($this, 'placesturnos'))
+			->method('GET|POST')
+			->bind('Ajax.placesturnos');
+
+		$controllers
+			->get('/placesgrados/', array($this, 'placesgrados'))
+			->method('GET|POST')
+			->bind('Ajax.placesgrados');
+
+		$controllers
+			->get('/placesseccions/', array($this, 'placesseccions'))
+			->method('GET|POST')
+			->bind('Ajax.placesseccions');
+
+		$controllers
 			->get('/profiles/', array($this, 'profiles'))
 			->method('GET|POST')
 			->bind('Ajax.profiles');
@@ -235,6 +255,53 @@ class AjaxController implements ControllerProviderInterface {
 			$obj = json_decode($_POST['action'], true);
 			$id = $app['db.places']->getPlaceByName($obj['name']);
 			$data = $app['db.places']->fetchCity($id);
+			echo json_encode($data);			
+		}
+		return $app['twig']->render('Ajax/Dump.twig');	
+	}
+
+	public function placesschools(Application $app) {
+		if(isset($_POST['action'])){
+			$obj = json_decode($_POST['action'], true);
+			$cityid = $app['db.places']->getCityByName($obj['Ciudad']);
+			$data = $app['db.places']->fetchSchool($cityid);
+			echo json_encode($data);			
+		}
+		return $app['twig']->render('Ajax/Dump.twig');	
+	}
+
+	public function placesturnos(Application $app) {
+		if(isset($_POST['action'])){
+			$obj = json_decode($_POST['action'], true);
+			$cityid = $app['db.places']->getCityByName($obj['Ciudad']);
+			$schoolid = $app['db.places']->getitemByNameandAncestorID($obj['name'], $cityid);
+			$data = $app['db.places']->fetchTurno($schoolid);
+			echo json_encode($data);			
+		}
+		return $app['twig']->render('Ajax/Dump.twig');	
+	}
+
+	public function placesgrados(Application $app) {
+		if(isset($_POST['action'])){
+			$obj = json_decode($_POST['action'], true);
+
+			$cityid = $app['db.places']->getCityByName($obj['Ciudad']);
+			$schoolid = $app['db.places']->getitemByNameandAncestorID($obj['Escuela'], $cityid);
+			$turnoId = $app['db.places']->getitemByNameandAncestorID($obj['name'], $schoolid);
+			$data = $app['db.places']->fetchGrade($turnoId);
+			echo json_encode($data);			
+		}
+		return $app['twig']->render('Ajax/Dump.twig');	
+	}
+
+	public function placesseccions(Application $app) {
+		if(isset($_POST['action'])){
+			$obj = json_decode($_POST['action'], true);
+			$cityid = $app['db.places']->getCityByName($obj['Ciudad']);
+			$schoolid = $app['db.places']->getitemByNameandAncestorID($obj['Escuela'], $cityid);
+			$turnoId = $app['db.places']->getitemByNameandAncestorID($obj['Turno'], $schoolid);
+			$gradoid = $app['db.places']->getitemByNameandAncestorID($obj['name'], $turnoId);
+			$data = $app['db.places']->fetchSeccion($gradoid);
 			echo json_encode($data);			
 		}
 		return $app['twig']->render('Ajax/Dump.twig');	

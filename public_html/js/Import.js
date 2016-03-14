@@ -4,97 +4,108 @@ SetData('Pais','json-datalistPais');
 SetData('Ciudad','json-datalistCiudad');*/
 
 
+$('.Pais').on('input', function(){
+    var options = document.getElementById("json-datalistPais").options
+    console.log(options);
+    for (var i=0;i<options.length;i++){
+       if (options[i].value == $(this).val()){
+        $value = this.value;
+        $('.Departamento').empty();
+        $(".Pais").val($value);
+        changeForm('PaisID', $value, 'Departamentohidden');
 
+        var postData = 
+              {
+                  "name": $value,
+              }
+        var dataString = JSON.stringify(postData);
+        $.ajax({
+          method: "POST",
+          data: {action:dataString},
+          url: "../ajax/placesstates/",
+          success: function(data){
+            console.log(data);
+            var dataList = document.getElementById('json-datalistDepartamento');
+              var input = document.getElementById('Departamento');
+                  var jsonOptions = JSON.parse(data);
+                  // Loop over the JSON array.
+            jsonOptions.forEach(function(item) {
+              // Create a new <option> element.
+              var option = document.createElement('option');
 
-$( ".Pais" ).change(function() {
-	$value = this.value;
-	$('.Departamento').empty();
-	$(".Pais").val($value);
-	changeForm('PaisID', $value, 'Departamentohidden');
+              // Set the value using the item in the JSON array.
+              option.text = item.id;
+              option.value = item.name;
 
-	var postData = 
-        {
-            "name": $value,
-        }
-	var dataString = JSON.stringify(postData);
-	$.ajax({
-		method: "POST",
-		data: {action:dataString},
-		url: "../ajax/placesstates/",
-		success: function(data){
-			console.log(data);
-			var dataList = document.getElementById('json-datalistDepartamento');
-  			var input = document.getElementById('Departamento');
-          	var jsonOptions = JSON.parse(data);
-          	// Loop over the JSON array.
-			jsonOptions.forEach(function(item) {
-				// Create a new <option> element.
-				var option = document.createElement('option');
-
-				// Set the value using the item in the JSON array.
-				option.text = item.id;
-				option.value = item.name;
-
-				// Add the <option> element to the <datalist>.
-				dataList.appendChild(option);
-			}); 
-		},
-		error: function(e){
-			console.log(e);
-		 	$("#alert").html(e);
-		}
-	}); 
+              // Add the <option> element to the <datalist>.
+              dataList.appendChild(option);
+            }); 
+          },
+          error: function(e){
+            console.log(e);
+            $("#alert").html(e);
+          }
+        }); 
+       } 
+         
+    }
 });
 
+$('.Departamento').on('input', function(){
+    var options = document.getElementById("json-datalistDepartamento").options
+    for (var i=0;i<options.length;i++){
+       if (options[i].value == $(this).val()){
+          $value = this.value;
+          clearChildren('json-datalistCiudad');
+          $('.ciudad').val('');
+          $(".Departamento").val($value);
+          changeForm('DepartamentoID', $value, 'Ciudadhidden');
 
+          var postData = 
+                {
+                    "name": $value,
+                }
+          var dataString = JSON.stringify(postData);
+          $.ajax({
+            method: "POST",
+            data: {action:dataString},
+            url: "../ajax/placescitys/",
+            success: function(data){
+              console.log(data);
+              var dataList = document.getElementById('json-datalistCiudad');
+                var input = document.getElementById('Ciudad');
+                    var jsonOptions = JSON.parse(data);
+                    // Loop over the JSON array.
+              jsonOptions.forEach(function(item) {
+                // Create a new <option> element.
+                var option = document.createElement('option');
 
-$( ".Departamento" ).change(function() {
+                // Set the value using the item in the JSON array.
+                option.text = item.id;
+                option.value = item.name;
 
-	$value = this.value;
-	clearChildren('json-datalistCiudad');
-	$('.ciudad').val('');
-	$(".Departamento").val($value);
-	changeForm('DepartamentoID', $value, 'Ciudadhidden');
-
-	var postData = 
-        {
-            "name": $value,
-        }
-	var dataString = JSON.stringify(postData);
-	$.ajax({
-		method: "POST",
-		data: {action:dataString},
-		url: "../ajax/placescitys/",
-		success: function(data){
-			console.log(data);
-			var dataList = document.getElementById('json-datalistCiudad');
-  			var input = document.getElementById('Ciudad');
-          	var jsonOptions = JSON.parse(data);
-          	// Loop over the JSON array.
-			jsonOptions.forEach(function(item) {
-				// Create a new <option> element.
-				var option = document.createElement('option');
-
-				// Set the value using the item in the JSON array.
-				option.text = item.id;
-				option.value = item.name;
-
-				// Add the <option> element to the <datalist>.
-				dataList.appendChild(option);
-			}); 
-		},
-		error: function(e){
-			console.log(e);
-		 	$("#alert").html(e);
-		}
-	}); 
+                // Add the <option> element to the <datalist>.
+                dataList.appendChild(option);
+              }); 
+            },
+            error: function(e){
+              console.log(e);
+              $("#alert").html(e);
+            }
+          }); 
+       }
+    }
 });
 
-
-$( ".ciudad" ).change(function() {
-	$value = this.value;
-	changeForm('CiudadID', $value, 'button');
-	$(".ciudad").val($value);
+$('.ciudad').on('input', function(){
+    var options = document.getElementById("json-datalistCiudad").options
+    for (var i=0;i<options.length;i++){
+       if (options[i].value == $(this).val()){
+        $value = this.value;
+        changeForm('CiudadID', $value, 'button');
+        $(".ciudad").val($value);
+       }
+    }
 });
 
 
