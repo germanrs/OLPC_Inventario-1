@@ -366,6 +366,7 @@ header ul.main-menu li:hover ul {
     padding-left: 1rem;
     border: 0.2rem solid #fff;
     color: #008dd3;
+    margin-right: 7rem;
 }
 
 .side-menu .auth-link:hover {
@@ -510,4 +511,10 @@ input[type="submit"]:hover, button[type="submit"]:hover{
 .button:hover{
   background: #87d53a;
   color:#008dd3;
+}
+
+#holaUsername{
+        color: green;
+    float: left;
+    margin-right: 1rem;
 }

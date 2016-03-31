@@ -249,3 +249,12 @@ a img{
   margin-top: 1rem;
   margin-bottom: 1rem;
 }
+
+.placename{
+  font-size: 2rem;
+}
+
+.error{
+  font-size: 1.8rem;
+  color: red;
+}

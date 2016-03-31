@@ -48,14 +48,18 @@ class AuthController implements ControllerProviderInterface {
 	 * @return string A blob of HTML
 	 */
 	public function login(Application $app) {
-		//Check if the user is logged in
-		$userLogin = false;
-		// Already logged in
-		if ($app['session']->get('user') && ($app['db.users']->find($app['session']->get('user')['Email']))) {
-			return $app->redirect($app['url_generator']->generate('Inventory'));
+		
+		//check if the user is logged in
+		//set acces level and username to default
+		$access_level = 0;
+		$username = '';
+
+		// check if user is already logged in
+		if ($app['session']->get('user') && ($app['db.people']->fetchAdminPerson($app['session']->get('user')))) {
+			return $app->redirect($app['url_generator']->generate('Inventory.laptops'));
 		}
 
-		// Create Form
+		// Create Login Form
 		$loginform = $app['form.factory']
 		->createNamed('loginform', 'form')
 			->add('username', 'text', array(
@@ -71,18 +75,20 @@ class AuthController implements ControllerProviderInterface {
 		// Form is valid
 		if ($loginform->isValid()) {
 
+			//get data from the form
 			$data = $loginform->getData();
+
+			//get the user that fits the username
 			$user = $app['db.users']->findUserByName($data['username']);
 
 			// Password checks out
-			if (password_verify($data['password'], $user['Password'])) {
+			if (sha1($data['password']) == $user['clave']) {
 
-				// Only store needed data in session: here we only keep the id and firstname.
-				$app['session']->set('user', array_intersect_key($user, array('ID' => '', 'Email' => '')));
+				// Only store needed data in session: here we only keep the id
+				$app['session']->set('user', array('ID' => $user['person_id']));
 
-				//var_dump($app['session']);
-                // Redirect to admin index
-				return $app->redirect($app['url_generator']->generate('home'));
+                // Redirect to Inventory index
+				return $app->redirect($app['url_generator']->generate('Inventory.laptops'));
 			}
 
             // Password does not check out: add an error to the form
@@ -94,7 +100,8 @@ class AuthController implements ControllerProviderInterface {
 		// return to login page if login has failed
 		return $app['twig']->render('auth/login.twig', array(
 			'user' => null, 'loginform' => $loginform->createView(),
-			'userLogin' => $userLogin
+			'access_level' => $access_level,
+			'username' => $username
 		));
 	}
 
@@ -102,11 +109,17 @@ class AuthController implements ControllerProviderInterface {
 	 * [Logout]
 	 * This is the Logout method. 
 	 * @param  Application $app
-	 * @return [string] the generated url
+	 * @return [string] the generated url to the login page
 	 */
 	public function logout(Application $app) {
+
+		//remove the session
 		$app['session']->remove('user');
+
+		//return to the login page
 		return $app->redirect($app['url_generator']->generate('auth.login'));
 	}
 }
+
+
 // EOF

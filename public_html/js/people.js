@@ -1,7 +1,86 @@
-
-SetData('places','json-datalistplaces');
 SetData('profiles','json-datalistprofiles');
 SetData('grade','json-datalistgrade');
+SetDepartments();
+
+SetStaticDataTurno('Turno','json-datalistTurno');
+SetStaticDataSeccion('Seccion','json-datalistSeccion');
+
+function SetDepartments(){
+  var postData = 
+        {
+            "name": 'Nicaragua',
+        }
+  var dataString = JSON.stringify(postData);
+  $.ajax({
+    method: "POST",
+    data: {action:dataString},
+    url: "../../ajax/placesstates/",
+    success: function(data){
+      console.log(data);
+      var dataList = document.getElementById('json-datalistDepartamento');
+        var input = document.getElementById('Departamento');
+            var jsonOptions = JSON.parse(data);
+            // Loop over the JSON array.
+      jsonOptions.forEach(function(item) {
+        // Create a new <option> element.
+        var option = document.createElement('option');
+
+        // Set the value using the item in the JSON array.
+        option.text = item.id;
+        option.value = item.name;
+
+        // Add the <option> element to the <datalist>.
+        dataList.appendChild(option);
+      }); 
+    },
+    error: function(e){
+      console.log(e);
+      $("#alert").html(e);
+    }
+  });
+} 
+
+
+function SetStaticDataTurno(input, datalist){
+  var dataList = document.getElementById(datalist);
+  var input = document.getElementById(input);
+
+          var option = document.createElement('option');
+          // Set the value using the item in the JSON array.
+          option.value = 'Turno Mañana';
+          // Add the <option> element to the <datalist>.
+          dataList.appendChild(option);
+
+          var option = document.createElement('option');
+          // Set the value using the item in the JSON array.
+          option.value = 'Turno Tarde';
+          // Add the <option> element to the <datalist>.
+          dataList.appendChild(option);
+}
+
+function SetStaticDataSeccion(input, datalist){
+  var dataList = document.getElementById(datalist);
+  var input = document.getElementById(input);
+
+          var option = document.createElement('option');
+          // Set the value using the item in the JSON array.
+          option.value = 'Seccion A';
+          // Add the <option> element to the <datalist>.
+          dataList.appendChild(option);
+
+          var option = document.createElement('option');
+          // Set the value using the item in the JSON array.
+          option.value = 'Seccion B';
+          // Add the <option> element to the <datalist>.
+          dataList.appendChild(option);
+
+          var option = document.createElement('option');
+          // Set the value using the item in the JSON array.
+          option.value = 'Seccion C';
+          // Add the <option> element to the <datalist>.
+          dataList.appendChild(option);
+}
+
 
 function SetData(input, datalist){
   var value = input.toLowerCase();
@@ -10,13 +89,11 @@ function SetData(input, datalist){
   // Get the <datalist> and <input> elements.
   var dataList = document.getElementById(datalist);
   var input = document.getElementById(input);
-
   // Create a new XMLHttpRequest.
   var request = new XMLHttpRequest();
 
   // Handle state changes for the request.
   request.onreadystatechange = function(response) {
-    
     if (request.readyState === 4) {
       if (request.status === 200) {
 
@@ -80,16 +157,158 @@ $( "#openAddModal" ).click(function() {
   document.getElementById("birth_date").value = '';
   document.getElementById("phone").value = '';
   document.getElementById("email").value = '';
-  document.getElementById("places").value = '';
   document.getElementById("notes").value = '';
   document.getElementById("profiles").value = '';
   document.getElementById("barcode").value = '';
   document.getElementById("grade").value = '';
+  document.getElementById("Turno").value = '';
+  document.getElementById("Seccion").value = '';
+  document.getElementById("Departamento").value = '';
+  document.getElementById("Ciudad").value = '';
+  document.getElementById("Escuela").value = '';
+  document.getElementById("Ciudad").disabled=true;
+  document.getElementById("Escuela").disabled=true;
+  document.getElementById("grade").disabled=true;
+  document.getElementById("Turno").disabled=true;
+  document.getElementById("Seccion").disabled=true;
   document.getElementById("AddPerson").text = 'Add';
   $("#alert").css("display", "none");
    $("#openModal").css("opacity", "1");
    $("#openModal").css("pointer-events", "auto");
 });
+
+$('#Departamento').on('input', function(){
+    var options = document.getElementById("json-datalistDepartamento").options
+    for (var i=0;i<options.length;i++){
+       if (options[i].value == $(this).val()){
+          $value = this.value;
+          clearChildren('json-datalistCiudad');
+          $('#Ciudad').val('');
+          clearChildren('json-datalistEscuela');
+          $('#Escuela').val('');
+          $("#Departamento").val($value);
+
+          var postData = 
+                {
+                    "name": $value,
+                }
+          var dataString = JSON.stringify(postData);
+          $.ajax({
+            method: "POST",
+            data: {action:dataString},
+            url: "../../ajax/placescitys/",
+            success: function(data){
+              document.getElementById("Ciudad").disabled=false;
+              console.log(data);
+              var dataList = document.getElementById('json-datalistCiudad');
+                var input = document.getElementById('Ciudad');
+                    var jsonOptions = JSON.parse(data);
+                    // Loop over the JSON array.
+              jsonOptions.forEach(function(item) {
+                // Create a new <option> element.
+                var option = document.createElement('option');
+
+                // Set the value using the item in the JSON array.
+                option.text = item.id;
+                option.value = item.name;
+
+                // Add the <option> element to the <datalist>.
+                dataList.appendChild(option);
+              }); 
+            },
+            error: function(e){
+              console.log(e);
+              $("#alert").html(e);
+            }
+          }); 
+       }
+    }
+});
+
+$('#Ciudad').on('input', function(){
+    var options = document.getElementById("json-datalistCiudad").options
+    for (var i=0;i<options.length;i++){
+       if (options[i].value == $(this).val()){
+          $value = this.value;
+          clearChildren('json-datalistEscuela');
+          $('#Escuela').val('');
+          $("#Ciudad").val($value);
+
+          var postData = 
+                {
+                    "Ciudad": $value,
+                }
+          var dataString = JSON.stringify(postData);
+          $.ajax({
+            method: "POST",
+            data: {action:dataString},
+            url: "../../ajax/placesschools/",
+            success: function(data){
+              document.getElementById("Escuela").disabled=false;
+              console.log(data);
+              var dataList = document.getElementById('json-datalistEscuela');
+                var input = document.getElementById('Escuela');
+                    var jsonOptions = JSON.parse(data);
+                    // Loop over the JSON array.
+              jsonOptions.forEach(function(item) {
+                // Create a new <option> element.
+                var option = document.createElement('option');
+
+                // Set the value using the item in the JSON array.
+                option.text = item.id;
+                option.value = item.name;
+
+                // Add the <option> element to the <datalist>.
+                dataList.appendChild(option);
+              }); 
+            },
+            error: function(e){
+              console.log(e);
+              $("#alert").html(e);
+            }
+          }); 
+       }
+    }
+});  
+
+$('#Escuela').on('input', function(){
+    var options = document.getElementById("json-datalistEscuela").options;
+    for (var i=0;i<options.length;i++){
+      if (options[i].value == $(this).val()){
+        AllowSchoolDetails();
+      }
+    }
+});
+
+$('#profiles').on('input', function(){
+    var options = document.getElementById("json-datalistprofiles").options;
+    for (var i=0;i<options.length;i++){
+      if (options[i].value == $(this).val()){
+        AllowSchoolDetails();
+      }
+    }
+});
+
+function AllowSchoolDetails(){
+  $profile = document.getElementById("profiles").value;
+  $school = document.getElementById("Escuela").value;
+  if($profile == 'Estudiante' && $school != ''){
+    document.getElementById("grade").disabled=false;
+    document.getElementById("Turno").disabled=false;
+    document.getElementById("Seccion").disabled=false;
+    document.getElementById("grade").value = '';
+    document.getElementById("Turno").value = '';
+    document.getElementById("Seccion").value = '';
+  }
+  else{
+    document.getElementById("grade").disabled=true;
+    document.getElementById("Turno").disabled=true;
+    document.getElementById("Seccion").disabled=true;
+    document.getElementById("grade").value = '';
+    document.getElementById("Turno").value = '';
+    document.getElementById("Seccion").value = '';
+  }
+}
 
 $( "#CloseAddModal" ).click(function() {
    $("#openModal").css("opacity", "0");
@@ -156,15 +375,19 @@ $( "#AddPerson" ).click(function() {
   var birth_date = document.getElementById("birth_date").value;
   var phone = document.getElementById("phone").value;
   var email = document.getElementById("email").value;
-  var places = document.getElementById("places").value;
+  var Departamento = document.getElementById("Departamento").value;
+  var Ciudad = document.getElementById("Ciudad").value;
+  var Escuela = document.getElementById("Escuela").value;
   var notes = document.getElementById("notes").value;
   var barcode = document.getElementById("barcode").value;
   var profiles = document.getElementById("profiles").value;
   var grade = document.getElementById("grade").value;
+  var Turno = document.getElementById("Turno").value;
+  var Seccion = document.getElementById("Seccion").value;
+
   if(!name || 0 === name.length ||
     !lastname || 0 === lastname.length || 
-    !places || 0 === places.length || 
-    !grade || 0 === grade.length || 
+    !Departamento || 0 === Departamento.length || 
     !barcode || 0 === barcode.length || barcode === parseInt(barcode, 10) ||
     !profiles || 0 === profiles.length){
     $("#alert").css("display", "initial");
@@ -198,13 +421,16 @@ $( "#AddPerson" ).click(function() {
                       "phone":phone,
                       "email":email,
                       "position":'NULL',
-                      "school_name":places,
                       "barcode":barcode,
                       "id_document_created_at":'NULL',
                       "notes":notes,
-                      "places":places,
+                      "Departamento":Departamento,
+                      "Ciudad":Ciudad,
+                      "Escuela":Escuela,
                       "profiles":profiles,
-                      "grade":grade
+                      "grade":grade,
+                      "Turno":Turno,
+                      "Seccion":Seccion
                   }
 
       var dataString = JSON.stringify(postData);
@@ -215,7 +441,8 @@ $( "#AddPerson" ).click(function() {
               url: "../../ajax/addperson/",
               success: function(data){
                   $("#alert").html(data);
-                    if(data == 'person added'){
+                  console.log(data);
+                    if(data == 'Student added' || data == 'person added'){
                     var table = document.getElementById("table");
                     var row = table.insertRow(1);
                     var cell1 = row.insertCell(0);
@@ -227,12 +454,14 @@ $( "#AddPerson" ).click(function() {
                     var cell7 = row.insertCell(6);
                     var cell8 = row.insertCell(7);
                     var cell9 = row.insertCell(8);
+                    var cell10 = row.insertCell(9);
                     cell2.innerHTML = name;
                     cell3.innerHTML = lastname;
                     cell4.innerHTML = phone;
-                    cell4.innerHTML = email;
-                    cell6.innerHTML = places;
-                    cell7.innerHTML = profiles;
+                    cell5.innerHTML = email;
+                    cell6.innerHTML = Departamento;
+                    cell7.innerHTML = Escuela;
+                    cell8.innerHTML = profiles;
                     $.ajax({
                           method: "POST",
                           data: {action:dataString},
@@ -241,8 +470,8 @@ $( "#AddPerson" ).click(function() {
                               console.log(data);
                               var data2 = data
                               cell1.innerHTML = '<input type="checkbox" id="'+data2+'" name="checkbox"> '
-                              cell8.innerHTML = '<a class="button EditLaptop" onclick="Editperson(this)"  id="EditLaptop" data="'+data2+'"  role="button">Edit</a>';
-                              cell9.innerHTML = '<a class="button DeleteLaptop" onclick="Deleteperson(this)" id="Deleteperson" data="'+data2+'" role="button">delete</a>';
+                              cell9.innerHTML = '<a class="button EditLaptop" onclick="editperson(this)"  id="EditLaptop" data="'+data2+'"  role="button">Edit</a>';
+                              cell10.innerHTML = '<a class="button DeleteLaptop" onclick="deleteperson(this)" id="Deleteperson" data="'+data2+'" role="button">delete</a>';
                           },
                           error: function(e){
                             console.log(e);
@@ -275,7 +504,10 @@ $( "#AddPerson" ).click(function() {
                     "id": res[Id],
                     "places":places,
                     "profiles":profiles,
-                    "grade":grade
+                    "grade":grade,
+                    "Turno":Turno,
+                    "Seccion":Seccion
+
                 }
           var dataString = JSON.stringify(postData);
           $.ajax({
@@ -323,7 +555,9 @@ $( "#AddPerson" ).click(function() {
                       "notes":notes,
                       "places":places,
                       "profiles":profiles,
-                      "grade":grade
+                      "grade":grade,
+                      "Turno":Turno,
+                      "Seccion":Seccion
                   }
 
         var dataString = JSON.stringify(postData);
@@ -404,14 +638,19 @@ function editperson(datainput){
   var $Lastname = table.rows[index].cells[2].innerHTML;
   var $phone = table.rows[index].cells[3].innerHTML;
   var $email = table.rows[index].cells[4].innerHTML;
-  var $namedescription = table.rows[index].cells[5].innerHTML;
-  var $profdescription = table.rows[index].cells[6].innerHTML;
-  var $birth_date = table.rows[index].cells[7].innerHTML;
-  var $position = table.rows[index].cells[8].innerHTML;
-  var $school_name = table.rows[index].cells[9].innerHTML;
-  var $barcode = table.rows[index].cells[10].innerHTML;
-  var $notes = table.rows[index].cells[12].innerHTML;
-  var $typedescription = table.rows[index].cells[13].innerHTML;
+  var $region = table.rows[index].cells[5].innerHTML;
+  var $Schoolname = table.rows[index].cells[6].innerHTML;
+  var $profdescription = table.rows[index].cells[7].innerHTML;
+  var $DocumentID = table.rows[index].cells[8].innerHTML;
+  var $birth_date = table.rows[index].cells[9].innerHTML;
+  var $position = table.rows[index].cells[10].innerHTML;
+  var $barcode = table.rows[index].cells[11].innerHTML;
+  
+  var $notes = table.rows[index].cells[13].innerHTML;
+  var $typedescription = table.rows[index].cells[14].innerHTML;
+  var $Turno = table.rows[index].cells[15].innerHTML;
+  var $Seccion = table.rows[index].cells[16].innerHTML;
+  var $grade = table.rows[index].cells[17].innerHTML;
   document.getElementById("AddPerson").setAttribute("data", $ID);
   document.getElementById("AddPerson").setAttribute("index", index);
   document.getElementById("Name").value = $Name;
@@ -422,8 +661,10 @@ function editperson(datainput){
   document.getElementById("notes").value = $notes;
   document.getElementById("profiles").value = $profdescription;
   document.getElementById("barcode").value = $barcode;
-  document.getElementById("grade").value = $typedescription;
-  document.getElementById("places").value = $namedescription;
+  document.getElementById("grade").value = $grade;
+  document.getElementById("places").value = $Schoolname;
+  document.getElementById("Turno").value = $Turno;
+  document.getElementById("Seccion").value = $Seccion;
   $("#openModal").css("opacity", "1");
   $("#openModal").css("pointer-events", "auto");
 }
@@ -441,4 +682,12 @@ function getCheckedBoxes(chkboxName) {
   }
   // Return the array if it is non-empty, or null
   return checkboxesChecked.length > 0 ? checkboxesChecked : null;
+}
+
+function clearChildren( parent_id ) {
+    var childArray = document.getElementById( parent_id ).children;
+    if ( childArray.length > 0 ) {
+        document.getElementById( parent_id ).removeChild( childArray[ 0 ] );
+        clearChildren( parent_id );
+    }
 }

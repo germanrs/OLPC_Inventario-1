@@ -1,9 +1,16 @@
-
+//caal the function setData to fill in the datalists.
 SetData('Model','json-datalistModel');
 SetData('People','json-datalistPeople');
+SetData('assignee','json-datalistassignee');
 SetData('Status','json-datalistStatus');
 
+//set the data of a datalist
+//input = ID of textbox
+//dataliist = id of datalist
+//returns: fills up the datalist with the requested data
 function SetData(input, datalist){
+
+  //set input to lowercase
   var value = input.toLowerCase();
 
 
@@ -37,7 +44,7 @@ function SetData(input, datalist){
         }); 
         
         // Update the placeholder text.
-        input.placeholder = value+"...";
+        input.placeholder = input.toLowerCase()+"...";
       } else {
 
         // An error occured :(
@@ -49,21 +56,32 @@ function SetData(input, datalist){
   // Update the placeholder text.
   input.placeholder = "Loading options...";
 
+  //workaround for assignee, he needs the same data as people.
+  if(value == 'assignee'){
+    value = 'people';
+  }
   // Set up and make the request.
   request.open('GET', 'http://localhost:8080/rein.bauwens/site%20OLPC/website/source/public_html/ajax/'+value+'/', true);
   request.send();
 }
 
+//if the "all checkboxes box" is selected, select all the textboxes
 $( "#chechallboxes" ).click(function() {
+
+  //get all the cechboxes.
   checkboxes = document.getElementsByName('checkbox');
 
+  //check all the chexboxes
   if (document.getElementById("chechallboxes").checked) {
+
+          //loop over all the checkboxes and check the checkboxes
          for (var i = 0; i < checkboxes.length; i++) {
              if (checkboxes[i].type == 'checkbox') {
                  checkboxes[i].checked = true;
              }
          }
      } else {
+        //loop over all the checkboxes and uncheck the checkboxes
          for (var i = 0; i < checkboxes.length; i++) {
              if (checkboxes[i].type == 'checkbox') {
                  checkboxes[i].checked = false;
@@ -73,43 +91,60 @@ $( "#chechallboxes" ).click(function() {
 
 });
 
-
+//clear all the fields when the add model is opend
 $( "#openAddModal" ).click(function() {
   document.getElementById("Serial").value = '';
+  document.getElementById("assignee").value = '';
   document.getElementById("Model").value = '';
   document.getElementById("People").value = '';
   document.getElementById("Status").value = '';
   document.getElementById("Uuid").value = '';
   document.getElementById("AddLaptop").text = 'Add';
   document.getElementById("Serial").disabled=false;
-    document.getElementById("Uuid").disabled=false;
+  document.getElementById("Uuid").disabled=false;
+
+  //hidde the error
   $("#alert").css("display", "none");
+
+  //show the form
    $("#openModal").css("opacity", "1");
    $("#openModal").css("pointer-events", "auto");
 });
 
+//close the form
 $( "#CloseAddModal" ).click(function() {
+
+    //hide the form
    $("#openModal").css("opacity", "0");
    $("#openModal").css("pointer-events", "none");
 });
 
+//edit 1 laptop
 $( ".EditLaptop" ).click(function() {
   editlaptop(this);
 });
 
+//delete 1 laptop
 $( ".DeleteLaptop" ).click(function() {
   deletelaptop(this);
 });
 
-
+//edit multiple laptops
 $( "#EditSelectedLaptops" ).click(function() {
+
+  // get all the selected items to edit
   var checkedBoxes = getCheckedBoxes("checkbox");
-  console.log(checkedBoxes);
+
+  //create the variable id;
   var id ='';
+
+  // put all the id's from the selected items into the variable id
   for (box in checkedBoxes) {
     id = id +  checkedBoxes[box].id + ', ' ;
   }
-  console.log(id);
+
+  //if none is selected => do nothing
+  //else get the form in the proper form, disable some fields and clear the text
   if(id !=''){
     $("#alert").css("display", "none");
     document.getElementById("AddLaptop").text = 'Edit';
@@ -123,31 +158,38 @@ $( "#EditSelectedLaptops" ).click(function() {
   }
 });
 
+//get all the selected items and delete them
 $( "#DeleteSelectedLaptops" ).click(function() {
+
+  //get all the selected items
   var checkedBoxes = getCheckedBoxes("checkbox");
-  console.log(checkedBoxes);
+
+  //loop over the selected items and delete them
   for (box in checkedBoxes) {
     deletelaptop(checkedBoxes[box]);
   }
 });
 
-
-
-
-
-
+//when the addlaptop function is pressed, add the items from the form into the database
+//by using json requests
 $( "#AddLaptop" ).click(function() {
+
+  //get the value's of the field
   var Serial = document.getElementById("Serial").value;
   var Model = document.getElementById("Model").value;
   var People = document.getElementById("People").value;
   var Status = document.getElementById("Status").value;
   var Uuid = document.getElementById("Uuid").value;
+  var assignee = document.getElementById("assignee").value;
 
-  if(!Serial || 0 === Serial.length ||!Model || 0 === Model.length || Model === parseInt(Model, 10) || !People || 0 === People.length || People === parseInt(People, 10) ||!Status || 0 === Status.length || Status === parseInt(Status, 10) ||!Uuid || 0 === Uuid.length){
+  //check if all the fields are used
+  if(!Serial || 0 === Serial.length ||!Model || 0 === Model.length || Model === parseInt(Model, 10) || !assignee || 0 === assignee.length || assignee === parseInt(assignee, 10)  || !People || 0 === People.length || People === parseInt(People, 10) ||!Status || 0 === Status.length || Status === parseInt(Status, 10) ||!Uuid || 0 === Uuid.length){
     $("#alert").css("display", "initial");
     $("#alert").html("Fill in all fields!");
   }
   else{
+
+    //create the variable date and set it
     var today = new Date();
     var dd = today.getDate();
     var mm = today.getMonth()+1; //January is 0!
@@ -161,10 +203,13 @@ $( "#AddLaptop" ).click(function() {
         mm='0'+mm
     } 
 
+    //create the date
     today = yyyy+'/'+mm+'/'+dd;
 
     //add 1 laptop
     if(document.getElementById("AddLaptop").text == 'Add'){
+
+      //set all the data into an array named postdata
       var postData = 
                   {
                       "serial_number":Serial,
@@ -173,12 +218,15 @@ $( "#AddLaptop" ).click(function() {
                       "owner_id":People,
                       "status_id":Status,
                       "uuid":Uuid,
+                      "assignee_id":assignee,
                       "registered":0,
                       "last_activation_date":'NULL'
                   }
 
+      //make a json of the postdata
       var dataString = JSON.stringify(postData);
 
+      //make an ajax request to the php server where you add a laptop to the database
       $.ajax({
               method: "POST",
               data: {action:dataString},
@@ -197,11 +245,15 @@ $( "#AddLaptop" ).click(function() {
                   var cell8 = row.insertCell(7);
                   var cell9 = row.insertCell(8);
                   var cell10 = row.insertCell(9);
+                  var cell11 = row.insertCell(10);
                   cell2.innerHTML = Serial;
                   cell3.innerHTML = People;
                   cell5.innerHTML = Model;
                   cell6.innerHTML = Status;
                   cell7.innerHTML = Uuid;
+                  cell8.innerHTML = ((assignee == People)?'yes':'no');
+
+                  //if succes get the id of the newest added laptop to make the buttons work
                   $.ajax({
                         method: "POST",
                         data: {action:dataString},
@@ -209,8 +261,8 @@ $( "#AddLaptop" ).click(function() {
                         success: function(data){
                             var data2 = data
                             cell1.innerHTML = '<input type="checkbox" id="'+data2+'" name="checkbox"> '
-                            cell8.innerHTML = '<a class="button EditLaptop" onclick="editlaptop(this)"  id="EditLaptop" data="'+data2+'"  role="button">Edit</a>';
-                            cell9.innerHTML = '<a class="button DeleteLaptop" onclick="deletelaptop(this)" id="DeleteLaptop" data="'+data2+'" role="button">delete</a>';
+                            cell9.innerHTML = '<a class="button EditLaptop" onclick="editlaptop(this)"  id="EditLaptop" data="'+data2+'"  role="button">Edit</a>';
+                            cell10.innerHTML = '<a class="button DeleteLaptop" onclick="deletelaptop(this)" id="DeleteLaptop" data="'+data2+'" role="button">delete</a>';
                         },
                         error: function(e){
                         }
@@ -220,13 +272,17 @@ $( "#AddLaptop" ).click(function() {
                   $("#alert").html(e);
               }
       });
+  
+      //if laptop is not added, show the form with the error.
       if($("#alert").html() != 'laptop added'){
-        $("#alert").css("display", "initial");
-        
+        $("#alert").css("display", "initial");    
       }
 
     }
+    //if the user eddited a laptop change the data in the database
     else if(document.getElementById("AddLaptop").text == 'Edit'){
+
+      //get 
       var Ids = $('#AddLaptop').attr("data");
       
       //edit multiple laptops

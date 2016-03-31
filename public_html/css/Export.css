@@ -23,6 +23,10 @@
   display: none;
 }
 
+#DownloadFileasExcel{
+  display: none;
+}
+
 section{
 	transition:all linear 0.15s;
 	display: none;

@@ -165,6 +165,11 @@ class AjaxController implements ControllerProviderInterface {
 			->method('GET|POST')
 			->bind('Ajax.getidofplace');
 
+		$controllers
+			->get('/massassignment/', array($this, 'massassignment'))
+			->method('GET|POST')
+			->bind('Ajax.massassignment');
+
 		// Return ControllerCollection
 		return $controllers;
 	}
@@ -212,7 +217,7 @@ class AjaxController implements ControllerProviderInterface {
 	 */
 	public function places(Application $app) {
 		
-		$data = $app['db.places']->fetchAll();
+		$data = $app['db.places']->fetchAllschools();
 		echo json_encode($data);
 		return $app['twig']->render('Ajax/Dump.twig');	
 	}
@@ -236,7 +241,6 @@ class AjaxController implements ControllerProviderInterface {
 	 */
 	public function placesstates(Application $app) {
 		if(isset($_POST['action'])){
-
 			$obj = json_decode($_POST['action'], true);
 			$id = $app['db.places']->getPlaceByName($obj['name']);
 			$data = $app['db.places']->fetchstate($id);
@@ -340,7 +344,7 @@ class AjaxController implements ControllerProviderInterface {
 	 * @return string A blob of HTML
 	 */
 	public function grade(Application $app) {
-		$data = $app['db.place_types']->fetchAll();
+		$data = $app['db.place_types']->fetchAllgrades();
 		echo json_encode($data);
 		return $app['twig']->render('Ajax/Dump.twig');	
 	}
@@ -377,10 +381,116 @@ class AjaxController implements ControllerProviderInterface {
 		if(isset($_POST['action'])){
 			$obj = json_decode($_POST['action'], true);
 			if($obj['formname']=='laptopsForm'){
-				$data = $app['db.laptops']->fetchList($obj);
+				$Departamentoid = $app['db.places']->getPlace($obj['Departamento'], 2);
+				$cityid = $app['db.places']->getCityByName($obj['Ciudad']);
+				$placeid =1;
+				$schoolid = $app['db.places']->getitemByNameandAncestorID($obj['Escuela'], $cityid);
+				$turnoId = $app['db.places']->getitemByNameandAncestorID($obj['Turno'], $schoolid);
+				$gradoid = $app['db.places']->getitemByNameandAncestorID($obj['grado'], $turnoId);
+				$Seccionid = $app['db.places']->getitemByNameandAncestorID($obj['Seccion'], $gradoid);	
+				$data = array();
+				if(!empty($Seccionid)){
+					$placeid = $Seccionid;
+					array_push($data, array('name' => $obj['Departamento'].' : '. $obj['Ciudad'].' : '. $obj['Escuela'].' : '. $obj['Turno'].' : '. $obj['grado'].' : '. $obj['Seccion'], 'data' => $app['db.laptops']->fetchList($obj,$placeid)));
+				}
+				else if(!empty($gradoid)){
+					$placeid = $gradoid;
+					$seccions =  $app['db.places']->fetchSeccion($gradoid);
+					foreach ($seccions as $seccion) {
+						array_push($data, array('name' => $obj['Departamento'].' : '. $obj['Ciudad'].' : '. $obj['Escuela'].' : '. $obj['Turno'].' : '. $obj['grado'].' : '. $seccion['name'], 'data' => $app['db.laptops']->fetchList($obj,$seccion['id'])));
+					}
+				}
+				else if(!empty($turnoId)){
+					$placeid = $turnoId;
+					$grades =  $app['db.places']->fetchGrade($turnoId);
+					foreach ($grades as $grade) {
+						$seccions =  $app['db.places']->fetchSeccion($grade['id']);
+						foreach ($seccions as $seccion) {
+							array_push($data, array('name' => $obj['Departamento'].' : '. $obj['Ciudad'].' : '. $obj['Escuela'].' : '. $obj['Turno'].' : '. $grade['name'].' : '. $seccion['name'], 'data' => $app['db.laptops']->fetchList($obj,$seccion['id'])));
+						}
+					}
+				}
+				else if(!empty($schoolid)){
+					$placeid = $schoolid;
+					$teachers = $app['db.laptops']->fetchList($obj,$schoolid);
+					array_push($data, array('name' => $obj['Departamento'].' : '. $obj['Ciudad'].' : '. $obj['Escuela'], 'data' => $teachers));
+					$turnos =  $app['db.places']->fetchTurno($schoolid);
+					foreach ($turnos as $turno) {
+						$grades =  $app['db.places']->fetchGrade($turno['id']);
+						foreach ($grades as $grade) {
+							$seccions =  $app['db.places']->fetchSeccion($grade['id']);
+							foreach ($seccions as $seccion) {
+								array_push($data, array('name' => $obj['Departamento'].' : '. $obj['Ciudad'].' : '. $obj['Escuela'].' : '. $turno['name'].' : '. $grade['name'].' : '. $seccion['name'], 'data' => $app['db.laptops']->fetchList($obj,$seccion['id'])));
+							}
+						}
+					}
+				}
+				else if(!empty($cityid)){
+					$placeid = $cityid;
+					$schools =  $app['db.places']->fetchSchool($cityid);
+					foreach ($schools as $school) {
+						$teachers = $app['db.laptops']->fetchList($obj,$school['id']);
+						array_push($data, array('name' =>  $obj['Departamento'].' : '. $obj['Ciudad'].' : '. $school['name'], 'data' => $teachers));
+						$turnos =  $app['db.places']->fetchTurno($school['id']);
+						foreach ($turnos as $turno) {
+							$grades =  $app['db.places']->fetchGrade($turno['id']);
+							foreach ($grades as $grade) {
+								$seccions =  $app['db.places']->fetchSeccion($grade['id']);
+								foreach ($seccions as $seccion) {
+									array_push($data, array('name' => $obj['Departamento'].' : '. $obj['Ciudad'].' : '. $school['name'].' : '. $turno['name'].' : '. $grade['name'].' : '. $seccion['name'], 'data' => $app['db.laptops']->fetchList($obj,$seccion['id'])));
+								}
+							}
+						}
+					}
+				}
+				else if(!empty($Departamentoid)){
+					$placeid = $Departamentoid;
+					$citys =  $app['db.places']->fetchCity($Departamentoid);
+					foreach ($citys as $city) {
+						$schools =  $app['db.places']->fetchSchool($city['id']);
+						foreach ($schools as $school) {
+							$teachers = $app['db.laptops']->fetchList($obj,$school['id']);
+							array_push($data, array('name' => $obj['Departamento'].' : '. $city['name'].' : '. $school['name'], 'data' => $teachers));
+							$turnos =  $app['db.places']->fetchTurno($school['id']);
+							foreach ($turnos as $turno) {
+								$grades =  $app['db.places']->fetchGrade($turno['id']);
+								foreach ($grades as $grade) {
+									$seccions =  $app['db.places']->fetchSeccion($grade['id']);
+									foreach ($seccions as $seccion) {
+										array_push($data, array('name' => $obj['Departamento'].' : '. $city['name'].' : '. $school['name'].' : '. $turno['name'].' : '. $grade['name'].' : '. $seccion['name'], 'data' => $app['db.laptops']->fetchList($obj,$seccion['id'])));
+									}
+								}
+							}
+						}
+					}
+				}
+				else{
+					$placeid =1;
+					$states =  $app['db.places']->fetchstate($placeid);
+					foreach ($states as $state) {
+						$citys =  $app['db.places']->fetchCity($state['id']);
+						foreach ($citys as $city) {
+							$schools =  $app['db.places']->fetchSchool($city['id']);
+							foreach ($schools as $school) {
+								$teachers = $app['db.laptops']->fetchList($obj,$school['id']);
+								array_push($data, array('name' => $state['name'].' : '. $city['name'].' : '. $school['name'], 'data' => $teachers));
+								$turnos =  $app['db.places']->fetchTurno($school['id']);
+								foreach ($turnos as $turno) {
+									$grades =  $app['db.places']->fetchGrade($turno['id']);
+									foreach ($grades as $grade) {
+										$seccions =  $app['db.places']->fetchSeccion($grade['id']);
+										foreach ($seccions as $seccion) {
+											array_push($data, array('name' => $state['name'].' : '. $city['name'].' : '. $school['name'].' : '. $turno['name'].' : '. $grade['name'].' : '. $seccion['name'], 'data' => $app['db.laptops']->fetchList($obj,$seccion['id'])));
+										}
+									}
+								}
+							}
+						}
+					}
+				}									
 				echo json_encode($data);
 			}
-			else if($obj['formname']=='peopleForm'){	
+			/*else if($obj['formname']=='peopleForm'){
 				$data = $app['db.people']->fetchList2($obj);
 				if(!empty($data[0]['placename'])){
 					foreach ($data as $person) {
@@ -412,7 +522,7 @@ class AjaxController implements ControllerProviderInterface {
 				else{
 				echo json_encode($data);
 				}	
-			}
+			}*/
 			else if($obj['formname']=='placesForm'){
 				$data = $app['db.places']->fetchList($obj);
 				echo json_encode($data);
@@ -544,26 +654,174 @@ class AjaxController implements ControllerProviderInterface {
 			$obj = json_decode($_POST['action'], true);
 			$place="";
 			$profile="";
-			$grade="";
-			var_dump($obj);
-			try {
-				$grade = $app['db.place_types']->getGrade($obj['grade']);
-				$place= $app['db.places']->getPlace($obj['places'],$grade) ;
-				$profile = $app['db.profiles']->getProfile($obj['profiles']);
-				var_dump($grade);
-				var_dump($place);
-				var_dump($profile);
-			} catch (Exception $e) {
+			$gradoid=0;
+			$turnoId=0;
+			$Seccionid=0;
+			
+			$barcodeControl = $app['db.people']->FindPeopleByBarcodeId($obj['barcode']);
+			if(!empty($barcodeControl)){
+				echo "Barcode is not unique";
+			}
+			else{
+				if($obj['profiles'] == 'Estudiante'){
+					$place= $app['db.places']->getPlaceonlyoneName($obj['Departamento']);
+					$place= $app['db.places']->getitemByNameandAncestorID($obj['Ciudad'], $place[0]['id']);
+					$place= $app['db.places']->getitemByNameandAncestorID($obj['Escuela'], $place);
+					$turnoId = $app['db.places']->getitemByNameandAncestorID($obj['Turno'], $place);
+					
+					if(empty($turnoId)){
+						$turno = array('created_at' => date("Y-m-d"),'name' => $obj['Turno'], 'place_id' => $place,'place_type_id' => 12);
+						$app['db.places']->insert($turno);
+						$turnoid = $app['db.places']->Lastadded();
+						$dependency = array('descendant_id' => $turnoid, 'ancestor_id' => $place);
+						$app['db.places_dependencies']->insert($dependency);
+						$turnoId = $app['db.places']->getitemByNameandAncestorID($obj['Turno'], $place);
+					}
+					
+					
+					$gradoid = $app['db.places']->getitemByNameandAncestorID($obj['grade'], $turnoId);
+					if(empty($gradoid)){
+						$place_type_id='';
+						switch ($obj['grade']) {
+						    case 'Primer Grado':
+						        $place_type_id=5;
+						        break;
+						    case 'Segundo Grado':
+						        $place_type_id=6;
+						        break;
+						    case 'Tercer Grado':
+						        $place_type_id=7;
+						        break;
+						    case 'Cuarto Grado':
+						        $place_type_id=8;
+						        break;
+						    case 'Quinto Grado':
+						        $place_type_id=9;
+						        break;
+						    case 'Sexto Grado':
+						        $place_type_id=10;
+						        break;
+						    case 'Septimo grado':
+						        $place_type_id=16;
+						        break;
+						    case 'Octavo grado':
+						        $place_type_id=17;
+						        break;
+						    case 'Noveno grado':
+						        $place_type_id=18;
+						        break;
+						    case 'Preescolar': 
+						        $place_type_id=14;
+						        break;
+						    case 'Educacion Especial':
+						        $place_type_id=13;
+						        break;
+						    }
+						$grado = array('created_at' => date("Y-m-d"),'name' => $obj['grade'],'place_id' => $turnoId,'place_type_id' => $place_type_id);
+						$app['db.places']->insert($grado);
+						$gradoid = $app['db.places']->Lastadded();
+
+						$dependency = array('descendant_id' => $gradoid, 'ancestor_id' => $turnoId);
+						$app['db.places_dependencies']->insert($dependency);
+						$gradoid = $app['db.places']->getitemByNameandAncestorID($obj['grade'], $turnoId);
+					}
+
+					
+					$Seccionid = $app['db.places']->getitemByNameandAncestorID($obj['Seccion'], $gradoid);
+					if(empty($Seccionid)){
+						$seccion = array('created_at' => date("Y-m-d"),'name' => $obj['Seccion'],'place_id' => $gradoid,'place_type_id' => 11);
+						$app['db.places']->insert($seccion);
+						$seccionid = $app['db.places']->Lastadded();
+
+						$dependency = array('descendant_id' => $Seccionid, 'ancestor_id' => $gradoid);
+						$app['db.places_dependencies']->insert($dependency);
+						$Seccionid = $app['db.places']->getitemByNameandAncestorID($obj['Seccion'], $gradoid);
+					}
+					
+					if(ctype_digit($Seccionid)){
+						unset($obj['Departamento']);
+						unset($obj['Ciudad']);
+						$obj['school_name']= $obj['Escuela'];
+						unset($obj['Escuela']);
+						unset($obj['profiles']);
+						unset($obj['grade']);
+						unset($obj['Turno']);
+						unset($obj['Seccion']);
+						$app['db.people']->insert($obj);
+						$person_id = $app['db.people']->FindPeopleId($obj);
+						$perform = array('person_id' => $person_id, 'place_id' => $Seccionid, 'profile_id' => 7);
+						$app['db.performs']->insert($perform);
+						echo "Student added";
+					}
+					else{
+						echo 'profile or place does not exist.';
+					}
+
+				}
+				else{
+					$place= $app['db.places']->getPlaceonlyoneName($obj['Departamento']);
+					if($obj['Ciudad']!=''){
+						$place= $app['db.places']->getitemByNameandAncestorID($obj['Ciudad'], $place[0]['id']);
+						if($obj['Escuela']!=''){
+							$place= $app['db.places']->getitemByNameandAncestorID($obj['Escuela'], $place);
+						}
+					}
+					else{
+						$place = $place[0]['id'];
+					}
+					$profile = $app['db.profiles']->getProfile($obj['profiles']);
+
+					if(ctype_digit($place) && ctype_digit($profile)){
+						unset($obj['Departamento']);
+						unset($obj['Ciudad']);
+						$obj['school_name']= $obj['Escuela'];
+						unset($obj['Escuela']);
+						unset($obj['profiles']);
+						unset($obj['grade']);
+						unset($obj['Turno']);
+						unset($obj['Seccion']);
+						$app['db.people']->insert($obj);
+						$person_id = $app['db.people']->FindPeopleId($obj);
+						$perform = array('person_id' => $person_id, 'place_id' => $place, 'profile_id' => $profile);
+						$app['db.performs']->insert($perform);
+						echo "person added";
+					}
+					else{
+						echo 'profile or place does not exist.';
+					}
+				}
 			}
 			
-			if(ctype_digit($place) && ctype_digit($profile)){
+
+			/*if($place[0]['place_type_id']==4){
+				$turnoId = $app['db.places']->getitemByNameandAncestorID($obj['Turno'], $place[0]['id']);
+				$gradoid = $app['db.places']->getitemByNameandAncestorID($obj['grade'], $turnoId);
+				$Seccionid = $app['db.places']->getitemByNameandAncestorID($obj['Seccion'], $gradoid);
+			}
+			if($Seccionid !=0){
+				$placeid = $Seccionid;
+			}
+			else if($gradoid !=0){
+				$placeid = $gradoid;
+			}
+			else if($turnoId !=0){
+				$placeid = $turnoId;
+			}
+			else{
+				$placeid = $place[0]['id'];
+			}
+			
+			
+			if(ctype_digit($placeid) && ctype_digit($profile)){
 				unset($obj['places']);
 				unset($obj['profiles']);
 				unset($obj['grade']);
+				unset($obj['Turno']);
+				unset($obj['Seccion']);
 				try {
 					$app['db.people']->insert($obj);
 					$person_id = $app['db.people']->FindPeopleId($obj);
-					$perform = array('person_id' => $person_id, 'place_id' => $place, 'profile_id' => $profile);
+					$perform = array('person_id' => $person_id, 'place_id' => $placeid, 'profile_id' => $profile);
 					$app['db.performs']->insert($perform);
 					echo "person added";
 				} catch (Exception $e) {
@@ -572,7 +830,7 @@ class AjaxController implements ControllerProviderInterface {
 			}
 			else{
 				echo 'The grade doesnt fit the school.';
-			}
+			}*/
 		}
 		return $app['twig']->render('Ajax/Dump.twig');	
 	}
@@ -585,19 +843,45 @@ class AjaxController implements ControllerProviderInterface {
 	public function editperson(Application $app) {
 		if(isset($_POST['action'])){
 			$obj = json_decode($_POST['action'], true);
-			try {
-				$grade = $app['db.place_types']->getGrade($obj['grade']);
-				$place= $app['db.places']->getPlace($obj['places'],$grade) ;
-				$profile = $app['db.profiles']->getProfile($obj['profiles']);
-			} catch (Exception $e) {
+			$place="";
+			$profile="";
+			$gradoid=0;
+			$turnoId=0;
+			$Seccionid=0;
+			$place= $app['db.places']->getPlaceonlyoneName($obj['places']);
+			if($place[0]['place_type_id']==4){
+				$turnoId = $app['db.places']->getitemByNameandAncestorID($obj['Turno'], $place[0]['id']);
+				$gradoid = $app['db.places']->getitemByNameandAncestorID($obj['grade'], $turnoId);
+				$Seccionid = $app['db.places']->getitemByNameandAncestorID($obj['Seccion'], $gradoid);
+
 			}
-			if(ctype_digit($place) && ctype_digit($profile) && !empty($obj['name'])){
+			if($Seccionid !=0){
+				$placeid = $Seccionid;
+			}
+			else if($gradoid !=0){
+				$placeid = $gradoid;
+			}
+			else if($turnoId !=0){
+				$placeid = $turnoId;
+			}
+			else{
+				$placeid = $place[0]['id'];
+			}
+			$profile = $app['db.profiles']->getProfile($obj['profiles']);
+
+			var_dump($turnoId);
+			var_dump($gradoid);
+			var_dump($Seccionid);
+
+			if(ctype_digit($placeid) && ctype_digit($profile)){
 				unset($obj['places']);
 				unset($obj['profiles']);
 				unset($obj['grade']);
+				unset($obj['Turno']);
+				unset($obj['Seccion']);
 				try {
 					$app['db.people']->updatePerson($obj);
-					$perform = array('person_id' => $obj['id'], 'place_id' => $place, 'profile_id' => $profile);
+					$perform = array('person_id' => $obj['id'], 'place_id' => $placeid, 'profile_id' => $profile);
 					$app['db.performs']->updatePerform($perform);
 					echo "laptop edited";
 				} catch (Exception $e) {
@@ -607,7 +891,7 @@ class AjaxController implements ControllerProviderInterface {
 			else if(empty($obj['name'])){
 				try {
 					$app['db.people']->updatesmallPerson($obj);
-					$perform = array('person_id' => $obj['id'], 'place_id' => $place, 'profile_id' => $profile);
+					$perform = array('person_id' => $obj['id'], 'place_id' => $placeid, 'profile_id' => $profile);
 					$app['db.performs']->updatePerform($perform);
 					echo "laptop edited";
 				} catch (Exception $e) {
@@ -632,8 +916,12 @@ class AjaxController implements ControllerProviderInterface {
 		if(isset($_POST['action'])){
 			$obj = json_decode($_POST['action'], true);
 			try {
+				var_dump('ffff');
+				$app['db.laptops']->changeOwnerToFZT($obj['id']);
+				$app['db.movements']->deleteperson($obj['id']);
 				$app['db.performs']->deleteperson($obj['id']);
 				$app['db.people']->deleteperson($obj['id']);
+
 				echo "person deleted";
 			} catch (Exception $e) {
 				echo "person already deleted";
@@ -806,11 +1094,31 @@ class AjaxController implements ControllerProviderInterface {
 		return $app['twig']->render('Ajax/Dump.twig');	
 	}
 
-
-
+	/**
+	 * home page
+	 * @param Application $app An Application instance
+	 * @return string A blob of HTML
+	 */
+	public function massassignment(Application $app) {
+		if(isset($_POST['action'])){
+			$obj = json_decode($_POST['action'], true);
+			try {
+				$barcodes = explode(", ", $obj['barcodes']);
+				$serials = explode(", ", $obj['serials']);
+				for($i =0; $i<count($barcodes);$i++){
+					if(strlen($barcodes[$i]) ==10 && strlen($serials[$i]) == 11){
+						echo $app['db.laptops']->massassignment($barcodes[$i],$serials[$i]);
+					}
+				}
+			} catch (Exception $e) {
+				echo "Not found";
+			}
+		}
+		return $app['twig']->render('Ajax/Dump.twig');	
+	}
 }
 
-	function sort_objects_by_school($a, $b) {
+/*	function sort_objects_by_school($a, $b) {
 	if($a->school == $b->school){ return 0 ; }
 	return ($a->school < $b->school) ? -1 : 1;
 	}
@@ -818,4 +1126,4 @@ class AjaxController implements ControllerProviderInterface {
 	function sort_objects_by_region($a, $b) {
 		if($a->region == $b->region){ return 0 ; }
 		return ($a->region < $b->region) ? -1 : 1;
-	}
+	}*/

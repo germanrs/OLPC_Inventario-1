@@ -1,6 +1,6 @@
 var columns = [];
 var rows = [];
-
+var total=0;
 $(document).ready(function() {
     function close_accordion_section() {
         $('.accordion .accordion-section-title').removeClass('active');
@@ -27,16 +27,69 @@ $(document).ready(function() {
 });
 
 $( "#submitlaptop" ).click(function() {
-    GetData(this, 'laptopsForm');      
+    GetData(this, 'laptopsForm'); 
+    changeHref(this, 'laptopsForm');
+   
 });
 
 $( "#submitpeople" ).click(function() {
-    GetData(this, 'peopleForm');  
+    GetData(this, 'peopleForm');
+    changeHref(this, 'peopleForm');    
 });
 
 $( "#submitplaces" ).click(function() {
     GetData(this, 'placesForm');  
+    changeHref(this, 'placesForm');  
 });
+
+
+function changeHref(datainput, formname){
+    var boxlist = '';
+    var total = $("#"+formname+" input:checkbox:checked").length;
+    $("#"+formname+" input:checkbox:checked").each(function(index) {
+        if (index === total - 1) {
+            boxlist += this.value;
+        }
+        else{
+            boxlist += this.value + ', ';
+        }
+        
+    });
+    $("#exportTable tr").remove();
+    var OrderByTerm = $(datainput).closest("form")   
+                       .find("#orderByTerm")
+                       .val();                          
+    var orderList = $(datainput).closest("form")   
+                       .find("#orderList")
+                       .val();  
+    var GroupByTerm = $(datainput).closest("form")   
+                       .find("#GroupByTerm")
+                       .val();    
+    var inputfield = $(datainput).closest("form")   
+                       .find("#inputfield")
+                       .val();
+    var Departamento = document.getElementById('Departamento').value;
+    var Ciudad = document.getElementById('Ciudad').value;
+    var Escuela = document.getElementById('Escuela').value;
+    var Turno = document.getElementById('Turno').value;
+    var grado = document.getElementById('grado').value;
+    var Seccion = document.getElementById('Seccion').value;
+    document.getElementById("DownloadFileasExcel").href='excel?coloms='+boxlist+
+                                                                '&OrderByTerm='+OrderByTerm+
+                                                                '&orderList='+orderList+
+                                                                '&GroupByTerm='+GroupByTerm+
+                                                                '&inputfield='+inputfield+
+                                                                '&Departamento='+Departamento+
+                                                                '&Ciudad='+Ciudad+
+                                                                '&Escuela='+Escuela+
+                                                                '&Turno='+Turno+
+                                                                '&grado='+grado+
+                                                                '&Seccion='+Seccion+
+                                                                "&formname="+formname; 
+    if(document.getElementById('Escuela').value!=''){
+         document.getElementById("DownloadFileasExcel").style.display = "inherit";  
+    }
+}
 
 function GetData(datainput, formname){
 
@@ -71,6 +124,29 @@ function GetData(datainput, formname){
     var Escuela = document.getElementById('Escuela').value;
     var Turno = document.getElementById('Turno').value;
     var grado = document.getElementById('grado').value;
+    var Seccion = document.getElementById('Seccion').value;
+   
+    var places='Nicaragua';
+    if(Departamento != ''){
+        places += ' : '+Departamento;
+        if(Ciudad != ''){
+            places += ' : '+Ciudad;
+            if(Escuela != ''){
+                places += ' : '+Escuela;
+                if(Turno != ''){
+                    places += ' : '+Turno;
+                    if(grado != ''){
+                        places += ' : '+grado;
+                        if(Seccion != ''){
+                            places += ' : '+Seccion;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    document.getElementById("place").innerHTML= "" + places;
 
     if(0<boxlist.length){
         var postData = 
@@ -85,88 +161,210 @@ function GetData(datainput, formname){
                         "Escuela":Escuela,
                         "Turno":Turno,
                         "grado":grado,
+                        "Seccion":Seccion,
                         "Departamento":Departamento
                     }
-
         var dataString = JSON.stringify(postData);
-        $.ajax({
-                method: "POST",
-                data: {action:dataString},
-                url: "../ajax/getList/",
-                success: function(data){
-                    var table = document.getElementById("exportTable");
-                    var jsonOptions = JSON.parse(data);
-                    // Loop over the JSON array.
-                    var row = table.insertRow(0);
-                    
-                    var i = 0;
-                    for (var k in jsonOptions[0]){
-                        if (jsonOptions[0].hasOwnProperty(k)) {
-                             var cell1 = row.insertCell(i);
-                             cell1.innerHTML = k;
-                             i++;
-                             columns.push({title: k, dataKey:k});
-                        }
-                    }
-                    
-                    rows = jsonOptions.slice(0,200); 
-                    $width = [0,0,0,0,0,0,0,0];
-                    var j = 1;
-                    for(var i = 0; i < jsonOptions.length; ++i) {
-                        var l=0;
-                        var row = table.insertRow();
-                        for (var k in jsonOptions[i]){
-                            var cell1 = row.insertCell(l);
-                            cell1.innerHTML =jsonOptions[i][k];
-                            l++;
-                        }
-                        j++;
-                        if(j===20){
-                            break;
-                        }
-                    };
-                    document.getElementById("pdfcontent").style.display = "inherit";
+        console.log()
+        if(formname == 'laptopsForm'){
+            $.ajax({
 
-                },
-                error: function(e){
-                    console.log(e);
-                }
-        });
+                    method: "POST",
+                    data: {action:dataString},
+                    url: "../ajax/getList/",
+                    success: function(data){
+                        var table = document.getElementById("exportTable");
+                        var jsonOptions = JSON.parse(data);
+                        // Loop over the JSON array.
+                        var row = table.insertRow(0);
+                        var i = 0;
+                        for (var k in jsonOptions[0]['data'][0]){
+                            if (jsonOptions[0]['data'][0].hasOwnProperty(k)) {
+                                 var cell1 = row.insertCell(i);
+                                 cell1.innerHTML = k;
+                                 i++;
+                                 columns.push({title: k, dataKey:k});
+                            }
+                        }
+                        console.log(jsonOptions);
+                        for (var i = 0; i < jsonOptions.length; i++) {
+                            total = total + jsonOptions[i]['data'].length;
+                        }
+                        document.getElementById("total").innerHTML = "total laptops :"+total; 
+                        rows = jsonOptions; 
+                        $width = [0,0,0,0,0,0,0,0];
+                        var j = 1;
+                        for(var i = 0; i < jsonOptions[0]['data'].length; ++i) {
+                            var l=0;
+                            var row = table.insertRow();
+                            for (var k in jsonOptions[0]['data'][i]){
+                                var cell1 = row.insertCell(l);
+                                cell1.innerHTML =jsonOptions[0]['data'][i][k];
+                                l++;
+                            }
+                            j++;
+                            if(j===20){
+                                break;
+                            }
+                        };
+                        document.getElementById("pdfcontent").style.display = "inherit";
+
+                    },
+                    error: function(e){
+                        console.log(e);
+                    }
+            });
+        }
+        else{
+            $.ajax({
+                    method: "POST",
+                    data: {action:dataString},
+                    url: "../ajax/getList/",
+                    success: function(data){
+                        var table = document.getElementById("exportTable");
+                        var jsonOptions = JSON.parse(data);
+                        // Loop over the JSON array.
+                        var row = table.insertRow(0);
+                        var i = 0;
+                        for (var k in jsonOptions[0]){
+                            if (jsonOptions[0].hasOwnProperty(k)) {
+                                 var cell1 = row.insertCell(i);
+                                 cell1.innerHTML = k;
+                                 i++;
+                                 columns.push({title: k, dataKey:k});
+                            }
+                        }
+                        document.getElementById("total").innerHTML = ""; 
+                        document.getElementById("place").innerHTML = "";
+                        rows = jsonOptions; 
+                        $width = [0,0,0,0,0,0,0,0];
+                        var j = 1;
+                        for(var i = 0; i < jsonOptions.length; ++i) {
+                            var l=0;
+                            var row = table.insertRow();
+                            for (var k in jsonOptions[i]){
+                                var cell1 = row.insertCell(l);
+                                cell1.innerHTML =jsonOptions[i][k];
+                                l++;
+                            }
+                            j++;
+                            if(j===20){
+                                break;
+                            }
+                        };
+
+                        document.getElementById("pdfcontent").style.display = "inherit";
+
+                    },
+                    error: function(e){
+                        console.log(e);
+                    }
+            });
+        }
     }
 }
 
-
-
 $('#DownloadFile').click(function () {
-    var doc = new jsPDF('p', 'pt');
-    doc.autoTable(columns, rows, {
-        styles: {
-            fillStyle: 'DF',
-            overflow: 'linebreak',
-        },
-        headerStyles: {
-            fillColor: [22,127,146],
-            textColor: 255,
-            fontSize: 15,
-            rowHeight: 30
-        },
-        bodyStyles: {
-            fillColor: [255, 255, 255],
-            textColor: 000
-        },
-        alternateRowStyles: {
-            fillColor:[234,243,243]
-        },
-        columnStyles: {
-            email: {
-                fontStyle: 'bold'
+    var Departamento = document.getElementById('Departamento').value;
+    var Ciudad = document.getElementById('Ciudad').value;
+    var Escuela = document.getElementById('Escuela').value;
+    var Turno = document.getElementById('Turno').value;
+    var grado = document.getElementById('grado').value;
+    var Seccion = document.getElementById('Seccion').value;
+    var places='Nicaragua';
+    if(Departamento != ''){
+        places += ' : '+ Departamento;
+        if(Ciudad != ''){
+            places += ' : '+Ciudad;
+            if(Escuela != ''){
+                places += ' : '+Escuela;
+                if(Turno != ''){
+                    places += ' : '+Turno;
+                    if(grado != ''){
+                        places += ' : '+grado;
+                        if(Seccion != ''){
+                            places += ' : '+Seccion;
+                        }
+                    }
+                }
             }
-        },
-        margin: {top: 60},
-        beforePageContent: function(data) {
-            doc.text("Laptop Table", 40, 30);
         }
-    });
+    }
+    total = 0;
+    for (var i = 0; i < rows.length; i++) {
+        total = total + rows[i]['data'].length;
+    }
+    var doc = new jsPDF('l', 'pt');
+    doc.setFontSize(14);
+    doc.text("place name: "+places + ' -- Total laptops:'+total , 40, 30);
+    for (var i = 0; i < rows.length; i++) {
+        if(i == 0){
+            doc.text(''+rows[i]['name'], 40, 50);
+            doc.autoTable(columns, rows[i]['data'], {
+            styles: {
+                fillStyle: 'DF',
+                overflow: 'linebreak',
+            },
+            headerStyles: {
+                fillColor: [22,127,146],
+                textColor: 255,
+                fontSize: 15,
+                rowHeight: 30
+            },
+            bodyStyles: {
+                fillColor: [255, 255, 255],
+                textColor: 000
+            },
+            alternateRowStyles: {
+                fillColor:[234,243,243]
+            },
+            columnStyles: {
+                email: {
+                    fontStyle: 'bold'
+                }
+            },
+            margin: {top: 80}/*,
+            beforePageContent: function(data) {
+                doc.text("place name: "+places , 40, 30);
+            }*/
+            });
+        }
+        else{
+            doc.text(''+rows[i]['name'], 40, doc.autoTableEndPosY() + 30);
+            doc.autoTable(columns, rows[i]['data'], {
+            startY: doc.autoTableEndPosY() + 40,
+            styles: {
+                fillStyle: 'DF',
+                overflow: 'linebreak',
+            },
+            headerStyles: {
+                fillColor: [22,127,146],
+                textColor: 255,
+                fontSize: 15,
+                rowHeight: 30
+            },
+            bodyStyles: {
+                fillColor: [255, 255, 255],
+                textColor: 000
+            },
+            alternateRowStyles: {
+                fillColor:[234,243,243]
+            },
+            columnStyles: {
+                email: {
+                    fontStyle: 'bold'
+                }
+            },
+            margin: {top: 80}/*,
+            beforePageContent: function(data) {
+                doc.text("place name: "+places , 40, 30);
+            }*/
+            });
+        }
+        
+    }
+    
+    
     doc.save('table.pdf');
 });
 

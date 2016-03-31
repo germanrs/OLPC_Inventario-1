@@ -20,4 +20,15 @@ class MovementsRepository extends \Knp\Repository {
 		return $this->db->fetchAll(
 				'SELECT movements.* FROM movements');
 	}
+
+	public function deleteperson($personID) {
+		$this->db->delete('movements', array('source_person_id' => $laptopID));
+		return $this->db->delete('movements', array('destination_person_id' => $laptopID));
+
+	}
+
+	
+
+
+
 }

@@ -48,6 +48,11 @@ class InventoryController implements ControllerProviderInterface {
 			->method('GET|POST')
 			->bind('Inventory.places');
 
+		$controllers
+			->get('/massassignment/', array($this, 'massassignment'))
+			->method('GET|POST')
+			->bind('Inventory.MassAssignment');
+			
 
 		// Return ControllerCollection
 		return $controllers;
@@ -59,14 +64,29 @@ class InventoryController implements ControllerProviderInterface {
 	 * @return string A blob of HTML
 	 */
 	public function laptops(Application $app) {
-		$show='';
+
 		//check if the user is logged in
-		/*$userLogin = false;
-		if ($app['session']->get('user') && ($app['db.users']->findUserByEmail($app['session']->get('user')['Email']))) {
-			$userLogin = true;
-			$userCred = $app['session']->get('user');
-		*/
-		//set the number of items per pages to 9
+		//set acces level and username to default
+		$access_level = 0;
+		$username = '';
+
+		// check if user is already logged in
+		if ($app['session']->get('user') && ($app['db.people']->fetchAdminPerson($app['session']->get('user')))) {
+
+			//get the user from de database.
+			$user = $app['db.people']->fetchAdminPerson($app['session']->get('user'));
+
+			//set acces level and username
+			$username = $user[0]['name'];
+			$access_level = $user[0]['access_level'];
+		}
+		else{
+
+			//redirect to login page if user is not logged id
+			return $app->redirect($app['url_generator']->generate('auth.login')); 
+		}
+
+		//set the number of items per pages to 20
 		$numItemsPerPage = 20;
 
 		//get the current page number, if page is not set use 1
@@ -74,38 +94,54 @@ class InventoryController implements ControllerProviderInterface {
 	
 		// Get parameters
 		$params = $app['request']->query->all();
-    	// when the form is applayed and the page is not 1 use the following code
+
+    	// when the form is applayed and the page has multiple filters
     	if ($params!=null && isset($params['filterform']['genres']) && ''!=($params['filterform']['genres'])) {
+    		
+    		//get the genre (sort filter)
     		$genre = $params['filterform']['genres'];
+
+    		//get the search value
 			$searchstring = $params['filterform']['searchstring'];
 			
 			//Get the number of items
 			$numItems = $app['db.laptops']->fetchTotalFilterLaptops($params['filterform']);	
 
+			//get a list of laptops
 			$laptops = $app['db.laptops']->findFiltered($params['filterform'],$curPage,$numItemsPerPage);
     	}
 
+    	// when the form is applayed and the page has only an order by filter
     	else if ($params!=null && isset($params['genres'])) {
+
+    		//get the genre (sort filter)
     		$genre = $params['genres'];
+			
+			//get the search value
 			$searchstring = $params['searchstring'];
 			
 			//Get the number of items
 			$numItems = $app['db.laptops']->fetchTotalFilterLaptops($params);
 
+			//get a list of laptops
 			$laptops = $app['db.laptops']->findFiltered($params,$curPage,$numItemsPerPage);
     	}
+
+    	//get the laptops from a page without filters
     	else{
+
+    		//set the genre to null
     		$genre = '';
+
+    		//set the searchstring to null
 			$searchstring = '';
 			
 
 			//Get the number of items
 			$numItems = $app['db.laptops']->fetchTotalLaptops();
 
-			$laptops = $app['db.laptops']->fetchAllLaptops($curPage,$numItemsPerPage);
-
-			// Password does not check out: add an error to the form
-            
+			//get a list of laptops
+			$laptops = $app['db.laptops']->fetchAllLaptops($curPage,$numItemsPerPage);            
     	}
 
     	//Calculate the number of pages by dividing the items count by the number of item per page 
@@ -173,7 +209,6 @@ class InventoryController implements ControllerProviderInterface {
 
 		//return the rendered twig with parameters
 		return $app['twig']->render('inventory/Laptops.twig', array(
-			'show' => $show,
 			'filterform' => $filterform->createView(),
 			'laptops' => $laptoparray,
 			'curPage'=>$curPage,
@@ -181,8 +216,9 @@ class InventoryController implements ControllerProviderInterface {
 			'numItems'=>$numItems, 
 			'baseUrl'=> $app['Inventory.base_url'],
 			'pagination'=>generatePaginationSequence($curPage, $numPages),
-			'requestParams' => $newparams
-			//'userLogin' => $userLogin,
+			'requestParams' => $newparams,
+			'access_level' => $access_level,
+			'username' => $username
 		));
 		
 	}
@@ -193,14 +229,29 @@ class InventoryController implements ControllerProviderInterface {
 	 * @return string A blob of HTML
 	 */
 	public function people(Application $app) {
-		$show='';
+		
 		//check if the user is logged in
-		/*$userLogin = false;
-		if ($app['session']->get('user') && ($app['db.users']->findUserByEmail($app['session']->get('user')['Email']))) {
-			$userLogin = true;
-			$userCred = $app['session']->get('user');
-		*/
-		//set the number of items per pages to 9
+		//set acces level and username to default
+		$access_level = 0;
+		$username = '';
+
+		// check if user is already logged in
+		if ($app['session']->get('user') && ($app['db.people']->fetchAdminPerson($app['session']->get('user')))) {
+
+			//get the user from de database.
+			$user = $app['db.people']->fetchAdminPerson($app['session']->get('user'));
+
+			//set acces level and username
+			$username = $user[0]['name'];
+			$access_level = $user[0]['access_level'];
+		}
+		else{
+
+			//redirect to login page if user is not logged id
+			return $app->redirect($app['url_generator']->generate('auth.login')); 
+		}
+
+		//set the number of items per pages to 20
 		$numItemsPerPage = 20;
 
 		//get the current page number, if page is not set use 1
@@ -244,25 +295,49 @@ class InventoryController implements ControllerProviderInterface {
 
     	$peoplearray = array();
 		foreach ($people as $person) {
-			$datadump= $app['db.performs']->fetchAllByPersonId($person['id']);	
+			$datadump= $app['db.performs']->fetchAllByPersonId($person['id']);
 			$datadump = $app['db.places_dependencies']->fetchAllAncestorsFromSchool($datadump[0]['place_id']);
+			$person['Seccion'] = '';
+			$person['Turno'] = '';
+			$person['grade'] = '';
+			$person['region'] ='';
+			$person['Schoolname'] ='';
+
 			if(!empty($datadump)){
 				foreach ($datadump as $data) {
 					$place_type_id=0;
 					if(!empty($data)){
-						$person['region'] ='';
 						if(2==$data['place_type_id']){
 							$person['region'] = $data['name'];
 						}
 						else if(4==$data['place_type_id']){
-							$person['namedescription'] = $data['name'];
+							$person['Schoolname'] = $data['name'];
+						}
+						else if(12==$data['place_type_id']){
+							$person['Turno'] = $data['name'];
+						}
+						else if(11==$data['place_type_id']){
+							$person['Seccion'] = $data['name'];
+						}
+						else if(5==$data['place_type_id'] ||
+							6==$data['place_type_id'] ||
+							7==$data['place_type_id'] ||
+							8==$data['place_type_id'] ||
+							9==$data['place_type_id'] ||
+							10==$data['place_type_id'] ||
+							13==$data['place_type_id'] ||
+							14==$data['place_type_id'] ||
+							16==$data['place_type_id'] ||
+							17==$data['place_type_id'] ||
+							18==$data['place_type_id']){
+							$person['grade'] = $data['name'];
 						}
 					}
 				}
 			}
 			else{
-				$person['region'] =$person['namedescription'];
-				$person['namedescription'] ='';
+				$person['region'] =$person['Schoolname'];
+				$person['Schoolname'] ='';
 			}
 			array_push($peoplearray,$person);
 		}
@@ -304,7 +379,8 @@ class InventoryController implements ControllerProviderInterface {
 
 		//return the rendered twig with parameters
 		return $app['twig']->render('inventory/people.twig', array(
-			'show' => $show,
+			'access_level' => $access_level,
+			'username' => $username,
 			'filterform' => $filterform->createView(),
 			'people' => $peoplearray,
 			'curPage'=>$curPage,
@@ -313,7 +389,7 @@ class InventoryController implements ControllerProviderInterface {
 			'baseUrl'=> $app['Inventory.base_url'],
 			'pagination'=>generatePaginationSequence($curPage, $numPages),
 			'requestParams' => $newparams
-			//'userLogin' => $userLogin,
+			
 		));
 		
 	}
@@ -324,14 +400,29 @@ class InventoryController implements ControllerProviderInterface {
 	 * @return string A blob of HTML
 	 */
 	public function places(Application $app) {
-		$show='';
+		
 		//check if the user is logged in
-		/*$userLogin = false;
-		if ($app['session']->get('user') && ($app['db.users']->findUserByEmail($app['session']->get('user')['Email']))) {
-			$userLogin = true;
-			$userCred = $app['session']->get('user');
-		*/
-		//set the number of items per pages to 9
+		//set acces level and username to default
+		$access_level = 0;
+		$username = '';
+
+		// check if user is already logged in
+		if ($app['session']->get('user') && ($app['db.people']->fetchAdminPerson($app['session']->get('user')))) {
+
+			//get the user from de database.
+			$user = $app['db.people']->fetchAdminPerson($app['session']->get('user'));
+
+			//set acces level and username
+			$username = $user[0]['name'];
+			$access_level = $user[0]['access_level'];
+		}
+		else{
+
+			//redirect to login page if user is not logged id
+			return $app->redirect($app['url_generator']->generate('auth.login')); 
+		}
+
+		//set the number of items per pages to 20
 		$numItemsPerPage = 20;
 
 		//get the current page number, if page is not set use 1
@@ -406,10 +497,9 @@ class InventoryController implements ControllerProviderInterface {
 		if (isset($params['filterform']['genres']) && ''==($params['filterform']['genres'])){
 				$filterform->get('genres')->addError(new \Symfony\Component\Form\FormError('Select a type'));
 		}
-
+		
 		//return the rendered twig with parameters
 		return $app['twig']->render('inventory/places.twig', array(
-			'show' => $show,
 			'filterform' => $filterform->createView(),
 			'places' => $places,
 			'curPage'=>$curPage,
@@ -417,8 +507,45 @@ class InventoryController implements ControllerProviderInterface {
 			'numItems'=>$numItems, 
 			'baseUrl'=> $app['Inventory.base_url'],
 			'pagination'=>generatePaginationSequence($curPage, $numPages),
-			'requestParams' => $newparams
-			//'userLogin' => $userLogin,
+			'requestParams' => $newparams,
+			'access_level' => $access_level,
+			'username' => $username
+		));
+		
+	}
+
+	/**
+	 * home page
+	 * @param Application $app An Application instance
+	 * @return string A blob of HTML
+	 */
+	public function massassignment(Application $app) {
+		
+		//check if the user is logged in
+		//set acces level and username to default
+		$access_level = 0;
+		$username = '';
+
+		// check if user is already logged in
+		if ($app['session']->get('user') && ($app['db.people']->fetchAdminPerson($app['session']->get('user')))) {
+
+			//get the user from de database.
+			$user = $app['db.people']->fetchAdminPerson($app['session']->get('user'));
+
+			//set acces level and username
+			$username = $user[0]['name'];
+			$access_level = $user[0]['access_level'];
+		}
+		else{
+
+			//redirect to login page if user is not logged id
+			return $app->redirect($app['url_generator']->generate('auth.login')); 
+		}
+		
+		//return the rendered twig with parameters
+		return $app['twig']->render('inventory/massassignment.twig', array(
+			'access_level' => $access_level,
+			'username' => $username
 		));
 		
 	}

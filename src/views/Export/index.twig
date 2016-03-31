@@ -15,24 +15,27 @@
 			<div class="accordion">
 				<div class="accordion-section">
 					<a class="accordion-section-title active" href="#accordion-1">Laptops</a>
-					
 					<div id="accordion-1" style="display: block;" class="accordion-section-content">
 						<h3>include</h3>
-						<form action="includelaptops" id="laptopsForm"  autocomplete="off" >
+						<form action="includelaptops" id="laptopsForm" >
 							<div class="checkboxes">
+								<input type="checkbox" name="laptops" value="CONCAT(people.name,' ',people.lastname) as name"><div class="boxlabel">owner</div>
 								<input type="checkbox" name="laptops" value="laptops.serial_number"><div class="boxlabel">serial_number</div>
 								<input type="checkbox" name="laptops" value="models.name as model"><div class="boxlabel">model</div>
-								<input type="checkbox" name="laptops" value="CONCAT(people.name,' ',people.lastname) as name"><div class="boxlabel">owner</div>
 								<input type="checkbox" name="laptops" value="statuses.description as status"><div class="boxlabel">status</div>
 								<input type="checkbox" name="laptops" value="laptops.uuid"><div class="boxlabel">uuid</div>
 								<input type="checkbox" onclick="ShowCountry()" name="laptops" value="places.name as place"><div class="boxlabel">place</div>
+								<div class="clear"></div>
+								<input type="checkbox" name="laptops" value="people.id_document"><div class="boxlabel">document id</div>
+								<input type="checkbox" name="laptops" value="people.barcode"><div class="boxlabel">barcode</div>
+								<input type="checkbox" name="laptops" value="IF (laptops.assignee_id = laptops.owner_id, 'yes' ,'No') AS InHands"><div class="boxlabel">In hands</div>
 							</div>
 							<div class="clear"></div>
 							<div class="label Paishidden">
 								Pais
 							</div>
 							<div class="input Paishidden">
-								<input  type="text" id="Pais" class="Pais" list="json-datalistPais" placeholder="Pais..." onmousedown="">
+								<input  type="text" id="Pais" class="Pais" list="json-datalistPais" placeholder="Pais...">
 							</div>
 							<datalist id="json-datalistPais"></datalist>
 							<div class="label Departamentohidden">
@@ -87,6 +90,8 @@
 									<option value="status">status</option>
 									<option value="uuid">uuid</option>
 									<option value="place">place</option>
+									<option value="id_document">document id</option>
+									<option value="barcode">barcode</option>
 								</select>
 								<select id='orderList'>
 									<option value="ASC">Ascending</option>
@@ -109,6 +114,8 @@
 									<option value="statuses.description">status</option>
 									<option value="laptops.uuid">uuid</option>
 									<option value="places.name">place</option>
+									<option value="people.id_document">document id</option>
+									<option value="people.barcode">barcode</option>
 								</select>
 								<input type="text" name="fname" id="inputfield" placeholder="search field..."><br>
 								<a class="button" id="submitlaptop" role="button">Preview</a>
@@ -117,62 +124,8 @@
 					</div><!--end .accordion-section-content-->
 				</div><!--end .accordion-section-->
 				<div class="accordion-section">
-					<a class="accordion-section-title" href="#accordion-2">People</a>
-					
+					<a class="accordion-section-title" href="#accordion-2">Places</a>
 					<div id="accordion-2" class="accordion-section-content">
-						<h3>include</h3>
-						<form action="includelaptops" id="peopleForm">
-							<div class="checkboxes">
-								<input type="checkbox" name="laptops" value="CONCAT(people.name,' ',people.lastname) as name"><div class="boxlabel">Name</div>
-								<input type="checkbox" name="laptops" value="people.id_document"><div class="boxlabel">document id</div>
-								<input type="checkbox" name="laptops" value="people.birth_date"><div class="boxlabel">birthday</div>
-								<input type="checkbox" name="laptops" value="people.phone"><div class="boxlabel">phone</div>
-								<input type="checkbox" onclick="ShowCountry()" name="laptops" value="places.name as place"><div class="boxlabel">place</div>
-								<div class="clear"></div>
-								<input type="checkbox" name="laptops" value="people.barcode"><div class="boxlabel">barcode</div>
-							</div>
-							<div class="order">
-								<h3>Order by</h3>
-								<select id='orderByTerm'>
-									<option value="null">Choose wisely!</option>
-									<option value="Name">Name</option>
-									<option value="id_document">document id</option>
-									<option value="phone">phone</option>
-									<option value="status">status</option>
-									<option value="places.name">place name</option>
-									<option value="barcode">barcode</option>
-								</select>
-								<select id='orderList'>
-									<option value="ASC">Ascending</option>
-									<option value="DESC">Descending</option>
-								</select>
-								{#<a href="default.asp">
-								  <img id='buttonPlus1' class='buttonplus'  src="{{ app.request.baseUrl }}/img/plus.png">
-								</a>
-								<a href="default.asp">
-								  <img id='buttonminus1' class='buttonMinus' src="{{ app.request.baseUrl }}/img/minus.png">
-								</a>#}
-							</div>
-							<div class="filter">
-								<h3>Filter</h3>
-								<select id='GroupByTerm'>
-									<option value="null">Choose wisely!</option>
-									<option value="CONCAT(people.name,' ',people.lastname)">Name</option>
-									<option value="people.id_document">document id</option>
-									<option value="people.phone">phone</option>
-									<option value="status">status</option>
-									<option value="places.name">place name</option>
-									<option value="people.barcode">barcode</option>
-								</select>
-								<input type="text" name="fname" id="inputfield" placeholder="search field..."><br>
-								<a class="button" id="submitpeople" role="button">Preview</a>
-							</div>
-						</form>
-					</div><!--end .accordion-section-content-->
-				</div><!--end .accordion-section-->
-				<div class="accordion-section">
-					<a class="accordion-section-title" href="#accordion-3">Places</a>
-					<div id="accordion-3" class="accordion-section-content">
 						<h3>places</h3>
 						<form action="includelaptops" id="placesForm">
 							<div class="checkboxes">
@@ -220,17 +173,24 @@
 		<h1>preview</h1>
 		<div class="clear"></div>
 		<div id="pdfcontent">
+			<h3 id="place"></h3>
+			<h3 id="total"></h3>
 			<table id="exportTable">
 				
 			</table>
 			<a class="button" id="DownloadFile" role="button">Download PDF</a>
+			<a class="button" id="DownloadFileasExcel" href="excel?data=AZE&test=123" role="button">Download Excel</a>
 		</div>
 	</div>
+	
+
 {% endblock %}
 {% block pageScripts %}
 	
+
 	<script src="{{ app.request.baseUrl }}/js/jspdf.min.js"></script>
 	<script src="{{ app.request.baseUrl }}/js/jspdf.debug.js"></script>
+	<script src="{{ app.request.baseUrl }}/js/simple-excel.js"></script>
 	<script src="{{ app.request.baseUrl }}/js/jspdf.plugin.autotable.js"></script>
 	<script src="{{ app.request.baseUrl }}/js/Export.js"></script>
 {% endblock %}

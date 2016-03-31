@@ -124,6 +124,10 @@ class PeopleRepository extends \Knp\Repository {
 		return $this->db->fetchColumn('SELECT id FROM people where name = '. $this->db->quote($people['name'], \PDO::PARAM_STR) .'AND lastname = '. $this->db->quote($people['lastname'], \PDO::PARAM_STR) .'AND barcode = '. $this->db->quote($people['barcode'], \PDO::PARAM_STR));
 	}
 
+	public function FindPeopleByBarcodeId($barcode) {
+		return $this->db->fetchColumn('SELECT id FROM people where barcode = '. $this->db->quote($barcode, \PDO::PARAM_STR));
+	}
+
 	public function Lastadded() {
 		return $this->db->fetchColumn('SELECT id FROM people order BY ID DESC');
 	}
@@ -273,6 +277,15 @@ class PeopleRepository extends \Knp\Repository {
 				. ' LIMIT 200');
 	    }
 	}
+
+	public function fetchAdminPerson($id) {
+		return $this->db->fetchAll(
+	    		'SELECT people.id, profiles.access_level, people.name from people 
+				INNER JOIN performs on performs.person_id = people.id
+				INNER JOIN profiles on performs.profile_id = profiles.id
+				where people.id ='.  $this->db->quote($id['ID'], \PDO::PARAM_STR));
+	}
+	
 
 
 }

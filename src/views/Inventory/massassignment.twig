@@ -1,0 +1,44 @@
+{# extend the parent tpl #}
+{% extends 'layout.twig' %}
+
+{# set the pagetitle in the parent tpl #}
+{% set pageTitle = 'Inventory' %}
+
+{# Page specific css #}
+{% block pageCss %}
+	<link rel="stylesheet" media="screen" href="{{ app.request.baseUrl }}/css/lijst.css" />
+	<link rel="stylesheet" media="screen" href="{{ app.request.baseUrl }}/css/massasignment.css" />
+{% endblock %}
+{% block pageContent %}
+	{# Page specific content #}
+	{% include  'menu.twig' %}
+<div class="menu-right">
+	<h1>Mass assignment</h1>
+	<form novalidate="novalidate" role="form">
+		<fieldset>
+			<div class="form-group">
+				<div class="labels">
+					<h2>laptop Serial number</h2>
+					<h2>Person Barcode<h2>
+				</div>
+				<div class="clear"></div>
+				<div class="input">
+					<input type="text" class="serial" name="serial" id="serial" value="" placeholder="Serial...">
+					<input type="text" class="barcode" name="barcode" id="barcode" style="margin-left: -0.4rem;" value="" placeholder="Barcode...">
+					<p id="alert" name="error"></p>
+					<div class="clear rows"></div>
+				</div>
+
+				
+			</div>
+			<div class="clear rows"></div>
+			<a class="button" id="assignall" data="" role="button">Add</a>
+			
+		</fieldset>
+	</form>
+	
+</div>
+{% endblock %}
+{% block pageScripts %}
+<script src="{{ app.request.baseUrl }}/js/massassignment.js"></script>
+{% endblock %}

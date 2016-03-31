@@ -21,6 +21,13 @@ class PlacesRepository extends \Knp\Repository {
 				'SELECT places.name as name, places.id as id  FROM places group by places.name');
 	}
 
+	public function fetchAllschools() {
+		return $this->db->fetchAll(
+				'SELECT places.name as name, places.id as id  FROM places where (places.place_type_id=4 OR places.place_type_id=3 OR places.place_type_id=2 OR places.place_type_id=1) group by places.name ');
+	}
+
+
+
 	/**
 	 * get the requested person
 	 * @param String $PersonName
@@ -29,6 +36,11 @@ class PlacesRepository extends \Knp\Repository {
 	public function getPlace($placename, $place_type_id) {
 		$query = 'SELECT id FROM places WHERE name = ' . $this->db->quote($placename, \PDO::PARAM_INT).'AND place_type_id = '. $this->db->quote($place_type_id, \PDO::PARAM_INT);
 		return $this->db->fetchColumn($query);
+	}
+
+	public function getPlaceonlyoneName($placename) {
+		$query = 'SELECT id, place_type_id FROM places WHERE name = ' . $this->db->quote($placename, \PDO::PARAM_INT).' AND (place_type_id = 1 OR place_type_id = 2 OR place_type_id = 3 OR place_type_id = 4)';
+		return $this->db->fetchAll($query);
 	}
 
 	public function getSchool($placename, $id) {
@@ -278,7 +290,7 @@ class PlacesRepository extends \Knp\Repository {
 	public function fetchGrade($idTurno) {
 		return $this->db->fetchAll(
 				'SELECT places.id, places.name from places
-				where place_id ='.$idTurno.' order by name');
+				where place_id ='.$idTurno.' order by place_type_id');
 	}
 
 	public function fetchSeccion($idSeccion) {

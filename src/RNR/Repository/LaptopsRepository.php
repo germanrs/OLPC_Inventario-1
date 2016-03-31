@@ -13,7 +13,7 @@ class LaptopsRepository extends \Knp\Repository {
 
 	public function fetchAllLaptops($curPage, $numItemsPerPage) {
 		return $this->db->fetchAll(
-				'SELECT laptops.id as laptopID, laptops.serial_number, laptops.uuid, people.name as firstname, people.lastname as lastname, people.id as peopleID, places.name as placename, places.id as placeID, models.name as modelName, statuses.description from laptops 
+				'SELECT laptops.id as laptopID, laptops.serial_number, laptops.uuid, people.name as firstname, people.lastname as lastname, people.id as peopleID, places.name as placename, places.id as placeID, models.name as modelName, statuses.description, IF (laptops.assignee_id = laptops.owner_id, "yes" ,"No") AS InHands from laptops 
 				INNER JOIN statuses ON statuses.id = laptops.status_Id 
 				INNER JOIN models on models.id = laptops.model_id 
 				INNER JOIN people on people.id = laptops.owner_id 
@@ -142,10 +142,26 @@ class LaptopsRepository extends \Knp\Repository {
 		return $this->db->fetchColumn('SELECT id FROM laptops where serial_number = '. $this->db->quote($laptopserial, \PDO::PARAM_STR));
 	}
 
-	
+	public function massassignment($barcode, $serial) {
+		$ownerid = $this->db->fetchColumn('SELECT id FROM people where barcode = '. $this->db->quote($barcode, \PDO::PARAM_STR));
+		if($ownerid != null && $ownerid != ''){
+			$result = 'UPDATE laptops SET 
+			 owner_id = '. $ownerid .
+			' WHERE serial_number = '.$this->db->quote($serial, \PDO::PARAM_INT);
+			$i = $this->db->executeUpdate($result);
+			
+			if($i == 1){
+				return 'changed$';
+			}
+			else{
+				return 'not changed$';
+			}
+		}
+		return 'Person '. $barcode.' not found$';
+	}
 
 
-	public function fetchList($obj) {
+	public function fetchList($obj, $placeID) {
 
 	    $extraWhere = '';
 	    $orderby ='';
@@ -154,16 +170,39 @@ class LaptopsRepository extends \Knp\Repository {
 	        $orderby .= ' ORDER BY '.$obj['OrderByTerm'].' '.$obj['orderList'];
 	    }
 	    if ($obj['GroupByTerm'] != 'null' && $obj['inputfield']!='search field...'){
-	    	$extraWhere .= ' WHERE '.$obj['GroupByTerm'].' LIKE ' . $this->db->quote('%'.$obj['inputfield'].'%', \PDO::PARAM_STR);
+	    	$extraWhere .= ' AND '.$obj['GroupByTerm'].' LIKE ' . $this->db->quote('%'.$obj['inputfield'].'%', \PDO::PARAM_STR);
 	    }
 	    //return 'SELECT '.$obj['coloms'].' FROM laptops INNER JOIN statuses ON statuses.id = laptops.status_Id INNER JOIN models on models.id = laptops.model_id INNER JOIN people on people.id = laptops.owner_id INNER JOIN performs on performs.person_id = laptops.owner_id INNER JOIN places on performs.place_id = places.id' . $extraWhere .' ' . $orderby;
 	
 	    return $this->db->fetchAll(
-				'SELECT '.$obj['coloms'].' FROM laptops INNER JOIN statuses ON statuses.id = laptops.status_Id INNER JOIN models on models.id = laptops.model_id INNER JOIN people on people.id = laptops.owner_id INNER JOIN performs on performs.person_id = laptops.owner_id INNER JOIN places on performs.place_id = places.id' . $extraWhere . ' ' . $orderby);
-	
+				'SELECT '.$obj['coloms'].' FROM  people
+				LEFT JOIN laptops on people.id = laptops.owner_id 
+				LEFT JOIN statuses ON statuses.id = laptops.status_Id 
+				LEFT JOIN models on models.id = laptops.model_id 
+				INNER JOIN performs on performs.person_id = people.id 
+				INNER JOIN places on performs.place_id = places.id
+				where performs.place_id = '.$placeID.' ' . $extraWhere . ' ' . $orderby);
+	}
+
+	public function fetchListOfPeopleFromPlace($placeId) {
+
+	    return $this->db->fetchAll(
+				'SELECT people.name, people.lastname, laptops.serial_number FROM  people
+				LEFT JOIN laptops on people.id = laptops.owner_id 
+				INNER JOIN performs on performs.person_id = people.id
+				where performs.place_id = '.$placeId);
+	}
+
+	public function changeOwnerToFZT($userid) {
+		$result = 'UPDATE laptops SET '.
+			'owner_id = 5
+			WHERE owner_id = '.$this->db->quote($userid, \PDO::PARAM_INT);
+		return $this->db->executeUpdate($result);
 	}
 
 
-	
+
+
+		
 }
 

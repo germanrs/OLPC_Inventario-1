@@ -21,6 +21,23 @@ class PlacestypesRepository extends \Knp\Repository {
 				'SELECT name as name, id as id  FROM place_types');
 	}
 
+	public function fetchAllgrades() {
+		return $this->db->fetchAll(
+				'SELECT name as name, id as id  FROM place_types where place_types.id = 5 OR
+																		place_types.id = 6 OR
+																		place_types.id = 7 OR
+																		place_types.id = 8 OR
+																		place_types.id = 9 OR
+																		place_types.id = 10 OR
+																		place_types.id = 13 OR
+																		place_types.id = 14 OR
+																		place_types.id = 16 OR
+																		place_types.id = 17 OR
+																		place_types.id = 18
+																		 ');
+	}
+
+	
 	/**
 	 * get the requested Status
 	 * @param String $StatusDescription

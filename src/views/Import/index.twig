@@ -16,7 +16,7 @@
 				<div class="accordion-section">
 					<a class="accordion-section-title active" href="#accordion-1">Importar estudiantes</a>
 					<div id="accordion-1" style="display: block;" class="accordion-section-content">
-						<p>El spreadsheet .xls de los datos de estudiantes tiene que tener las columnas:</p>
+						<p>El spreadsheet .xlsx de los datos de estudiantes tiene que tener las columnas:</p>
 						<ul>
 							<li>
 								Nombre
@@ -137,7 +137,7 @@
 						<div id="accordion-3" class="accordion-section-content">
 							<div class="clear"></div>
 							<section class="active">
-								<p>Crear un spreadsheet (formato .xls) y rellenar con los datos de las laptops en estas columnas:</p>
+								<p>Crear un spreadsheet (formato .xlsx) y rellenar con los datos de las laptops en estas columnas:</p>
 								<ul>
 									<li>
 										Serial de la laptop (SHC005008C0)
@@ -165,7 +165,9 @@
 	<div class="preview">
 		<h1>preview</h1>
 		<div class="clear"></div>
-		<div class="error">{{placename}} {{ error }}</div>
+		<div class="placename">{{placename}}</div>
+		<div class="clear"></div>
+		<div class="error">{{ error }}</div>
 		<div class="clear"></div>
 		<div id="pdfcontent">
 			<table id="exportTable">
@@ -256,12 +258,16 @@
 						<th>
 							Type
 						</th>
+						<th>
+							Remark
+						</th>
 					</tr>
 					{% for object in data %}
 						<tr>
 							<td class="serial">{{ object.A }}</td>
 							<td class="UUID">{{ object.B }}</td>
 							<td class="Type">{{ object.C }}</td>
+							<td class="Type">{{ object.D }}</td>
 						</tr>
 					{% endfor %}
 				{% endif %}

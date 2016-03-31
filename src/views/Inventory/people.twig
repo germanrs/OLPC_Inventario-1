@@ -7,6 +7,7 @@
 {# Page specific css #}
 {% block pageCss %}
 	<link rel="stylesheet" media="screen" href="{{ app.request.baseUrl }}/css/lijst.css" />
+	<link rel="stylesheet" media="screen" href="{{ app.request.baseUrl }}/css/people.css" />
 {% endblock %}
 {% block pageContent %}
 	{# Page specific content #}
@@ -71,16 +72,18 @@
 				<td class="phone">{{ person.phone }}</td>
 				<td class ="email">{{ person.email }}</td>
 				<td class="place">{{ person.region }}</td>
-				<td class="namedescription">{{ person.namedescription }}</td>
+				<td class="Schoolname">{{ person.Schoolname }}</td>
 				<td class="profdescription">{{ person.profdescription }}</td>
 				<td class="id_document displaynone">{{ person.id_document }}</td>
 				<td class="birth_date displaynone">{{ person.birth_date }}</td>
 				<td class="position displaynone">{{ person.position }}</td>
-				<td class="school_name displaynone">{{ person.school_name }}</td>
 				<td class="barcode displaynone">{{ person.barcode }}</td>
 				<td class="id_document_created_at displaynone">{{ person.id_document_created_at }}</td>
 				<td class="notes displaynone">{{ person.notes }}</td>
 				<td class="typedescription displaynone">{{ person.typedescription }}</td>
+				<td class="Turno displaynone">{{ person.Turno }}</td>
+				<td class="Seccion displaynone">{{ person.Seccion }}</td>
+				<td class="Grade displaynone">{{ person.grade }}</td>
 				<td class="text-right">
 					<a class="button Editperson" id="Editperson" data="{{ person.id }}"  role="button">Edit</a>
 				</td>
@@ -97,7 +100,6 @@
 			{% include  'pagination.twig' %}
 		</div>
 	</div>
-	<div class="hiden" id="hiden">/{{show}}</div>
 		<div id="openModal" class="modalDialog">
 			<div>
 				<a id="CloseAddModal"  class="close">X</a>
@@ -107,78 +109,114 @@
 					<form novalidate="novalidate" role="form">
 						<fieldset>
 							<div class="form-group">
-								<div class="label">
-									Name
+								<div class="formleft">
+									<div class="label">
+										Name
+									</div>
+									<div class="input">
+										<input type="text" id="Name" placeholder="Name...">
+									</div>
+									<div class="clear"></div>
+									<div class="label">
+										Lastname
+									</div>
+									<div class="input">
+										<input type="text" id="Lastname" placeholder="Lastname...">
+									</div>
+									<div class="clear"></div>
+									<div class="label">
+										birth_date
+									</div>
+									<div class="input">
+										<input type="text" id="birth_date" name="login" value="" placeholder="birth_date...">
+									</div>
+									<div class="clear"></div>
+									<div class="label">
+										phone
+									</div>
+									<div class="input">
+										<input type="text" id="phone" name="login" value="" placeholder="phone...">
+									</div>
+									<div class="clear"></div>
+									<div class="label">
+										email
+									</div>
+									<div class="input">
+										<input type="text" id="email" name="login" value="" placeholder="email...">
+									</div>
+									<div class="clear"></div>
+									<div class="label">
+										barcode
+									</div>
+									<div class="input">
+										<input type="text" id="barcode" name="login" value="" placeholder="barcode...">
+									</div>
+									<div class="clear"></div>
+									<div class="label">
+										notes
+									</div>
+									<div class="input">
+										<input type="text" id="notes" name="login" value="" placeholder="notes...">
+									</div>
 								</div>
-								<div class="input">
-									<input type="text" id="Name" placeholder="Name...">
+								<div class="formright">
+									<div class="label">
+										profiles
+									</div>
+									<div class="input">
+										<input type="text" id="profiles" list="json-datalistprofiles" placeholder="profiles..">
+									</div>
+									<datalist id="json-datalistprofiles"></datalist>
+									<div class="clear"></div>
+									<div class="label">
+										Departamento
+									</div>
+									<div class="input">
+										<input type="text" id="Departamento" list="json-datalistDepartamento" placeholder="Departamento...">
+									</div>
+									<datalist id="json-datalistDepartamento"></datalist>
+									<div class="clear"></div>
+									<div class="label">
+										Ciudad
+									</div>
+									<div class="input">
+										<input type="text" id="Ciudad" list="json-datalistCiudad" placeholder="Ciudad...">
+									</div>
+									<datalist id="json-datalistCiudad"></datalist>
+									<div class="clear"></div>
+									<div class="label">
+										Escuela
+									</div>
+									<div class="input">
+										<input type="text" id="Escuela" list="json-datalistEscuela" placeholder="Escuela...">
+									</div>
+									<datalist id="json-datalistEscuela"></datalist>
+									<div class="clear"></div>
+									<div class="label">
+										Turno
+									</div>
+									<div class="input">
+										<input type="text" id="Turno" list="json-datalistTurno" placeholder="Turno..">
+									</div>
+									<datalist id="json-datalistTurno"></datalist>
+									<div class="clear"></div>
+									<div class="label">
+										grade
+									</div>
+									<div class="input">
+										<input type="text" id="grade" list="json-datalistgrade" placeholder="profiles..">
+									</div>
+									<datalist id="json-datalistgrade"></datalist>
+									<div class="clear"></div>
+									<div class="label">
+										Seccion
+									</div>
+									<div class="input">
+										<input type="text" id="Seccion" list="json-datalistSeccion" placeholder="Seccion..">
+									</div>
+									<datalist id="json-datalistSeccion"></datalist>
+									<div class="clear"></div>
 								</div>
-								<div class="clear"></div>
-								<div class="label">
-									Lastname
-								</div>
-								<div class="input">
-									<input type="text" id="Lastname" placeholder="Lastname...">
-								</div>
-								<div class="clear"></div>
-								<div class="label">
-									birth_date
-								</div>
-								<div class="input">
-									<input type="text" id="birth_date" name="login" value="" placeholder="birth_date...">
-								</div>
-								<div class="clear"></div>
-								<div class="label">
-									phone
-								</div>
-								<div class="input">
-									<input type="text" id="phone" name="login" value="" placeholder="phone...">
-								</div>
-								<div class="clear"></div>
-								<div class="label">
-									email
-								</div>
-								<div class="input">
-									<input type="text" id="email" name="login" value="" placeholder="email...">
-								</div>
-								<div class="clear"></div>
-								<div class="label">
-									school name
-								</div>
-								<div class="input">
-									<input type="text" id="places" list="json-datalistplaces" placeholder="places...">
-								</div>
-								<datalist id="json-datalistplaces"></datalist>
-								<div class="clear"></div>
-								<div class="label">
-									barcode
-								</div>
-								<div class="input">
-									<input type="text" id="barcode" name="login" value="" placeholder="barcode...">
-								</div>
-								<div class="clear"></div>
-								<div class="label">
-									notes
-								</div>
-								<div class="input">
-									<input type="text" id="notes" name="login" value="" placeholder="notes...">
-								</div>
-								<div class="label">
-									profiles
-								</div>
-								<div class="input">
-									<input type="text" id="profiles" list="json-datalistprofiles" placeholder="profiles..">
-								</div>
-								<datalist id="json-datalistprofiles"></datalist>
-								<div class="clear"></div>
-								<div class="label">
-									grade
-								</div>
-								<div class="input">
-									<input type="text" id="grade" list="json-datalistgrade" placeholder="profiles..">
-								</div>
-								<datalist id="json-datalistgrade"></datalist>
-								<div class="clear"></div>
 							</div>
 							<a class="button" id="AddPerson" data="" role="button">Add</a>
 							<p id="alert">Fill in all fields!</p>

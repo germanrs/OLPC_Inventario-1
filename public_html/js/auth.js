@@ -12,15 +12,6 @@ function str_hmac_sha1(key, data){ return binb2str(core_hmac_sha1(key, data));}
 /*
  * Perform a simple self-test to see if the VM is working
  */
-function sha1_vm_test()
-{
-	console.log(hex_sha1("abc"));
-	console.log(hex_sha1("germanrx89"));
-  	return hex_sha1("abc") == "a9993e364706816aba3e25717850c26c9cd0d89d";
-
-}
-
-sha1_vm_test();
 
 function core_sha1(x, len)
 {

@@ -23,7 +23,7 @@ class PlacesDependenciesRepository extends \Knp\Repository {
 
 	public function fetchAllAncestors($ancestor) {
 		return $this->db->fetchAll(
-				'SELECT place_dependencies.* FROM place_dependencies where descendant_id ='.$ancestor.' AND ancestor_id <='.$ancestor.' ORDER BY ancestor_id DESC' );
+				'SELECT place_dependencies.* FROM place_dependencies where descendant_id ='.$ancestor );
 	}
 
 	public function DeleteALL($id) {
@@ -34,9 +34,7 @@ class PlacesDependenciesRepository extends \Knp\Repository {
 		return $this->db->fetchAll(
 				'SELECT place_dependencies.ancestor_id, places.name, place_type_id, places.id FROM place_dependencies
 				inner Join places on places.id = place_dependencies.ancestor_id
-				where descendant_id ='.$ancestor.' AND ancestor_id <='.$ancestor.' 
-				And  (place_type_id = 2 OR place_type_id = 4)
-				ORDER BY ancestor_id DESC');
+				where descendant_id ='.$ancestor);
 	}
 }
 

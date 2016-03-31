@@ -19,7 +19,7 @@ $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
     'db.options' => array(
         'driver' => 'pdo_mysql',
         'dbhost' => 'localhost',
-        'dbname' => 'testolpc',
+        'dbname' => 'laatsteversieolpc',
         'user' => 'root',
         'charset' => 'utf8mb4',
         'password' => '', //Mysql password

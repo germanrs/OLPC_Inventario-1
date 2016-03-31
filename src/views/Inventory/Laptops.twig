@@ -55,6 +55,9 @@
 				uuid
 			</th>
 			<th>
+				In hands
+			</th>
+			<th>
 				edit
 			</th>{# 
 			<th>
@@ -73,6 +76,7 @@
 				<td class ="model">{{ laptop.modelName }}</td>
 				<td class="status">{{ laptop.description }}</td>
 				<td class="uuid">{{ laptop.uuid }}</td>
+				<td class="uuid">{{ laptop.InHands }}</td>
 
 				<td class="text-right">
 					<a class="button EditLaptop" id="EditLaptop" data="{{ laptop.laptopID }}"  role="button">Edit</a>
@@ -90,7 +94,6 @@
 			{% include  'pagination.twig' %}
 		</div>
 	</div>
-	<div class="hiden" id="hiden">/{{show}}</div>
 		<div id="openModal" class="modalDialog">
 			<div>
 				<a id="CloseAddModal"  class="close">X</a>
@@ -137,6 +140,14 @@
 								<div class="input">
 									<input type="text" id="Uuid" name="login" value="" placeholder="UuId...">
 								</div>
+								<div class="clear"></div>
+								<div class="label">
+									In hands of
+								</div>
+								<div class="input">
+									<input type="text" id="assignee" list="json-datalistassignee" placeholder="Assiged to..">
+								</div>
+								<datalist id="json-datalistassignee"></datalist>
 								<div class="clear"></div>
 							</div>
 							<a class="button" id="AddLaptop" data="" role="button">Add</a>

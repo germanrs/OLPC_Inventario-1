@@ -1,0 +1,44 @@
+fieldset{
+	border:none;
+	margin-left: 0rem;
+    padding-left: 0rem;
+}
+
+.labels h2{
+	float: left;
+	margin-left: 7rem;
+}
+
+.labels h2:first-child{
+
+	margin-right: 12rem;
+}
+
+input[type="text"]{
+	margin-left: 0rem;
+	margin-right: 3rem;
+	width: 30rem;
+}
+
+#assignall {
+    margin-right: 10rem;
+    float: right;
+}
+
+.menu-right {
+    width: 70%;
+}
+
+.input {
+    float: left;
+	width: inherit;
+}
+
+.menu-right h1{
+	margin-left: 24rem;
+}    
+
+#alert{
+	margin-top: 0.5rem;
+	display: inherit;
+}

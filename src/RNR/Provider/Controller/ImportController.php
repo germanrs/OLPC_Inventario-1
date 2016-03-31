@@ -49,11 +49,26 @@ class ImportController implements ControllerProviderInterface {
 		$value = 0;
 
 		//check if the user is logged in
-		/*$userLogin = false;
-		if ($app['session']->get('user') && ($app['db.users']->findUserByEmail($app['session']->get('user')['Email']))) {
-			$userLogin = true;
-			$userCred = $app['session']->get('user');
-		*/
+		//set acces level and username to default
+		$access_level = 0;
+		$username = '';
+
+		// check if user is already logged in
+		if ($app['session']->get('user') && ($app['db.people']->fetchAdminPerson($app['session']->get('user')))) {
+
+			//get the user from de database.
+			$user = $app['db.people']->fetchAdminPerson($app['session']->get('user'));
+
+			//set acces level and username
+			$username = $user[0]['name'];
+			$access_level = $user[0]['access_level'];
+		}
+		else{
+
+			//redirect to login page if user is not logged id
+			return $app->redirect($app['url_generator']->generate('auth.login')); 
+		}
+		
 		$CiudadID ='';
 		$DepartamentoID='';
 		$PaisID='';
@@ -134,7 +149,7 @@ class ImportController implements ControllerProviderInterface {
 			$data= $uploadformstudents->getData();
 			$filename=$_FILES["uploadformstudents"]["tmp_name"]["file"];
 			$extension=$_FILES["uploadformstudents"]["name"]["file"];
-			if(strpos(substr($extension,-4),'lsx') || strpos(substr($extension,-4),'xls'))
+			if(strpos(substr($extension,-4),'lsx') || strpos(substr($extension,-4),'xlsx'))
 		    {
 		    	if ( $_FILES["uploadformstudents"]["tmp_name"]['file'] )
 				{
@@ -293,7 +308,7 @@ class ImportController implements ControllerProviderInterface {
 								}
 								$perform = array('person_id' => $person_id, 'place_id' => $place, 'profile_id' => 7);
 								$app['db.performs']->insert($perform);
-								$error = ": people added";
+								$error = "Students added";
 							} catch (Exception $e) {
 								$error =  "server down, try again later";
 							}	
@@ -324,7 +339,7 @@ class ImportController implements ControllerProviderInterface {
 			$laptopid ='';
 			$filename=$_FILES["uploadformteachers"]["tmp_name"]["file"];
 			$extension=$_FILES["uploadformteachers"]["name"]["file"];
-			if(strpos(substr($extension,-4),'lsx') || strpos(substr($extension,-4),'xls'))
+			if(strpos(substr($extension,-4),'lsx') || strpos(substr($extension,-4),'xlsx'))
 		    {
 		    	if ( $_FILES["uploadformteachers"]["tmp_name"]['file'] )
 				{
@@ -369,7 +384,7 @@ class ImportController implements ControllerProviderInterface {
 								}
 								$perform = array('person_id' => $person_id, 'place_id' => $place, 'profile_id' => 5);
 								$app['db.performs']->insert($perform);
-								$error = ": people added";
+								$error = "Teachers added";
 							} catch (Exception $e) {
 								$error =  "server down, try again later";
 							}	
@@ -390,13 +405,13 @@ class ImportController implements ControllerProviderInterface {
 			$data= $uploadformlaptops->getData();
 			$filename=$_FILES["uploadformlaptops"]["tmp_name"]["file"];
 			$extension=$_FILES["uploadformlaptops"]["name"]["file"];	
-			if(strpos(substr($extension,-4),'lsx') || strpos(substr($extension,-4),'xls'))
+			if(strpos(substr($extension,-4),'lsx') || strpos(substr($extension,-4),'xlsx'))
 		    {
 		    	if ( $_FILES["uploadformlaptops"]["tmp_name"]['file'] )
 				{
 					$objPHPExcel = \PHPExcel_IOFactory::load($filename);
 					$sheetData = $objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
-					$data = $sheetData;
+					$data = array();
 					foreach ($sheetData as $value) {
 						$place="";
 						$profile="";
@@ -407,11 +422,26 @@ class ImportController implements ControllerProviderInterface {
 							if($controle == 0 && !empty($model) && strlen($value['A']) == 11 && strlen($value['B']) == 36){
 								$laptop = array('serial_number' => $value['A'], 'uuid' => $value['B'], 'model_id' => $model, 'owner_id' => 5);
 								$app['db.laptops']->insert($laptop);
-								$error ="laptops added";
+								$error ="laptop added";
+							}
+							else if($controle != 0) {
+								$error ="Laptop already exists";
+							}
+							else if(empty($model)) {
+								$error ="model does not exists";
+							}
+							else if(strlen($value['A']) != 11) {
+								$error ="length of serial is incorrect";
+							}
+							else if(strlen($value['B']) != 36) {
+								$error ="length of uuid is incorrect";
 							}
 							else{
-								$error ="error";
+								$error ="server error";
 							}
+							$value['D'] = $error;
+							$error ='';
+							array_push($data, $value);
 						}
 						catch (Exception $e) {
 								$error =  "server down, try again later";
@@ -434,6 +464,8 @@ class ImportController implements ControllerProviderInterface {
 			'uploadformteachers' => $uploadformteachers->createView(),
 			'uploadformlaptops' => $uploadformlaptops->createView(),
 			'placename' => $placename,
+			'access_level' => $access_level,
+			'username' => $username
 			//'userLogin' => $userLogin,
 		));	
 	}
