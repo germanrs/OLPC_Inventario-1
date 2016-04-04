@@ -1,10 +1,13 @@
+//call the function setData to fill in the datalist.
 SetData('profiles','json-datalistprofiles');
 SetData('grade','json-datalistgrade');
 SetDepartments();
 
+//call the function SetStaticDataTurno to fill in the datalist with static date//me not like.
 SetStaticDataTurno('Turno','json-datalistTurno');
 SetStaticDataSeccion('Seccion','json-datalistSeccion');
 
+//set the data from the department list
 function SetDepartments(){
   var postData = 
         {
@@ -40,7 +43,7 @@ function SetDepartments(){
   });
 } 
 
-
+//set the data of the turno list
 function SetStaticDataTurno(input, datalist){
   var dataList = document.getElementById(datalist);
   var input = document.getElementById(input);
@@ -58,6 +61,7 @@ function SetStaticDataTurno(input, datalist){
           dataList.appendChild(option);
 }
 
+//set the data of the seccion list
 function SetStaticDataSeccion(input, datalist){
   var dataList = document.getElementById(datalist);
   var input = document.getElementById(input);
@@ -81,7 +85,10 @@ function SetStaticDataSeccion(input, datalist){
           dataList.appendChild(option);
 }
 
-
+//set the data of a datalist
+//input = ID of textbox
+//dataliist = id of datalist
+//returns: fills up the datalist with the requested data
 function SetData(input, datalist){
   var value = input.toLowerCase();
 
@@ -131,16 +138,23 @@ function SetData(input, datalist){
   request.send();
 }
 
+//if the "all checkboxes box" is selected, select all the textboxes
 $( "#chechallboxes" ).click(function() {
+
+  //get all the cechboxes.
   checkboxes = document.getElementsByName('checkbox');
 
+  //check all the chexboxes
   if (document.getElementById("chechallboxes").checked) {
+
+          //loop over all the checkboxes and check the checkboxes
          for (var i = 0; i < checkboxes.length; i++) {
              if (checkboxes[i].type == 'checkbox') {
                  checkboxes[i].checked = true;
              }
          }
      } else {
+        //loop over all the checkboxes and uncheck the checkboxes
          for (var i = 0; i < checkboxes.length; i++) {
              if (checkboxes[i].type == 'checkbox') {
                  checkboxes[i].checked = false;
@@ -150,7 +164,7 @@ $( "#chechallboxes" ).click(function() {
 
 });
 
-
+//when clicken on the add button, set all the value of the form to default
 $( "#openAddModal" ).click(function() {
   document.getElementById("Name").value = '';
   document.getElementById("Lastname").value = '';
@@ -159,7 +173,6 @@ $( "#openAddModal" ).click(function() {
   document.getElementById("email").value = '';
   document.getElementById("notes").value = '';
   document.getElementById("profiles").value = '';
-  document.getElementById("barcode").value = '';
   document.getElementById("grade").value = '';
   document.getElementById("Turno").value = '';
   document.getElementById("Seccion").value = '';
@@ -177,9 +190,13 @@ $( "#openAddModal" ).click(function() {
    $("#openModal").css("pointer-events", "auto");
 });
 
+//when an item has been selected in the departmentdatalist change the form
+//select the correct city's from the database with a json request
 $('#Departamento').on('input', function(){
     var options = document.getElementById("json-datalistDepartamento").options
     for (var i=0;i<options.length;i++){
+
+      //if it changes, clear all the subjects of depertment: "citys and schools"
        if (options[i].value == $(this).val()){
           $value = this.value;
           clearChildren('json-datalistCiudad');
@@ -188,6 +205,7 @@ $('#Departamento').on('input', function(){
           $('#Escuela').val('');
           $("#Departamento").val($value);
 
+          //set the data for an ajax request to obtain the correct data for the city list
           var postData = 
                 {
                     "name": $value,
@@ -225,15 +243,20 @@ $('#Departamento').on('input', function(){
     }
 });
 
+//when an item has been selected in the citydatalist change the form
+//select the correct schools from the database with a json request
 $('#Ciudad').on('input', function(){
     var options = document.getElementById("json-datalistCiudad").options
     for (var i=0;i<options.length;i++){
+
+      //if it changes, clear all the subjects of citys: schools
        if (options[i].value == $(this).val()){
           $value = this.value;
           clearChildren('json-datalistEscuela');
           $('#Escuela').val('');
           $("#Ciudad").val($value);
 
+          //set the data for an ajax request to obtain the correct data for the school list
           var postData = 
                 {
                     "Ciudad": $value,
@@ -271,6 +294,7 @@ $('#Ciudad').on('input', function(){
     }
 });  
 
+//if the school changes, call the AllowSchoolDetails() function
 $('#Escuela').on('input', function(){
     var options = document.getElementById("json-datalistEscuela").options;
     for (var i=0;i<options.length;i++){
@@ -280,6 +304,7 @@ $('#Escuela').on('input', function(){
     }
 });
 
+//if the profiles changes, call the AllowSchoolDetails() function
 $('#profiles').on('input', function(){
     var options = document.getElementById("json-datalistprofiles").options;
     for (var i=0;i<options.length;i++){
@@ -289,6 +314,7 @@ $('#profiles').on('input', function(){
     }
 });
 
+//allow the user to select the details of the school: turno, grado, seccion
 function AllowSchoolDetails(){
   $profile = document.getElementById("profiles").value;
   $school = document.getElementById("Escuela").value;
@@ -310,26 +336,29 @@ function AllowSchoolDetails(){
   }
 }
 
+//close the from
 $( "#CloseAddModal" ).click(function() {
    $("#openModal").css("opacity", "0");
    $("#openModal").css("pointer-events", "none");
 });
 
+//edit 1 person
 $( ".Editperson" ).click(function() {
   editperson(this);
 });
 
+//delete 1 person
 $( ".DeletePerson" ).click(function() {
   deleteperson(this);
 });
 
+//import 1 perosn
 $( "#ImportButton" ).click(function() {
   var fileinput = document.getElementById("uploadform_file")
   fileinput.click();
 });
 
-
-
+//set the form with the correct data to edit 1 perosn
 $( "#EditSelectedPeople" ).click(function() {
   var checkedBoxes = getCheckedBoxes("checkbox");
   console.log(checkedBoxes);
@@ -346,20 +375,19 @@ $( "#EditSelectedPeople" ).click(function() {
     document.getElementById("birth_date").disabled=true;
     document.getElementById("phone").disabled=true;
     document.getElementById("email").disabled=true;
-    document.getElementById("barcode").disabled=true;
     document.getElementById("notes").disabled=true;
     document.getElementById("Name").value='disabled';
     document.getElementById("Lastname").value='disabled';
     document.getElementById("birth_date").value='disabled';
     document.getElementById("phone").value='disabled';
     document.getElementById("email").value='disabled';
-    document.getElementById("barcode").value='disabled';
     document.getElementById("notes").value='disabled';
     $("#openModal").css("opacity", "1");
     $("#openModal").css("pointer-events", "auto");
   }
 });
 
+//delete multiple people from the database
 $( "#DeleteSelectedPeople" ).click(function() {
   var checkedBoxes = getCheckedBoxes("checkbox");
   console.log(checkedBoxes);
@@ -368,6 +396,7 @@ $( "#DeleteSelectedPeople" ).click(function() {
   }
 });
 
+//do an ajax request to add an person
 $( "#AddPerson" ).click(function() {
   var name = document.getElementById("Name").value;
   var lastname = document.getElementById("Lastname").value;
@@ -379,21 +408,39 @@ $( "#AddPerson" ).click(function() {
   var Ciudad = document.getElementById("Ciudad").value;
   var Escuela = document.getElementById("Escuela").value;
   var notes = document.getElementById("notes").value;
-  var barcode = document.getElementById("barcode").value;
   var profiles = document.getElementById("profiles").value;
   var grade = document.getElementById("grade").value;
   var Turno = document.getElementById("Turno").value;
   var Seccion = document.getElementById("Seccion").value;
 
-  if(!name || 0 === name.length ||
-    !lastname || 0 === lastname.length || 
-    !Departamento || 0 === Departamento.length || 
-    !barcode || 0 === barcode.length || barcode === parseInt(barcode, 10) ||
-    !profiles || 0 === profiles.length){
+  //give alert if name is not fild in
+  if(!name || 0 === name.length){
     $("#alert").css("display", "initial");
-    $("#alert").html("Fill in all fields!");
+    $("#alert").html("Fill in a name!");
   }
+
+  //give alert if lastname is not fild in
+  else if(!lastname || 0 === lastname.length){
+    $("#alert").css("display", "initial");
+    $("#alert").html("Fill in a lastname!");
+  }
+
+  //give alert if department is not fild in
+  else if(!Departamento || 0 === Departamento.length){
+    $("#alert").css("display", "initial");
+    $("#alert").html("Choose a Departament!");
+  }
+
+  //give alert if profile is not fild in
+  else if(!profiles || 0 === profiles.length){
+    $("#alert").css("display", "initial");
+    $("#alert").html("Choose a profile!");
+  }
+
+  //no errors? continue with adding person
   else{
+
+    //create the date
     var created_at = new Date();
     var dd = created_at.getDate();
     var mm = created_at.getMonth()+1; //January is 0!
@@ -409,8 +456,10 @@ $( "#AddPerson" ).click(function() {
 
     created_at = yyyy+'/'+mm+'/'+dd;
 
-    //add 1 laptop
+    //add 1 person
     if(document.getElementById("AddPerson").text == 'Add'){
+
+      //set all the data into an array named postdata
       var postData = 
                   {
                       "created_at":created_at,
@@ -421,7 +470,6 @@ $( "#AddPerson" ).click(function() {
                       "phone":phone,
                       "email":email,
                       "position":'NULL',
-                      "barcode":barcode,
                       "id_document_created_at":'NULL',
                       "notes":notes,
                       "Departamento":Departamento,
@@ -433,8 +481,10 @@ $( "#AddPerson" ).click(function() {
                       "Seccion":Seccion
                   }
 
+      //make a json of the postdata
       var dataString = JSON.stringify(postData);
 
+      //make an ajax request to the php server where you add a person to the database
       $.ajax({
               method: "POST",
               data: {action:dataString},
@@ -462,6 +512,8 @@ $( "#AddPerson" ).click(function() {
                     cell6.innerHTML = Departamento;
                     cell7.innerHTML = Escuela;
                     cell8.innerHTML = profiles;
+
+                    //if succes get the id of the newest added person to make the buttons work
                     $.ajax({
                           method: "POST",
                           data: {action:dataString},
@@ -472,6 +524,9 @@ $( "#AddPerson" ).click(function() {
                               cell1.innerHTML = '<input type="checkbox" id="'+data2+'" name="checkbox"> '
                               cell9.innerHTML = '<a class="button EditLaptop" onclick="editperson(this)"  id="EditLaptop" data="'+data2+'"  role="button">Edit</a>';
                               cell10.innerHTML = '<a class="button DeleteLaptop" onclick="deleteperson(this)" id="Deleteperson" data="'+data2+'" role="button">delete</a>';
+                              //hide the form
+                             $("#openModal").css("opacity", "0");
+                             $("#openModal").css("pointer-events", "none");
                           },
                           error: function(e){
                             console.log(e);
@@ -484,32 +539,46 @@ $( "#AddPerson" ).click(function() {
                   console.log(e);
               }
       });
+
+      //if laptop is not added, show the form with the error.
       if($("#alert").html() != 'Person added'){
         $("#alert").css("display", "initial");
         
       }
 
     }
+
+    //if the user eddited a person change the data in the database
     else if(document.getElementById("AddPerson").text == 'Edit'){
+
+      //get all the ids
       var Ids = $('#AddPerson').attr("data");
 
-      //edit multiple laptops
+      //edit multiple persons
       if(Ids.indexOf(',') > -1){
         var res = Ids.split(", ");
         res.pop();
         var teller = 0;
         for (Id in res) {
+
+          //create the array postdata with all the variables from the form
           var postData = 
                 {
                     "id": res[Id],
-                    "places":places,
+                    "Departamento":Departamento,
+                    "Ciudad":Ciudad,
+                    "Escuela":Escuela,
                     "profiles":profiles,
                     "grade":grade,
                     "Turno":Turno,
                     "Seccion":Seccion
 
                 }
+
+          //make a json blob of the array postdata
           var dataString = JSON.stringify(postData);
+
+          //make a json request to edit multiple persons.
           $.ajax({
                   method: "POST",
                   data: {action:dataString},
@@ -518,10 +587,15 @@ $( "#AddPerson" ).click(function() {
                       $("#alert").html(data); 
                       var index = $("#"+res[teller]).closest("tr").index();
                       var table = document.getElementById("table");
-                      table.rows[index].cells[6].innerHTML = places;
+                      table.rows[index].cells[5].innerHTML = Departamento;
+                      table.rows[index].cells[6].innerHTML = Escuela;
                       table.rows[index].cells[7].innerHTML = profiles;
                       teller++;
                       console.log(data);
+
+                      //hide the form
+                      $("#openModal").css("opacity", "0");
+                      $("#openModal").css("pointer-events", "none");
                   },
                   error: function(e){
                       $("#alert").html(e);
@@ -535,9 +609,11 @@ $( "#AddPerson" ).click(function() {
         }
       }
 
-      //edit 1 laptop
+      //edit 1 person
       else{
         var index = $('#AddPerson').attr("index");
+
+        //create the array postdata with all the variables from the form
         var postData = 
                   {
                       "id":Ids,
@@ -549,18 +625,21 @@ $( "#AddPerson" ).click(function() {
                       "phone":phone,
                       "email":email,
                       "position":'NULL',
-                      "school_name":places,
-                      "barcode":barcode,
                       "id_document_created_at":'NULL',
                       "notes":notes,
-                      "places":places,
+                      "Departamento":Departamento,
+                      "Ciudad":Ciudad,
+                      "Escuela":Escuela,
                       "profiles":profiles,
                       "grade":grade,
                       "Turno":Turno,
                       "Seccion":Seccion
                   }
 
+        //make a json blob of the array postdata
         var dataString = JSON.stringify(postData);
+
+        //make a json request to edit 1 person.
         $.ajax({
                 method: "POST",
                 data: {action:dataString},
@@ -572,9 +651,14 @@ $( "#AddPerson" ).click(function() {
                     table.rows[index].cells[2].innerHTML = lastname;
                     table.rows[index].cells[3].innerHTML = phone;
                     table.rows[index].cells[4].innerHTML = email;
-                    table.rows[index].cells[5].innerHTML = places;
-                    table.rows[index].cells[6].innerHTML = profiles;
+                    table.rows[index].cells[5].innerHTML = Departamento;
+                    table.rows[index].cells[6].innerHTML = Escuela;
+                    table.rows[index].cells[7].innerHTML = profiles;
                     console.log(data);
+
+                    //hide the form
+                    $("#openModal").css("opacity", "0");
+                    $("#openModal").css("pointer-events", "none");
                 },
                 error: function(e){
                     $("#alert").html(e);
@@ -595,22 +679,27 @@ $( "#AddPerson" ).click(function() {
   }
 });
 
-
+//delete 1 persen and assign the laptop back to FZT 
 function deleteperson(datainput){
   var id = $(datainput).closest("tr")   // Finds the closest row <tr> 
                        .find(".Editperson")     // Gets a descendent with class="nr"
                        .attr("data");
   
+  //get the id of the selected row you want to delete
   var index = $(datainput).closest("tr").index();
   console.log(id);
   console.log(index);
+
+  //create the array postdata with all the variables from the form
   var postData = 
           {
               "id":id
           }
 
+  //make a json blob of the array postdata
   var dataString = JSON.stringify(postData);
 
+  //make a json request to delete 1 person.
   $.ajax({
           method: "POST",
           data: {action:dataString},
@@ -628,6 +717,7 @@ function deleteperson(datainput){
   });
 }
 
+//edit 1 person, change the html of the ducument, by filling in the form
 function editperson(datainput){
   $("#alert").css("display", "none");
   document.getElementById("AddPerson").text = 'Edit';
@@ -644,13 +734,13 @@ function editperson(datainput){
   var $DocumentID = table.rows[index].cells[8].innerHTML;
   var $birth_date = table.rows[index].cells[9].innerHTML;
   var $position = table.rows[index].cells[10].innerHTML;
-  var $barcode = table.rows[index].cells[11].innerHTML;
   
-  var $notes = table.rows[index].cells[13].innerHTML;
+  var $notes = table.rows[index].cells[12].innerHTML;
   var $typedescription = table.rows[index].cells[14].innerHTML;
-  var $Turno = table.rows[index].cells[15].innerHTML;
-  var $Seccion = table.rows[index].cells[16].innerHTML;
-  var $grade = table.rows[index].cells[17].innerHTML;
+  var $Turno = table.rows[index].cells[14].innerHTML;
+  var $Seccion = table.rows[index].cells[15].innerHTML;
+  var $grade = table.rows[index].cells[16].innerHTML;
+  var $Ciudad = table.rows[index].cells[17].innerHTML;
   document.getElementById("AddPerson").setAttribute("data", $ID);
   document.getElementById("AddPerson").setAttribute("index", index);
   document.getElementById("Name").value = $Name;
@@ -660,11 +750,12 @@ function editperson(datainput){
   document.getElementById("email").value = $email;
   document.getElementById("notes").value = $notes;
   document.getElementById("profiles").value = $profdescription;
-  document.getElementById("barcode").value = $barcode;
   document.getElementById("grade").value = $grade;
-  document.getElementById("places").value = $Schoolname;
   document.getElementById("Turno").value = $Turno;
   document.getElementById("Seccion").value = $Seccion;
+  document.getElementById("Escuela").value = $Schoolname;
+  document.getElementById("Departamento").value = $region;
+  document.getElementById("Ciudad").value = $Ciudad;
   $("#openModal").css("opacity", "1");
   $("#openModal").css("pointer-events", "auto");
 }
@@ -684,6 +775,7 @@ function getCheckedBoxes(chkboxName) {
   return checkboxesChecked.length > 0 ? checkboxesChecked : null;
 }
 
+//clear the datalist where the id = parent_id
 function clearChildren( parent_id ) {
     var childArray = document.getElementById( parent_id ).children;
     if ( childArray.length > 0 ) {

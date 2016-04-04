@@ -13,7 +13,7 @@ class LaptopsRepository extends \Knp\Repository {
 
 	public function fetchAllLaptops($curPage, $numItemsPerPage) {
 		return $this->db->fetchAll(
-				'SELECT laptops.id as laptopID, laptops.serial_number, laptops.uuid, people.name as firstname, people.lastname as lastname, people.id as peopleID, places.name as placename, places.id as placeID, models.name as modelName, statuses.description, IF (laptops.assignee_id = laptops.owner_id, "yes" ,"No") AS InHands from laptops 
+				'SELECT laptops.id as laptopID, laptops.serial_number, laptops.uuid, laptops.assignee_id, people.name as firstname, people.lastname as lastname, people.id as peopleID, places.name as placename, places.id as placeID, models.name as modelName, statuses.description, IF (laptops.assignee_id = laptops.owner_id, "yes" ,"No") AS InHands from laptops 
 				INNER JOIN statuses ON statuses.id = laptops.status_Id 
 				INNER JOIN models on models.id = laptops.model_id 
 				INNER JOIN people on people.id = laptops.owner_id 
@@ -68,7 +68,7 @@ class LaptopsRepository extends \Knp\Repository {
 	    }
 
 	    return $this->db->fetchAll(
-				'SELECT laptops.id as laptopID, laptops.serial_number, laptops.uuid, people.name as firstname, people.lastname as lastname, CONCAT(people.name," ",people.lastname) AS FullName, people.id as peopleID, places.name as placename, places.id as placeID, models.name as modelName, statuses.description from laptops 
+				'SELECT laptops.id as laptopID, laptops.serial_number, laptops.uuid, laptops.assignee_id, people.name as firstname, people.lastname as lastname, CONCAT(people.name," ",people.lastname) AS FullName, people.id as peopleID, places.name as placename, places.id as placeID, models.name as modelName, statuses.description from laptops 
 				INNER JOIN statuses ON statuses.id = laptops.status_Id 
 				INNER JOIN models on models.id = laptops.model_id 
 				INNER JOIN people on people.id = laptops.owner_id 
@@ -102,15 +102,34 @@ class LaptopsRepository extends \Knp\Repository {
 		}
 	}
 
+	public function FindnewestId() {
+		$query = 'SELECT id FROM laptops ORDER BY id DESC';
+		return $this->db->fetchColumn($query);
+	}
+
+
 	public function deletelaptop($laptopID) {
 		return $this->db->delete('laptops', array('id' => $laptopID));
 	}
 
 	public function updateLaptop($laptop) {
+		$movelaptop = $this->db->fetchAll('SELECT * FROM laptops where id = '. $this->db->quote($laptop['id'], \PDO::PARAM_STR));
+		if($movelaptop[0]['assignee_id']!=$laptop['assignee_id'] && $laptop['owner_id']!=$laptop['assignee_id']){
+			$movement = "INSERT INTO movements (created_at, source_person_id, destination_person_id, comment, movement_type_id, laptop_id) 
+									VALUES (".date("Y-m-d").",".$movelaptop[0]['assignee_id'].",".$laptop['assignee_id'].", 'Manual update of laptop',6,".$laptop['id'].")";
+			$this->db->executeUpdate($movement);
+		}
+		else if($movelaptop[0]['assignee_id']!=$laptop['assignee_id'] && $laptop['owner_id']==$laptop['assignee_id']){
+			$movement = "INSERT INTO movements (created_at, source_person_id, destination_person_id, comment, movement_type_id, laptop_id) 
+									VALUES (".date("Y-m-d").",".$movelaptop[0]['assignee_id'].",".$laptop['assignee_id'].", 'Return',11,".$laptop['id'].")";
+			$this->db->executeUpdate($movement);
+		}
+
 		if($laptop['serial_number'] == 'disabled' AND  $laptop['uuid'] == 'disabled'){
 			$result = 'UPDATE laptops SET '.
 			'model_id = '. $this->db->quote($laptop['model_id'], \PDO::PARAM_STR) . ',' .
 			'owner_id = '. $this->db->quote($laptop['owner_id'], \PDO::PARAM_STR) . ',' .
+			'assignee_id = '. $this->db->quote($laptop['assignee_id'], \PDO::PARAM_STR) . ',' .
 			'status_id = '. $this->db->quote($laptop['status_id'], \PDO::PARAM_STR) .
 			' WHERE id = '.$this->db->quote($laptop['id'], \PDO::PARAM_INT);
 		}
@@ -119,6 +138,7 @@ class LaptopsRepository extends \Knp\Repository {
 			'serial_number = '. $this->db->quote($laptop['serial_number'], \PDO::PARAM_STR) . ',' .
 			'model_id = '. $this->db->quote($laptop['model_id'], \PDO::PARAM_STR) . ',' .
 			'owner_id = '. $this->db->quote($laptop['owner_id'], \PDO::PARAM_STR) . ',' .
+			'assignee_id = '. $this->db->quote($laptop['assignee_id'], \PDO::PARAM_STR) . ',' .
 			'status_id = '. $this->db->quote($laptop['status_id'], \PDO::PARAM_STR) . ',' .
 			'uuid = '. $this->db->quote($laptop['uuid'], \PDO::PARAM_STR) .
 			' WHERE id = '.$this->db->quote($laptop['id'], \PDO::PARAM_INT);

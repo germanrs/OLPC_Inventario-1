@@ -76,7 +76,7 @@
 				<td class ="model">{{ laptop.modelName }}</td>
 				<td class="status">{{ laptop.description }}</td>
 				<td class="uuid">{{ laptop.uuid }}</td>
-				<td class="uuid">{{ laptop.InHands }}</td>
+				<td class="uuid" data={{ laptop.assignee_id }} >{{ laptop.InHands }}</td>
 
 				<td class="text-right">
 					<a class="button EditLaptop" id="EditLaptop" data="{{ laptop.laptopID }}"  role="button">Edit</a>

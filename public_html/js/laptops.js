@@ -1,4 +1,4 @@
-//caal the function setData to fill in the datalists.
+//call the function setData to fill in the datalists.
 SetData('Model','json-datalistModel');
 SetData('People','json-datalistPeople');
 SetData('assignee','json-datalistassignee');
@@ -13,6 +13,7 @@ function SetData(input, datalist){
   //set input to lowercase
   var value = input.toLowerCase();
 
+  var placeholder = input.toLowerCase();
 
   // Get the <datalist> and <input> elements.
   var dataList = document.getElementById(datalist);
@@ -44,7 +45,7 @@ function SetData(input, datalist){
         }); 
         
         // Update the placeholder text.
-        input.placeholder = input.toLowerCase()+"...";
+        input.placeholder = placeholder+"...";
       } else {
 
         // An error occured :(
@@ -187,6 +188,20 @@ $( "#AddLaptop" ).click(function() {
     $("#alert").css("display", "initial");
     $("#alert").html("Fill in all fields!");
   }
+
+  //check length of serial
+  else if(Serial.length != 11){
+    $("#alert").html("Serial length is incorrect!");
+    $("#alert").css("display", "initial");
+  }
+
+  //check length of uuid
+  else if(Uuid.length != 36){
+    $("#alert").html("Uuid length is incorrect!");
+    $("#alert").css("display", "initial");
+  }
+
+  //add laptop
   else{
 
     //create the variable date and set it
@@ -248,21 +263,23 @@ $( "#AddLaptop" ).click(function() {
                   var cell11 = row.insertCell(10);
                   cell2.innerHTML = Serial;
                   cell3.innerHTML = People;
-                  cell5.innerHTML = Model;
-                  cell6.innerHTML = Status;
-                  cell7.innerHTML = Uuid;
-                  cell8.innerHTML = ((assignee == People)?'yes':'no');
+                  cell6.innerHTML = Model;
+                  cell7.innerHTML = Status;
+                  cell8.innerHTML = Uuid;
+                  cell9.innerHTML = ((assignee == People)?'yes':'no');
 
                   //if succes get the id of the newest added laptop to make the buttons work
                   $.ajax({
                         method: "POST",
                         data: {action:dataString},
-                        url: "../ajax/getidoflaptop/",
+                        url: "../../ajax/getidoflaptop/",
                         success: function(data){
                             var data2 = data
                             cell1.innerHTML = '<input type="checkbox" id="'+data2+'" name="checkbox"> '
-                            cell9.innerHTML = '<a class="button EditLaptop" onclick="editlaptop(this)"  id="EditLaptop" data="'+data2+'"  role="button">Edit</a>';
-                            cell10.innerHTML = '<a class="button DeleteLaptop" onclick="deletelaptop(this)" id="DeleteLaptop" data="'+data2+'" role="button">delete</a>';
+                            cell10.innerHTML = '<a class="button EditLaptop" onclick="editlaptop(this)"  id="EditLaptop" data="'+data2+'"  role="button">Edit</a>';
+                            //hide the form
+                             $("#openModal").css("opacity", "0");
+                             $("#openModal").css("pointer-events", "none");
                         },
                         error: function(e){
                         }
@@ -279,10 +296,11 @@ $( "#AddLaptop" ).click(function() {
       }
 
     }
+
     //if the user eddited a laptop change the data in the database
     else if(document.getElementById("AddLaptop").text == 'Edit'){
 
-      //get 
+      //get all the ids
       var Ids = $('#AddLaptop').attr("data");
       
       //edit multiple laptops
@@ -291,6 +309,8 @@ $( "#AddLaptop" ).click(function() {
         res.pop();
         var teller = 0;
         for (Id in res) {
+
+          //create the array postdata with all the variables from the form
           var postData = 
                 {
                     "id": res[Id],
@@ -299,8 +319,13 @@ $( "#AddLaptop" ).click(function() {
                     "owner_id":People,
                     "status_id":Status,
                     "uuid":Uuid,
+                    "assignee_id":assignee
                 }
+
+          //make a json blob of the array postdata
           var dataString = JSON.stringify(postData);
+
+          //make a json request to edit multiple laptops.
           $.ajax({
                   method: "POST",
                   data: {action:dataString},
@@ -313,7 +338,12 @@ $( "#AddLaptop" ).click(function() {
                       table.rows[index].cells[2].innerHTML = People;
                       table.rows[index].cells[4].innerHTML = Model;
                       table.rows[index].cells[5].innerHTML = Status;
+                      table.rows[index].cells[8].innerHTML = ((assignee==People)?'yes':'no');
                       teller++;
+
+                      //hide the form
+                      $("#openModal").css("opacity", "0");
+                      $("#openModal").css("pointer-events", "none");
                   },
                   error: function(e){
                       $("#alert").html(e);
@@ -331,6 +361,8 @@ $( "#AddLaptop" ).click(function() {
       else{
         var ID = $('#AddLaptop').attr("data");
         var index = $('#AddLaptop').attr("index");
+
+        //create the array postdata with all the variables from the form
         var postData = 
                     {
                         "id": ID,
@@ -339,24 +371,34 @@ $( "#AddLaptop" ).click(function() {
                         "owner_id":People,
                         "status_id":Status,
                         "uuid":Uuid,
+                        "assignee_id":assignee
                     }
 
+        //make a json blob of the array postdata
         var dataString = JSON.stringify(postData);
+
+        //make a json request to edit 1 laptop.
         $.ajax({
                 method: "POST",
                 data: {action:dataString},
                 url: "../../ajax/editlaptop/",
                 success: function(data){
                     $("#alert").html(data);
+                    console.log(data);
                     var table = document.getElementById("table");
                     table.rows[index].cells[1].innerHTML = Serial;
                     table.rows[index].cells[2].innerHTML = People;
                     table.rows[index].cells[5].innerHTML = Model;
                     table.rows[index].cells[6].innerHTML = Status;
                     table.rows[index].cells[7].innerHTML = Uuid;
+                    table.rows[index].cells[8].innerHTML = ((assignee==People)?'yes':'no');
+                    //hide the form
+                    $("#openModal").css("opacity", "0");
+                    $("#openModal").css("pointer-events", "none");
                 },
                 error: function(e){
                     $("#alert").html(e);
+                    console.log(e);
                 }
         });
         if($("#alert").html() != 'laptop edited'){
@@ -373,7 +415,8 @@ $( "#AddLaptop" ).click(function() {
   }
 });
 
-
+//delete 1 laptop 
+//not in use
 function deletelaptop(datainput){
   var id = $(datainput).closest("tr")   // Finds the closest row <tr> 
                        .find(".EditLaptop")     // Gets a descendent with class="nr"
@@ -404,6 +447,7 @@ function deletelaptop(datainput){
   });
 }
 
+//edit 1 laptop, change the html of the ducument, by filling in the form
 function editlaptop(datainput){
   document.getElementById("Serial").disabled=true;
   document.getElementById("Uuid").disabled=true;
@@ -424,6 +468,27 @@ function editlaptop(datainput){
   document.getElementById("People").value = $name;
   document.getElementById("Status").value = $status;
   document.getElementById("Uuid").value = $uuid;
+  var assignee_id = table.rows[index].cells[8].getAttribute("data");
+  var postData = 
+          {
+              "assignee_id":assignee_id
+          }
+
+  var dataString = JSON.stringify(postData);
+
+  //do an ajax request to get the name of the assignee to fill in the form
+  $.ajax({
+          method: "POST",
+          data: {action:dataString},
+          url: "../../ajax/getuserbyid/",
+          success: function(data){
+            console.log(data);
+             document.getElementById("assignee").value = data;
+          },
+          error: function(e){
+              $("#alert").html(e);
+          }
+  });
   $("#openModal").css("opacity", "1");
   $("#openModal").css("pointer-events", "auto");
 }

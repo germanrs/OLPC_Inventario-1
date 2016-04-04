@@ -301,6 +301,7 @@ class InventoryController implements ControllerProviderInterface {
 			$person['Turno'] = '';
 			$person['grade'] = '';
 			$person['region'] ='';
+			$person['city'] ='';
 			$person['Schoolname'] ='';
 
 			if(!empty($datadump)){
@@ -309,6 +310,9 @@ class InventoryController implements ControllerProviderInterface {
 					if(!empty($data)){
 						if(2==$data['place_type_id']){
 							$person['region'] = $data['name'];
+						}
+						else if(3==$data['place_type_id']){
+							$person['city'] = $data['name'];
 						}
 						else if(4==$data['place_type_id']){
 							$person['Schoolname'] = $data['name'];

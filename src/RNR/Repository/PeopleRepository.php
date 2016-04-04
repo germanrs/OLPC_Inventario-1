@@ -104,7 +104,6 @@ class PeopleRepository extends \Knp\Repository {
 		'phone = '. $this->db->quote($people['phone'], \PDO::PARAM_STR) .',' .
 		'email = '. $this->db->quote($people['email'], \PDO::PARAM_STR) .',' .
 		'school_name = '. $this->db->quote($people['school_name'], \PDO::PARAM_STR) .',' .
-		'barcode = '. $this->db->quote($people['barcode'], \PDO::PARAM_STR) .',' .
 		'id_document_created_at = '. $this->db->quote($people['id_document_created_at'], \PDO::PARAM_STR) .',' .
 		'notes = '. $this->db->quote($people['notes'], \PDO::PARAM_STR) .
 		' WHERE id = '.$this->db->quote($people['id'], \PDO::PARAM_INT);
@@ -115,13 +114,17 @@ class PeopleRepository extends \Knp\Repository {
 	public function updatesmallPerson($people) {
 		
 		$result = 'UPDATE people SET '.
-		'school_name = '. $this->db->quote($people['places'], \PDO::PARAM_STR) .
+		'school_name = '. $this->db->quote($people['school_name'], \PDO::PARAM_STR) .
 		' WHERE id = '.$this->db->quote($people['id'], \PDO::PARAM_INT);
 		return $this->db->executeUpdate($result);
 	}
 
 	public function FindPeopleId($people) {
-		return $this->db->fetchColumn('SELECT id FROM people where name = '. $this->db->quote($people['name'], \PDO::PARAM_STR) .'AND lastname = '. $this->db->quote($people['lastname'], \PDO::PARAM_STR) .'AND barcode = '. $this->db->quote($people['barcode'], \PDO::PARAM_STR));
+		return $this->db->fetchColumn('SELECT id FROM people where name = '. $this->db->quote($people['name'], \PDO::PARAM_STR) .'AND lastname = '. $this->db->quote($people['lastname'], \PDO::PARAM_STR));
+	}
+
+	public function FindPeopleById($peopleID) {
+		return $this->db->fetchColumn('SELECT CONCAT(people.name," ",people.lastname) as name FROM people where id = '. $this->db->quote($peopleID, \PDO::PARAM_STR));
 	}
 
 	public function FindPeopleByBarcodeId($barcode) {
