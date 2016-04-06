@@ -2,7 +2,7 @@
 
 namespace RNR\Repository;
 /**
- * @author Robin Staes <robin.staes@student.odisee.be>
+ * @author Rein Bauwens <rein.bauwens@student.odisee.be>
  */
 class PeopleRepository extends \Knp\Repository {
 
@@ -29,6 +29,17 @@ class PeopleRepository extends \Knp\Repository {
 		$query = 'SELECT id FROM people WHERE CONCAT(people.name," ",people.lastname) = ' . $this->db->quote($PersonName, \PDO::PARAM_INT);
 		return $this->db->fetchColumn($query);
 	}
+
+	/**
+	 * get the requested person
+	 * @param String $PersonName
+	 * @return The requested person
+	 */
+	public function findbarcode($barcode) {
+		$query = 'SELECT * FROM people WHERE barcode = ' . $this->db->quote($barcode, \PDO::PARAM_INT);
+		return $this->db->fetchColumn($query);
+	}
+	
 
 	public function fetchAllPeople($curPage, $numItemsPerPage) {
 		return $this->db->fetchAll(

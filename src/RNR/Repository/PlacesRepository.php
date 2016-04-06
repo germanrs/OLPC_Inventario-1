@@ -3,7 +3,7 @@
 namespace RNR\Repository;
 
 /**
- * @author Robin Staes <robin.staes@student.odisee.be>
+ * @author Rein Bauwens <rein.bauwens@student.odisee.be>
  */
 class PlacesRepository extends \Knp\Repository {
 
@@ -25,8 +25,6 @@ class PlacesRepository extends \Knp\Repository {
 		return $this->db->fetchAll(
 				'SELECT places.name as name, places.id as id  FROM places where (places.place_type_id=4 OR places.place_type_id=3 OR places.place_type_id=2 OR places.place_type_id=1) group by places.name ');
 	}
-
-
 
 	/**
 	 * get the requested person
@@ -177,9 +175,7 @@ class PlacesRepository extends \Knp\Repository {
 	public function updatePlace($place) {
 		
 		$result = 'UPDATE places SET '.
-		'name = '. $this->db->quote($place['name'], \PDO::PARAM_STR) . ',' .
-		'place_id = '. $this->db->quote($place['place_id'], \PDO::PARAM_STR) . ',' .
-		'place_type_id = '. $this->db->quote($place['place_type_id'], \PDO::PARAM_STR) .
+		'name = '. $this->db->quote($place['name'], \PDO::PARAM_STR) .
 		' WHERE id = '.$this->db->quote($place['id'], \PDO::PARAM_INT);
 		return $this->db->executeUpdate($result);
 	}
@@ -278,6 +274,16 @@ class PlacesRepository extends \Knp\Repository {
 				where places.place_type_id = 4
 				and ancestor_id ='.$idcity.' order by name');
 	}
+
+	public function fetchSchoolwithservername($idcity) {
+		return $this->db->fetchAll(
+				'SELECT places.id, places.name, school_infos.server_hostname from places
+				inner join place_dependencies on descendant_id = places.id
+				LEFT join school_infos on school_infos.place_id = places.id
+				where places.place_type_id = 4
+				and ancestor_id ='.$idcity.' order by name');
+	}
+	
 
 	public function fetchTurno($idschool) {
 		return $this->db->fetchAll(

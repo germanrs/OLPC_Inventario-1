@@ -3,7 +3,7 @@
 namespace RNR\Repository;
 
 /**
- * @author Robin Staes <robin.staes@student.odisee.be>
+ * @author Rein Bauwens <rein.bauwens@student.odisee.be>
  */
 class PlacesDependenciesRepository extends \Knp\Repository {
 
@@ -35,6 +35,13 @@ class PlacesDependenciesRepository extends \Knp\Repository {
 				'SELECT place_dependencies.ancestor_id, places.name, place_type_id, places.id FROM place_dependencies
 				inner Join places on places.id = place_dependencies.ancestor_id
 				where descendant_id ='.$ancestor);
+	}
+
+	public function fetchAllChildren($ancestor) {
+		return $this->db->fetchAll(
+				'SELECT descendant_id FROM place_dependencies
+				where ancestor_id ='.$ancestor.
+				' ORDER BY place_dependencies.descendant_id DESC');
 	}
 }
 

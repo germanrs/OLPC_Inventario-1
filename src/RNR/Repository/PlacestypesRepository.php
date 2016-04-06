@@ -3,7 +3,7 @@
 namespace RNR\Repository;
 
 /**
- * @author Robin Staes <robin.staes@student.odisee.be>
+ * @author Rein Bauwens <rein.bauwens@student.odisee.be>
  */
 class PlacestypesRepository extends \Knp\Repository {
 
@@ -47,4 +47,6 @@ class PlacestypesRepository extends \Knp\Repository {
 		$query = 'SELECT id FROM place_types WHERE name = ' . $this->db->quote($name, \PDO::PARAM_INT);
 		return $this->db->fetchColumn($query);
 	}
+
+	
 }

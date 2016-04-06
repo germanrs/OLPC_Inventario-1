@@ -425,93 +425,9 @@ class InventoryController implements ControllerProviderInterface {
 			//redirect to login page if user is not logged id
 			return $app->redirect($app['url_generator']->generate('auth.login')); 
 		}
-
-		//set the number of items per pages to 20
-		$numItemsPerPage = 20;
-
-		//get the current page number, if page is not set use 1
-		$curPage = max(1, (int) $app['request']->get('p'));
-	
-		// Get parameters
-		$params = $app['request']->query->all();
-    	// when the form is applayed and the page is not 1 use the following code
-    	if ($params!=null && isset($params['filterform']['genres']) && ''!=($params['filterform']['genres'])) {
-    		$genre = $params['filterform']['genres'];
-			$searchstring = $params['filterform']['searchstring'];
-			
-			//Get the number of items
-			$numItems = $app['db.places']->fetchTotalFilterPlaces($params['filterform']);	
-
-			$places = $app['db.places']->findFiltered($params['filterform'],$curPage,$numItemsPerPage);
-    	}
-
-    	else if ($params!=null && isset($params['genres'])) {
-    		$genre = $params['genres'];
-			$searchstring = $params['searchstring'];
-			
-			//Get the number of items
-			$numItems = $app['db.places']->fetchTotalFilterPlaces($params);
-
-			$places = $app['db.places']->findFiltered($params,$curPage,$numItemsPerPage);
-    	}
-    	else{
-    		$genre = '';
-			$searchstring = '';
-			
-
-			//Get the number of items
-			$numItems = $app['db.places']->fetchTotalPlaces();
-
-			$places = $app['db.places']->fetchAllPlaces($curPage,$numItemsPerPage);
-
-			// Password does not check out: add an error to the form
-            
-    	}
-    	
-    	//Calculate the number of pages by dividing the items count by the number of item per page 
-		$numPages = ceil($numItems / $numItemsPerPage);
-
-		// Create Form
-		$filterform = $app['form.factory']
-				->createNamed('filterform', 'form')
-				->add('searchstring', 'text', array(
-					'attr' => array('class' => 'required'),
-					'required' => false,
-					'data' => $searchstring
-				))
-				->add('genres', 'choice', array(
-    				'choices'  => array(
-    					'places.name' => 'place name',
-    					'place_types.name' => 'place type',
-    					'school_infos.server_hostname' => 'school'),
-    				'placeholder' => 'Choose wisely!',
-    				'required' => false,
-					'attr' => array('class' => 'required'),
-					'data' => $genre,
-				));
-
-		//if params['filterform'] isset, use the data from it. if its not set, the data is availeble in params.		
-		if(!isset($params['filterform'])){
-			$newparams = $params;
-		}
-		else{
-			$newparams = $params['filterform'];
-		}
-		
-		if (isset($params['filterform']['genres']) && ''==($params['filterform']['genres'])){
-				$filterform->get('genres')->addError(new \Symfony\Component\Form\FormError('Select a type'));
-		}
 		
 		//return the rendered twig with parameters
 		return $app['twig']->render('inventory/places.twig', array(
-			'filterform' => $filterform->createView(),
-			'places' => $places,
-			'curPage'=>$curPage,
-			'numPages'=>$numPages,
-			'numItems'=>$numItems, 
-			'baseUrl'=> $app['Inventory.base_url'],
-			'pagination'=>generatePaginationSequence($curPage, $numPages),
-			'requestParams' => $newparams,
 			'access_level' => $access_level,
 			'username' => $username
 		));

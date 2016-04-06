@@ -297,7 +297,14 @@ class ImportController implements ControllerProviderInterface {
 						}
 						
 						if(ctype_digit($place)){
-							$object = array('created_at' => date("Y/m/d"), 'name' => $value['A'],'lastname' => $value['B'], 'school_name'=> $value['D']);
+							//generate a barcode for the user
+							$barcode = 0;
+							do {
+							    $barcode = rand(1000000000, 9999999999);
+							} while (!empty($app['db.people']->findbarcode($barcode)));
+							
+
+							$object = array('created_at' => date("Y/m/d"), 'name' => $value['A'],'lastname' => $value['B'], 'school_name'=> $value['D'], 'barcode'=>$barcode);
 							try {
 								$app['db.people']->insert($object);
 								$person_id = $app['db.people']->Lastadded();
@@ -373,7 +380,15 @@ class ImportController implements ControllerProviderInterface {
 							var_dump($e);
 						}
 						if(ctype_digit($place)){
-							$object = array('created_at' => date("Y/m/d"), 'name' => $value['A'],'lastname' => $value['B'], 'school_name'=> $value['D']);
+
+							//generate a barcode for the user
+							$barcode = 0;
+							do {
+							    $barcode = rand(1000000000, 9999999999);
+							} while (!empty($app['db.people']->findbarcode($barcode)));
+							
+
+							$object = array('created_at' => date("Y/m/d"), 'name' => $value['A'],'lastname' => $value['B'], 'school_name'=> $value['D'], 'barcode' => $barcode);
 							try {
 								$app['db.people']->insert($object);
 								$person_id = $app['db.people']->Lastadded();
@@ -422,6 +437,9 @@ class ImportController implements ControllerProviderInterface {
 							if($controle == 0 && !empty($model) && strlen($value['A']) == 11 && strlen($value['B']) == 36){
 								$laptop = array('serial_number' => $value['A'], 'uuid' => $value['B'], 'model_id' => $model, 'owner_id' => 5);
 								$app['db.laptops']->insert($laptop);
+								$laptopID = $app['db.laptops']->FindnewestId();
+								$movement = array('created_at' => date("Y-m-d"),'source_person_id' => 5, 'destination_person_id' => 5,'comment' => 'created by uploading excel file', 'movement_type_id'=> 11 ,'laptop_id'=>$laptopID);
+								$app['db.movements']->insert($movement);
 								$error ="laptop added";
 							}
 							else if($controle != 0) {

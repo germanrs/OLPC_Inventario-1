@@ -3,7 +3,7 @@
 namespace RNR\Repository;
 
 /**
- * @author Robin Staes <robin.staes@student.odisee.be>
+ * @author Rein Bauwens <rein.bauwens@student.odisee.be>
  */
 class SchoolinfosRepository extends \Knp\Repository {
 
@@ -28,7 +28,6 @@ class SchoolinfosRepository extends \Knp\Repository {
 	public function updateSchool($place) {
 		$query = 'SELECT school_infos.* FROM school_infos WHERE place_id = ' . $this->db->quote($place['place_id'], \PDO::PARAM_INT);
 		$school = $this->db->fetchColumn($query);
-		var_dump($place);
 		if(empty($school)){
 			return $this->db->insert('school_infos', $place);
 

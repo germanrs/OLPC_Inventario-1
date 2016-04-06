@@ -7,6 +7,7 @@
 {# Page specific css #}
 {% block pageCss %}
 	<link rel="stylesheet" media="screen" href="{{ app.request.baseUrl }}/css/lijst.css" />
+	<link rel="stylesheet" media="screen" href="{{ app.request.baseUrl }}/css/places.css" />
 {% endblock %}
 {% block pageContent %}
 	{# Page specific content #}
@@ -14,68 +15,84 @@
 <div class="menu-right">
 	<div class="top-menu">
 	<h1><a href="{{ path('Inventory.places') }}">Places</a></h1>
-	<a class="button" id="openAddModal"  role="button">Add</a>
-
-
-		<div class="h_search">
-			<form action="{{ baseUrl }}" method="GET" {{ form_enctype(filterform) }}  novalidate="novalidate" role="form">
-				<h2 class="text-danger">{{ form_errors(filterform.genres)|striptags }}</h2>	
-				{{ form_widget(filterform.genres, { 'attr': {'class': 'form-control'} })  }}
-				{{ form_widget(filterform.searchstring, { 'attr': {'class': 'form-control'} }) }}
-				<input type="hidden" id="filterform__token" name="filterform[_token]" value="45072b220b3b190f6f6d863b5cd2a0d55f523c54" />
-				{{ form_widget(filterform._token) }}
-				<input type="submit" class="btn btn-primary pull-right" value="Filter" />
-
-			</form>
-	</div>
+	
 </div>
 <div class="overvieuw">
-	<table class="responstable" id="table">
-		<tr>
-			<th>
-				<input type="checkbox" id="chechallboxes" name="checkbox">   
-			</th>
-			<th>
-				name
-			</th>
-			<th>
-				place_type
-			</th>
-			<th>
-				school server hostname
-			</th>
-			<th>
-				edit
-			</th>
-			<th>
-				delete
-			</th> 
-		</tr>
-		{% for place in places %}
-			<tr>
-				<td>
-	            	<input type="checkbox" id="{{ place.ider }}" name="checkbox">    
-	        	</td>
-				<td class="name">{{ place.name }}</td>
-				<td class="place">{{ place.placename }}</td>
-				<td class="status">{{ place.server_hostname }}</td>
-				<td class="status displaynone">{{ place.ancestor_id }}</td>
-				<td class="text-right">
-					<a class="button Editplace" id="Editplace" data="{{ place.ider }}"  role="button">Edit</a>
-				</td>
-				<td class="text-right">
-					<a class="button Deleteplace" id="Deleteplace" data="{{ place.ider }}" role="button">delete</a>
-				</td>
-			</tr>
-		{% endfor %}
-	</table>
-	<a class="button" id="EditSelectedplaces" role="button">Edit selected</a>
-    <a class="button" id="DeleteSelectedplaces" role="button">delete selected</a>
-	<div class="center">
-		<div class="pages">
-			{% include  'pagination.twig' %}
+	<div class="leftsort">
+		<div class="clear"></div>
+		<div class="label">
+			Departamento
 		</div>
+		<div class="input">
+			<input type="text" id="Departamento" list="json-datalistDepartamento" placeholder="Departamento...">
+		</div>
+		<datalist id="json-datalistDepartamento"></datalist>
+		<div class="clear"></div>
+		<div class="label">
+			Ciudad
+		</div>
+		<div class="input">
+			<input type="text" id="Ciudad" list="json-datalistCiudad" placeholder="Ciudad...">
+		</div>
+		<datalist id="json-datalistCiudad"></datalist>
+		<div class="clear"></div>
+		<div class="label">
+			Escuela
+		</div>
+		<div class="input">
+			<input type="text" id="Escuela" list="json-datalistEscuela" placeholder="Escuela...">
+		</div>
+		<datalist id="json-datalistEscuela"></datalist>
+		<div class="clear"></div>
+		<div class="label">
+			Turno
+		</div>
+		<div class="input">
+			<input type="text" id="Turno" list="json-datalistTurno" placeholder="Turno..">
+		</div>
+		<datalist id="json-datalistTurno"></datalist>
+		<div class="clear"></div>
+		<div class="label">
+			grade
+		</div>
+		<div class="input">
+			<input type="text" id="grade" list="json-datalistgrade" placeholder="profiles..">
+		</div>
+		<datalist id="json-datalistgrade"></datalist>
+		<div class="clear"></div>
+		<div class="label">
+			Seccion
+		</div>
+		<div class="input">
+			<input type="text" id="Seccion" list="json-datalistSeccion" placeholder="Seccion..">
+		</div>
+		<datalist id="json-datalistSeccion"></datalist>
+		<div class="clear"></div>
 	</div>
+	<div class="righttable">
+		<table class="responstable" id="table">
+			<tr>
+				<th>
+					<input type="checkbox" id="chechallboxes" name="checkbox">   
+				</th>
+				<th>
+					name
+				</th>
+				<th>
+					school server hostname
+				</th>
+				<th>
+					edit
+				</th>
+				<th>
+					delete
+				</th> 
+			</tr>
+			
+		</table>
+		<a class="button" id="openAddModal"  role="button">Add</a>
+	    <a class="button" id="DeleteSelectedplaces" role="button">delete selected</a>
+    </div>
 		<div id="openModal" class="modalDialog">
 			<div>
 				<a id="CloseAddModal"  class="close">X</a>
@@ -100,11 +117,11 @@
 								</div>
 								<datalist id="json-datalistplace_type"></datalist>
 								<div class="clear"></div>
-								<div class="label">
+								<div class="label server_hostname">
 									School server hostname
 								</div>
 								<div class="input">
-									<input type="text" id="server_hostname" placeholder="Server hostname...">
+									<input type="text" id="server_hostname" class="server_hostname" placeholder="Server hostname...">
 								</div>
 								<div class="clear"></div>
 								<div class="label">

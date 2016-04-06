@@ -3,7 +3,7 @@
 namespace RNR\Repository;
 
 /**
- * @author Robin Staes <robin.staes@student.odisee.be>
+ * @author Rein Bauwens <rein.bauwens@student.odisee.be>
  */
 class LaptopsRepository extends \Knp\Repository {
 
@@ -68,7 +68,7 @@ class LaptopsRepository extends \Knp\Repository {
 	    }
 
 	    return $this->db->fetchAll(
-				'SELECT laptops.id as laptopID, laptops.serial_number, laptops.uuid, laptops.assignee_id, people.name as firstname, people.lastname as lastname, CONCAT(people.name," ",people.lastname) AS FullName, people.id as peopleID, places.name as placename, places.id as placeID, models.name as modelName, statuses.description from laptops 
+				'SELECT laptops.id as laptopID, laptops.serial_number, laptops.uuid, laptops.assignee_id, people.name as firstname, people.lastname as lastname, CONCAT(people.name," ",people.lastname) AS FullName, people.id as peopleID, places.name as placename, places.id as placeID, models.name as modelName, statuses.description,  IF (laptops.assignee_id = laptops.owner_id, "yes" ,"No") AS InHands  from laptops 
 				INNER JOIN statuses ON statuses.id = laptops.status_Id 
 				INNER JOIN models on models.id = laptops.model_id 
 				INNER JOIN people on people.id = laptops.owner_id 

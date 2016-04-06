@@ -81,6 +81,11 @@ class AjaxController implements ControllerProviderInterface {
 			->bind('Ajax.placesseccions');
 
 		$controllers
+		->get('/getdataforplacestable/', array($this, 'getdataforplacestable'))
+		->method('GET|POST')
+		->bind('Ajax.getdataforplacestable');
+
+		$controllers
 			->get('/profiles/', array($this, 'profiles'))
 			->method('GET|POST')
 			->bind('Ajax.profiles');
@@ -680,7 +685,13 @@ class AjaxController implements ControllerProviderInterface {
 			$gradoid=0;
 			$turnoid=0;
 			$Seccionid=0;
-			
+
+			//generate a barcode for the user
+			$upperbound = 0;
+			do {
+			    $upperbound = rand(1000000000, 9999999999);
+			} while (!empty($app['db.people']->findbarcode($upperbound)));
+			$obj['barcode'] = $upperbound;
 			
 			if($obj['profiles'] == 'Estudiante'){
 				$place= $app['db.places']->getPlaceonlyoneName($obj['Departamento']);
@@ -1078,19 +1089,44 @@ class AjaxController implements ControllerProviderInterface {
 		if(isset($_POST['action'])){
 			$obj = json_decode($_POST['action'], true);
 			$place_type="";
-			$ancestor="";
+			$ancestor="1";
 			try {
-				$grade = $app['db.place_types']->getGrade($obj['place_type']);
-				$place= $app['db.places']->getPlaceByName($obj['ancestor']) ;
+				if($obj['Departamento']!=''){
+					$ancestor= $app['db.places']->getPlaceonlyoneName($obj['Departamento']);
+					$ancestor = $ancestor[0]['id'];
+					if($obj['Ciudad']!=''){
+						$ancestor= $app['db.places']->getitemByNameandAncestorID($obj['Ciudad'], $ancestor);
+						if($obj['Escuela']!=''){
+							$ancestor= $app['db.places']->getitemByNameandAncestorID($obj['Escuela'], $ancestor);
+							if($obj['Turno']!=''){
+								$ancestor= $app['db.places']->getitemByNameandAncestorID($obj['Turno'], $ancestor);
+								if($obj['grade']!=''){
+									$ancestor= $app['db.places']->getitemByNameandAncestorID($obj['grade'], $ancestor);
+								}
+							}
+						}
+					}
+				}
+				if($obj['place_type']=="Grado"){
+					if($app['db.place_types']->getGrade($obj['name'])==''){
+						echo "grade does not excists, change name to resolve problem.";
+					}
+					else{
+						$place_type = $app['db.place_types']->getGrade($obj['name']);
+					}
+				}
+				else{
+					$place_type = $app['db.place_types']->getGrade($obj['place_type']);
+				}
 
 			} catch (Exception $e) {
 			}
-			if(ctype_digit($grade) && ctype_digit($place)){
-				$insertplace = array('created_at' => $obj['created_at'], 'name' => $obj['name'], 'place_id' => $place,'place_type_id' => $grade);
+			if(ctype_digit($place_type) && ctype_digit($ancestor)){
+				$insertplace = array('created_at' => $obj['created_at'], 'name' => $obj['name'], 'place_id' => $ancestor,'place_type_id' => $place_type);
 				try {
 					$app['db.places']->insert($insertplace);
 					$place_id = $app['db.places']->FindnewestId();
-					$Ancestors=$app['db.places_dependencies']->fetchAllAncestors($place);
+					$Ancestors=$app['db.places_dependencies']->fetchAllAncestors($ancestor);
 					foreach ($Ancestors as $waarde) {
 					 	$dependency = array('descendant_id' => $place_id, 'ancestor_id' => $waarde['ancestor_id']);
 						$app['db.places_dependencies']->insert($dependency);
@@ -1107,9 +1143,6 @@ class AjaxController implements ControllerProviderInterface {
 					echo "server down, try again later";
 				}	
 			}
-			else{
-				echo 'select a type and an ancestor.';
-			}
 		}
 		return $app['twig']->render('Ajax/Dump.twig');	
 	}
@@ -1121,59 +1154,24 @@ class AjaxController implements ControllerProviderInterface {
 	 */
 	public function editplace(Application $app) {
 		if(isset($_POST['action'])){
-			$obj = json_decode($_POST['action'], true);
-			$place_type="";
-			$ancestor="";
-			if(!empty($obj['ancestor']) && !empty($obj['id'])){
-				try {
-					$grade = $app['db.place_types']->getGrade($obj['place_type']);
-					$place= $app['db.places']->getPlaceByName($obj['ancestor']) ;
-				} catch (Exception $e) {
-				}
-				if(ctype_digit($grade) && ctype_digit($place) && !empty($obj['ancestor'])){
-					$insertplace = array('id' => $obj['id'], 'name' => $obj['name'], 'place_id' => $place,'place_type_id' => $grade);
-					try {
-						$oldplace = $app['db.places']->getPlaceById($obj['id']);
-						$app['db.places']->updatePlace($insertplace);
-						if($place!=$oldplace[0]['place_id']){
-							$app['db.places_dependencies']->DeleteALL($obj['id']);
-							$Ancestors=$app['db.places_dependencies']->fetchAllAncestors($place);
-							foreach ($Ancestors as $waarde) {
-							 	$dependency = array('descendant_id' => $obj['id'], 'ancestor_id' => $waarde['ancestor_id']);
-								$app['db.places_dependencies']->insert($dependency);
-							}
-							$dependency = array('descendant_id' => $obj['id'], 'ancestor_id' => $obj['id']);
-							$app['db.places_dependencies']->insert($dependency); 
+			try{
+				$obj = json_decode($_POST['action'], true);
+				
+				$insertplace = array('id' => $obj['id'], 'name' => $obj['name']);
+				$app['db.places']->updatePlace($insertplace);
 
-						} 
-						if(!empty($obj['server_hostname'])){
-							$schoolinfo = array('lease_duration' => null, 'server_hostname' => $obj['server_hostname'], 'place_id' => $obj['id']);
-							$app['db.school_infos']->updateSchool($schoolinfo);
-						}
-						else if(empty($obj['server_hostname'])){
-							$app['db.school_infos']->deleteSchool($obj['id']);
-						}
-						echo "place updated";
-					}catch (Exception $e) {
-						echo "server down, try again later";
-					}	
-				}
-			}
-			else if(empty($obj['ancestor'])){
-				try {
-					$grade = $app['db.place_types']->getGrade($obj['place_type']);
-					$insertplace = array('id' => $obj['id'],'place_type_id' => $grade);
-					$app['db.places']->updateSmallPlace($insertplace);
-					echo "place edited";
-				} catch (Exception $e) {
-					echo "Server down, try again later";
-				}
+				if(!empty($obj['server_hostname'])){
+					$schoolinfo = array('lease_duration' => null, 'server_hostname' => $obj['server_hostname'], 'place_id' => $obj['id']);
+					$app['db.school_infos']->updateSchool($schoolinfo);
 
+				}
+				else if(empty($obj['server_hostname'])){
+					$app['db.school_infos']->deleteSchool($obj['id']);
+				}
+				echo "place updated";
+			}catch (Exception $e) {
+				echo "server down, try again later";
 			}
-			else{
-				echo 'Internal error, reload page';
-			}
-			
 		}
 		return $app['twig']->render('Ajax/Dump.twig');	
 	}
@@ -1187,10 +1185,26 @@ class AjaxController implements ControllerProviderInterface {
 		if(isset($_POST['action'])){
 			$obj = json_decode($_POST['action'], true);
 			try {
+				var_dump($obj);
+				$children = $app['db.places_dependencies']->fetchAllChildren($obj['id']);
+				foreach ($children as $child) {
+					$performs = $app['db.performs']->fetchAllByPlaceid($child['descendant_id']);
+					foreach ($performs as $perform) {
+						$perform['person_id'];
+						$app['db.laptops']->changeOwnerToFZT($perform['person_id']);
+						$app['db.movements']->deleteperson($perform['person_id']);
+						$app['db.performs']->deleteperson($perform['person_id']);
+						$app['db.people']->deleteperson($perform['person_id']);
+					}
+					$app['db.places_dependencies']->DeleteALL($child['descendant_id']);
+					$app['db.school_infos']->deleteSchool($child['descendant_id']);
+					$app['db.places']->deletePlace($child['descendant_id']);
+					echo "place deleted";
+				}
 				$app['db.places_dependencies']->DeleteALL($obj['id']);
 				$app['db.school_infos']->deleteSchool($obj['id']);
 				$app['db.places']->deletePlace($obj['id']);
-				echo "place deleted";
+				
 			} catch (Exception $e) {
 				echo "place was already deleted";
 			}
@@ -1249,7 +1263,58 @@ class AjaxController implements ControllerProviderInterface {
 		}
 		return $app['twig']->render('Ajax/Dump.twig');	
 	}
+
+	/**
+	 * home page
+	 * @param Application $app An Application instance
+	 * @return string A blob of HTML
+	 */
+	public function getdataforplacestable(Application $app) {
+		if(isset($_POST['action'])){
+			$obj = json_decode($_POST['action'], true);
+			try {
+				$Departamento= $app['db.places']->getitemByNameandAncestorID($obj['Departamento'],1);
+				$Ciudad= $app['db.places']->getitemByNameandAncestorID($obj['Ciudad'], $Departamento);
+				$Escuela= $app['db.places']->getitemByNameandAncestorID($obj['Escuela'], $Ciudad);
+				$Turno= $app['db.places']->getitemByNameandAncestorID($obj['Turno'], $Escuela);
+				$grade= $app['db.places']->getitemByNameandAncestorID($obj['grade'], $Turno);
+				$data ='';
+				if(!empty($grade)){
+					$data = $app['db.places']->fetchSeccion($grade);
+				}
+				else if(!empty($Turno)){
+					$data = $app['db.places']->fetchGrade($Turno);
+				}
+				else if(!empty($Escuela)){
+					$data = $app['db.places']->fetchTurno($Escuela);
+				}
+				else if(!empty($Ciudad)){
+					$data = $app['db.places']->fetchSchoolwithservername($Ciudad);
+				}
+				else if(!empty($Departamento)){
+					$data = $app['db.places']->fetchCity($Departamento);
+				}
+				else{
+					$data = $app['db.places']->fetchstate(1);
+				}
+				echo json_encode($data);
+			} catch (Exception $e) {
+				echo "Not found";
+			}
+		}
+		return $app['twig']->render('Ajax/Dump.twig');	
+	}
 }
+
+
+
+					
+					
+					
+					
+					
+
+
 
 /*	function sort_objects_by_school($a, $b) {
 	if($a->school == $b->school){ return 0 ; }

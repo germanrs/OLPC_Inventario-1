@@ -3,7 +3,7 @@
 namespace RNR\Repository;
 
 /**
- * @author Robin Staes <robin.staes@student.odisee.be>
+ * @author Rein Bauwens <rein.bauwens@student.odisee.be>
  */
 class PerformsRepository extends \Knp\Repository {
 
@@ -38,6 +38,11 @@ class PerformsRepository extends \Knp\Repository {
 	public function fetchAllByPersonId($person_id) {
 		return $this->db->fetchAll(
 				'SELECT performs.* FROM performs where performs.person_id ='.  $this->db->quote($person_id, \PDO::PARAM_STR));
+	}
+
+	public function fetchAllByPlaceid($placeid) {
+		return $this->db->fetchAll(
+				'SELECT performs.person_id FROM performs where performs.place_id ='.  $this->db->quote($placeid, \PDO::PARAM_STR));
 	}
 
 
