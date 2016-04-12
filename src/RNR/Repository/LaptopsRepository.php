@@ -154,12 +154,31 @@ class LaptopsRepository extends \Knp\Repository {
 		return $this->db->executeUpdate($result);
 	}
 
+	public function updatelaptopbySerial($serial, $userid) {
+		$result = 'UPDATE laptops SET '.
+			'owner_id = '. $this->db->quote($userid, \PDO::PARAM_STR) .
+			'WHERE serial_number = '.$this->db->quote($serial, \PDO::PARAM_INT);
+		return $this->db->executeUpdate($result);
+	}
+
 	public function FindLaptopId($laptop) {
 		return $this->db->fetchColumn('SELECT id FROM laptops where serial_number = '. $this->db->quote($laptop['serial_number'], \PDO::PARAM_STR) .'AND uuid = '. $this->db->quote($laptop['uuid'], \PDO::PARAM_STR));
 	}
 
+	public function FindLaptopbySerialandOwner($laptopid, $ownerid) {
+		return $this->db->fetchColumn('SELECT * FROM laptops where serial_number = '. $this->db->quote($laptopid, \PDO::PARAM_STR) .'AND owner_id = '. $this->db->quote($ownerid, \PDO::PARAM_STR));
+	}
+
 	public function GetLaptopId($laptopserial) {
 		return $this->db->fetchColumn('SELECT id FROM laptops where serial_number = '. $this->db->quote($laptopserial, \PDO::PARAM_STR));
+	}
+
+	public function GetownerbyId($laptopserial) {
+		return $this->db->fetchColumn('SELECT owner_id FROM laptops where serial_number = '. $this->db->quote($laptopserial, \PDO::PARAM_STR));
+	}
+
+	public function GetLaptopIdbyowner($ownerid) {
+		return $this->db->fetchColumn('SELECT id FROM laptops where owner_id = '. $this->db->quote($ownerid, \PDO::PARAM_STR));
 	}
 
 	public function massassignment($barcode, $serial) {
@@ -220,9 +239,11 @@ class LaptopsRepository extends \Knp\Repository {
 		return $this->db->executeUpdate($result);
 	}
 
-
-
-
-		
+	public function fetchbarcodeList($obj, $placeID) {
+	    return $this->db->fetchAll(
+				'SELECT CONCAT(people.name," ",people.lastname) as fullname, barcode FROM  people
+				INNER JOIN performs on performs.person_id = people.id 
+				where performs.place_id = '.$placeID);
+	}
 }
 

@@ -180,14 +180,14 @@
 			</table>
 			<a class="button" id="DownloadFile" role="button">Download PDF</a>
 			<a class="button" id="DownloadFileasExcel" href="excel?data=AZE&test=123" role="button">Download Excel</a>
+			<a class="button" id="DownloadBarcodes" href="excel?data=AZE&test=123" role="button">Download barcodes</a>
 		</div>
 	</div>
 	
 
 {% endblock %}
 {% block pageScripts %}
-	
-
+	<script src="{{ app.request.baseUrl }}/js/JsBarcode.all.min.js"></script>
 	<script src="{{ app.request.baseUrl }}/js/jspdf.min.js"></script>
 	<script src="{{ app.request.baseUrl }}/js/jspdf.debug.js"></script>
 	<script src="{{ app.request.baseUrl }}/js/simple-excel.js"></script>

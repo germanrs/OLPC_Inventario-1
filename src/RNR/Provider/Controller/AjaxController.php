@@ -180,6 +180,13 @@ class AjaxController implements ControllerProviderInterface {
 			->method('GET|POST')
 			->bind('Ajax.massassignment');
 
+		$controllers
+			->get('/getBarcodeList/', array($this, 'getBarcodeList'))
+			->method('GET|POST')
+			->bind('Ajax.getBarcodeList');
+
+			
+
 		// Return ControllerCollection
 		return $controllers;
 	}
@@ -500,39 +507,6 @@ class AjaxController implements ControllerProviderInterface {
 				}									
 				echo json_encode($data);
 			}
-			/*else if($obj['formname']=='peopleForm'){
-				$data = $app['db.people']->fetchList2($obj);
-				if(!empty($data[0]['placename'])){
-					foreach ($data as $person) {
-						$datadump= $app['db.performs']->fetchAllByPersonId($person['peopleid']);	
-						$datadump = $app['db.places_dependencies']->fetchAllAncestorsFromSchool($datadump[0]['place_id']);
-						if(!empty($datadump)){
-							foreach ($datadump as $data) {
-								$place_type_id=0;
-								if(!empty($data)){
-									$person['region'] ='';
-									if(2==$data['place_type_id']){
-										$person['region'] = $data['name'];
-									}
-									else if(4==$data['place_type_id']){
-										$person['school'] = $data['name'];
-									}
-								}
-							}
-						}
-						else{
-							$person['region'] = $person['placename'];
-							$person['school'] ='';
-						}
-						array_push($peoplearray,$person);
-						
-					}
-					echo json_encode($peoplearray);
-				}
-				else{
-				echo json_encode($data);
-				}	
-			}*/
 			else if($obj['formname']=='placesForm'){
 				$data = $app['db.places']->fetchList($obj);
 				echo json_encode($data);
@@ -1080,7 +1054,7 @@ class AjaxController implements ControllerProviderInterface {
 	}
 
 	/**
-	 * home page
+	 * addplace page
 	 * @param Application $app An Application instance
 	 * @return string A blob of HTML
 	 */
@@ -1185,25 +1159,22 @@ class AjaxController implements ControllerProviderInterface {
 		if(isset($_POST['action'])){
 			$obj = json_decode($_POST['action'], true);
 			try {
-				var_dump($obj);
 				$children = $app['db.places_dependencies']->fetchAllChildren($obj['id']);
+				var_dump($children);
 				foreach ($children as $child) {
 					$performs = $app['db.performs']->fetchAllByPlaceid($child['descendant_id']);
 					foreach ($performs as $perform) {
-						$perform['person_id'];
 						$app['db.laptops']->changeOwnerToFZT($perform['person_id']);
 						$app['db.movements']->deleteperson($perform['person_id']);
 						$app['db.performs']->deleteperson($perform['person_id']);
-						$app['db.people']->deleteperson($perform['person_id']);
+						$app['db.people']->deleteperson($perform['person_id']);						
 					}
 					$app['db.places_dependencies']->DeleteALL($child['descendant_id']);
 					$app['db.school_infos']->deleteSchool($child['descendant_id']);
 					$app['db.places']->deletePlace($child['descendant_id']);
-					echo "place deleted";
+					
 				}
-				$app['db.places_dependencies']->DeleteALL($obj['id']);
-				$app['db.school_infos']->deleteSchool($obj['id']);
-				$app['db.places']->deletePlace($obj['id']);
+				echo "place deleted";
 				
 			} catch (Exception $e) {
 				echo "place was already deleted";

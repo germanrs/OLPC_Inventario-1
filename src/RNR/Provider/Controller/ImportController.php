@@ -42,10 +42,20 @@ class ImportController implements ControllerProviderInterface {
 	 * @return string A blob of HTML
 	 */
 	public function import(Application $app) {
+		
+		//the name of the place
 		$placename='';
+
+		//show is the design of the table that will be choosenn from in the template
 		$show='';
+
+		//the data for the table in the template
 		$data=array();
+
+		//returns a big red error
 		$error="";
+
+		//a general field for some data
 		$value = 0;
 
 		//check if the user is logged in
@@ -69,10 +79,16 @@ class ImportController implements ControllerProviderInterface {
 			return $app->redirect($app['url_generator']->generate('auth.login')); 
 		}
 		
+		//city id
 		$CiudadID ='';
+		
+		//department id
 		$DepartamentoID='';
+
+		//country id
 		$PaisID='';
 		
+		//the uploadform for the students with all his fields
 		$uploadformstudents = $app['form.factory']
 		->createNamed('uploadformstudents', 'form')
 				->add('file', 'file', array(
@@ -96,6 +112,7 @@ class ImportController implements ControllerProviderInterface {
 						'data' => '',
 					));
 
+		//the uploadform for the teachers with all his fields
 		$uploadformteachers = $app['form.factory']
 		->createNamed('uploadformteachers', 'form')
 				->add('file', 'file', array(
@@ -119,6 +136,16 @@ class ImportController implements ControllerProviderInterface {
 						'data' => '',
 					));
 
+		//the uploadform for the schools with all his fields
+		$uploadformescuelas = $app['form.factory']
+		->createNamed('uploadformescuelas', 'form')
+				->add('file', 'file', array(
+						'required' => true,
+						'constraints' => array(new Assert\NotBlank()),
+						'label' => 'File:'
+					));
+
+		//the uploadform for the laptops with all his fields
 		$uploadformlaptops = $app['form.factory']
 		->createNamed('uploadformlaptops', 'form')
 				->add('file', 'file', array(
@@ -130,10 +157,12 @@ class ImportController implements ControllerProviderInterface {
 		$uploadformstudents->handleRequest($app['request']);
 		$uploadformteachers->handleRequest($app['request']);
 		$uploadformlaptops->handleRequest($app['request']);
+		$uploadformescuelas->handleRequest($app['request']);
 
 		$file = $app['request']->files->get($uploadformstudents->getName());
 		$file = $app['request']->files->get($uploadformteachers->getName());
 		$file = $app['request']->files->get($uploadformlaptops->getName());
+		$file = $app['request']->files->get($uploadformescuelas->getName());
 
 		if ($uploadformstudents->isValid()) {
 
@@ -472,6 +501,310 @@ class ImportController implements ControllerProviderInterface {
 		        $error = 'Invalid File:Please Upload XLSX File';
 		    }
 		}
+
+		if ($uploadformescuelas->isValid()) {
+			$data= $uploadformescuelas->getData();
+			$filename=$_FILES["uploadformescuelas"]["tmp_name"]["file"];
+			$extension=$_FILES["uploadformescuelas"]["name"]["file"];	
+			if(strpos(substr($extension,-4),'lsx') || strpos(substr($extension,-4),'xlsx'))
+		    {
+		    	if ( $_FILES["uploadformescuelas"]["tmp_name"]['file'] )
+				{
+					$objPHPExcel = \PHPExcel_IOFactory::load($filename);
+					$placeID=0;	
+					$data = array();
+					for($i=0;$i<($objPHPExcel->getSheetCount());$i++){
+						$objPHPExcel->setActiveSheetIndex($i);
+						$sheetData = $objPHPExcel->getActiveSheet()->rangeToArray('A1:R100');
+						$sheetName = $objPHPExcel->getActiveSheet()->getTitle();
+						$schoolname='';
+						if($sheetName == 'Cierre Global'){
+							$places = explode(" : ", $sheetData[1][1]);
+							$departmentid = $app['db.places']->getDepartmentByName($places[0]);
+							$cityID = $app['db.places']->getitemByNameandAncestorID($places[1], $departmentid);
+							$schoolID = $app['db.places']->getitemByNameandAncestorID($places[2], $cityID);
+							$schoolname = $places[2];
+							$placeID=$schoolID;
+							if(empty($schoolID)){
+								$school = array('created_at' => date("Y-m-d"),'name' => $places[2],'place_id' => $cityID,'place_type_id' => 4);
+								$app['db.places']->insert($school);
+								$schoolid = $app['db.places']->Lastadded();
+								$Ancestors=$app['db.places_dependencies']->fetchAllAncestors($cityID);
+								foreach ($Ancestors as $waarde) {
+								 	$dependency = array('descendant_id' => $schoolid, 'ancestor_id' => $waarde['ancestor_id']);
+									$app['db.places_dependencies']->insert($dependency);
+								}
+								$dependency = array('descendant_id' => $schoolid, 'ancestor_id' => $schoolid);
+								$app['db.places_dependencies']->insert($dependency);
+								$placeID= $app['db.places']->getSchool($places[2],$cityID);
+							}
+						}
+
+						else if($sheetName == 'Docente'){
+							foreach ($sheetData as $value) {
+								$remark='';
+								if(is_numeric($value[0]) && !empty($value[6])){
+									$person = $app['db.people']->getPerson($value[6]);
+									if(empty($person)){
+										//generate a barcode for the user
+										$barcode = 0;
+										do {
+										    $barcode = rand(1000000000, 9999999999);
+										} while (!empty($app['db.people']->findbarcode($barcode)));
+										
+										$names = explode(" ", $value[6]);
+										$firstname = '';
+										$lastname ='';
+										switch(count($names)){
+											case 2:
+										        $firstname = $names[0];
+										        $lastname = $names[1];
+										        break;
+										    case 3:
+										        $firstname = $names[0];
+										        $lastname = $names[1] . ' ' . $names[2];
+										        break;
+										    case 4:
+										        $firstname = $names[0] . ' ' . $names[1];
+										        $lastname = $names[2] . ' ' . $names[3];
+										        break;
+										    default:
+										        $firstname = $names[0] . ' ' . $names[1];
+										        $lastname = $names[2] . ' ' . $names[3] . ' ' . $names[4];
+										        break;
+										}
+										
+										$object = array('created_at' => date("Y/m/d"), 'name' => $firstname,'lastname' => $lastname, 'school_name'=>$schoolname, 'barcode' => $barcode);
+										$app['db.people']->insert($object);
+										$person = $app['db.people']->Lastadded();
+										$perform = array('person_id' => $person, 'place_id' => $placeID, 'profile_id' => 5);
+										$app['db.performs']->insert($perform);
+										$remark =";person added";
+									}
+									if(!empty($value['7'])){
+										$laptopid = $app['db.laptops']->FindLaptopbySerialandOwner($value['7'], $person);
+										if(empty($laptopid)){
+											$laptopid = $app['db.laptops']->GetLaptopId($value['7']);
+											if(!empty($laptopid)){
+												if(ctype_digit($laptopid)){
+													$owner = $app['db.laptops']->GetownerbyId($value['7']);
+													$app['db.laptops']->updatelaptopbyID($laptopid, $person);
+													$movement = array('created_at' => date("Y-m-d"),'source_person_id' => $owner, 'destination_person_id' => $person,'comment' => 'excel_movement by:'.$username, 'movement_type_id'=> 11 ,'laptop_id'=>$laptopid);
+													$app['db.movements']->insert($movement);
+													$remark .=";laptop serial does not exist";
+												}
+											}
+											else{
+												$remark .=";laptop serial does not exist";
+											}
+										}
+									}
+									else{
+										$laptopid = $app['db.laptops']->GetLaptopIdbyowner($person);
+										if(!empty($laptopid)){
+											$app['db.laptops']->updatelaptopbySerial($value['7'], 5);
+											$movement = array('created_at' => date("Y-m-d"),'source_person_id' => $person, 'destination_person_id' => 5,'comment' => 'excel_movement by:'.$username, 'movement_type_id'=> 11 ,'laptop_id'=>$laptopid);
+											$app['db.movements']->insert($movement);
+											$remark .= ';laptop removed' ;
+										}
+									}
+									if($remark==''){
+										$remark= 'no changes';
+									}
+									$value = array('A' => $value[6],'B' => $value['7'],'C' => 'Teacher','D' => '','E' => '','F' => '', 'G'=>$remark);
+									array_push($data, $value);
+								}
+							}
+						}
+						else if(strlen($sheetName)==5){
+							$names = explode(" ", $sheetName);
+							$name = ($names[0] == 'M')? 'Turno Mañana': (($names[0] == 'T')? 'Turno Tarde': 'Turno Completo');
+							$place= $app['db.places']->getitemByNameandAncestorID($name, $placeID);
+							$turnoid = $place;
+							if(empty($place)){
+								$turno = array('created_at' => date("Y-m-d"),'name' => $name,'place_id' => $placeID,'place_type_id' => 12);
+								$app['db.places']->insert($turno);
+								$turnoid = $app['db.places']->Lastadded();
+								$Ancestors=$app['db.places_dependencies']->fetchAllAncestors($placeID);
+								foreach ($Ancestors as $waarde) {
+								 	$dependency = array('descendant_id' => $turnoid, 'ancestor_id' => $waarde['ancestor_id']);
+									$app['db.places_dependencies']->insert($dependency);
+								}
+								$dependency =  array('descendant_id' => $turnoid, 'ancestor_id' => $turnoid);
+								$app['db.places_dependencies']->insert($dependency);
+
+								$place= $app['db.places']->getitemByNameandAncestorID($name, $placeID);
+							}
+							$place_type_id='';
+							switch ($names[1]) {
+							    case 1:
+							        $name = 'Primer Grado';
+							        $place_type_id=5;
+							        break;
+							    case 2:
+							        $name = 'Segundo Grado';
+							        $place_type_id=6;
+							        break;
+							    case 3:
+							        $name = 'Tercer Grado';
+							        $place_type_id=7;
+							        break;
+							    case 4:
+							        $name = 'Cuarto Grado';
+							        $place_type_id=8;
+							        break;
+							    case 5:
+							        $name = 'Quinto Grado';
+							        $place_type_id=9;
+							        break;
+							    case 6:
+							        $name = 'Sexto Grado';
+							        $place_type_id=10;
+							        break;
+							    case 7:
+							        $name = 'Septimo Grado';
+							        $place_type_id=16;
+							        break;
+							    case 8:
+							        $name = 'Octavo Grado';
+							        $place_type_id=17;
+							        break;
+							    case 9:
+							        $name = 'Noveno Grado';
+							        $place_type_id=18;
+							        break;
+							    case 'k': 
+							        $name = 'Preescolar';
+							        $place_type_id=14;
+							        break;
+							    case 'special':
+							        $name = 'Educacion Especial';
+							        $place_type_id=13;
+							        break;
+							}
+							$place= $app['db.places']->getgradeOfPlace($place, $name);
+							$gradoid = $place;
+							if(empty($place)){
+								$grado = array('created_at' => date("Y-m-d"),'name' => $name,'place_id' => $turnoid,'place_type_id' => $place_type_id);
+								$app['db.places']->insert($grado);
+								$gradoid = $app['db.places']->Lastadded();
+								$Ancestors=$app['db.places_dependencies']->fetchAllAncestors($turnoid);
+								foreach ($Ancestors as $waarde) {
+								 	$dependency = array('descendant_id' => $gradoid, 'ancestor_id' => $waarde['ancestor_id']);
+									$app['db.places_dependencies']->insert($dependency);
+								}
+								$dependency =  array('descendant_id' => $gradoid, 'ancestor_id' => $gradoid);
+								$app['db.places_dependencies']->insert($dependency);
+								$place= $app['db.places']->getgradeOfPlace($place, $name);
+							}
+							switch ($names[2]) {
+							    case 'A':	
+							        $name = 'Seccion A';
+							        break;
+							    case 'B':
+							        $name = 'Seccion B';
+							        break;
+							    case 'C':
+							        $name = 'Seccion C';
+							        break;
+							    case 'D':
+							        $name = 'Seccion D';
+							        break;
+							}
+							$place= $app['db.places']->getSeccionOfPlace($place, $name);
+							if(empty($place)){
+								$seccion = array('created_at' => date("Y-m-d"),'name' => $name,'place_id' => $gradoid,'place_type_id' => 11);
+								$app['db.places']->insert($seccion);
+								$seccionid = $app['db.places']->Lastadded();
+								$Ancestors=$app['db.places_dependencies']->fetchAllAncestors($gradoid);
+								foreach ($Ancestors as $waarde) {
+								 	$dependency = array('descendant_id' => $seccionid, 'ancestor_id' => $waarde['ancestor_id']);
+									$app['db.places_dependencies']->insert($dependency);
+								}
+								$dependency =  array('descendant_id' => $seccionid, 'ancestor_id' => $seccionid);
+								$app['db.places_dependencies']->insert($dependency);
+								$place= $app['db.places']->getSeccionOfPlace($place, $name);
+							}
+							foreach ($sheetData as $value) {
+								if(is_numeric($value[0]) && !empty($value[6])){
+									$person = $app['db.people']->getPerson($value[6]);
+									if(empty($person)){
+										//generate a barcode for the user
+										$barcode = 0;
+										do {
+										    $barcode = rand(1000000000, 9999999999);
+										} while (!empty($app['db.people']->findbarcode($barcode)));
+										
+										$names = explode(" ", $value[6]);
+										$firstname = '';
+										$lastname ='';
+										switch(count($names)){
+											case 2:
+										        $firstname = $names[0];
+										        $lastname = $names[1];
+										        break;
+										    case 3:
+										        $firstname = $names[0];
+										        $lastname = $names[1] . ' ' . $names[2];
+										        break;
+										    case 4:
+										        $firstname = $names[0] . ' ' . $names[1];
+										        $lastname = $names[2] . ' ' . $names[3];
+										        break;
+										    default:
+										        $firstname = $names[0] . ' ' . $names[1];
+										        $lastname = $names[2] . ' ' . $names[3] . ' ' . $names[4];
+										        break;
+										}
+										
+										$object = array('created_at' => date("Y/m/d"), 'name' => $firstname,'lastname' => $lastname, 'school_name'=>$schoolname, 'barcode' => $barcode);
+										$app['db.people']->insert($object);
+										$person = $app['db.people']->Lastadded();
+									}
+									if(!empty($value['7'])){
+										$laptopid = $app['db.laptops']->FindLaptopbySerialandOwner($value['7'], $person);
+										if(empty($laptopid)){
+											$laptopid = $app['db.laptops']->GetLaptopId($value['7']);
+											if(!empty($laptopid)){
+												if(ctype_digit($laptopid)){
+													$owner = $app['db.laptops']->GetownerbyId($value['7']);
+													$app['db.laptops']->updatelaptopbyID($laptopid, $person);
+													$movement = array('created_at' => date("Y-m-d"),'source_person_id' => $owner, 'destination_person_id' => $person,'comment' => 'excel_movement by:'.$username, 'movement_type_id'=> 11 ,'laptop_id'=>$laptopid);
+													$app['db.movements']->insert($movement);
+													$remark .=";laptop serial does not exist";
+												}
+											}
+											else{
+												$remark .=";laptop serial does not exist";
+											}
+										}
+									}
+									else{
+										$laptopid = $app['db.laptops']->GetLaptopIdbyowner($person);
+										if(!empty($laptopid)){
+											$app['db.laptops']->updatelaptopbySerial($value['7'], 5);
+											$movement = array('created_at' => date("Y-m-d"),'source_person_id' => $person, 'destination_person_id' => 5,'comment' => 'excel_movement by:'.$username, 'movement_type_id'=> 11 ,'laptop_id'=>$laptopid);
+											$app['db.movements']->insert($movement);
+											$remark .= ';laptop removed' ;
+										}
+									}
+									if($remark==''){
+										$remark= 'no changes';
+									}
+									$value = array('A' => $value[6],'B' => $value['7'],'C' => 'Student','D' => $names[0],'E' => $names[1],'F' => $names[2], 'G'=>$remark);
+									array_push($data, $value);
+								}
+							}
+						}
+					}
+				}
+				$value = 4;
+	    	}
+		    else{
+		        $error = 'Invalid File:Please Upload XLSX File';
+		    }
+		}
+
 		//return the rendered twig with parameters
 		return $app['twig']->render('Import/index.twig', array(
 			'show' => $show,
@@ -481,6 +814,7 @@ class ImportController implements ControllerProviderInterface {
 			'uploadformstudents' => $uploadformstudents->createView(),
 			'uploadformteachers' => $uploadformteachers->createView(),
 			'uploadformlaptops' => $uploadformlaptops->createView(),
+			'uploadformescuelas' => $uploadformescuelas->createView(),
 			'placename' => $placename,
 			'access_level' => $access_level,
 			'username' => $username

@@ -22,10 +22,9 @@ class MovementsRepository extends \Knp\Repository {
 	}
 
 	public function deleteperson($personID) {
+		$this->db->delete('movements', array('source_person_id' => $personID));
 		return $this->db->delete('movements', array('destination_person_id' => $personID));
-
 	}
-
 	
 
 

@@ -1,4 +1,5 @@
 
+
 SetData('Pais','json-datalistPais');
 /*SetData('Departamento','json-datalistDepartamento');
 SetData('Ciudad','json-datalistCiudad');*/
@@ -125,6 +126,12 @@ $( "#ImportButtonLaptops" ).click(function() {
   var fileinput = document.getElementById("uploadformlaptops_file")
   fileinput.click();
 });
+
+$( "#ImportButtonescuelas" ).click(function() {
+  var fileinput = document.getElementById("uploadformescuelas_file")
+  fileinput.click();
+});
+
 
 $(document).ready(function() {
     function close_accordion_section() {

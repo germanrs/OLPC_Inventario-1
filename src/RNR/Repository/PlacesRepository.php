@@ -65,6 +65,11 @@ class PlacesRepository extends \Knp\Repository {
 		return $this->db->fetchColumn($query);
 	}
 
+	public function getDepartmentByName($placename) {
+		$query = 'SELECT id FROM places WHERE place_type_id = 2 AND name = ' . $this->db->quote($placename, \PDO::PARAM_INT)	;
+		return $this->db->fetchColumn($query);
+	}
+
 	
 
 	public function getitemByNameandAncestorID($placename, $cityid) {
@@ -170,6 +175,10 @@ class PlacesRepository extends \Knp\Repository {
 
 	public function deletePlace($placeId) {
 		return $this->db->delete('places', array('id' => $placeId));
+	}
+
+	public function deletePlaceID($placeId) {
+		return $this->db->delete('places', array('place_id' => $placeId));
 	}
 
 	public function updatePlace($place) {

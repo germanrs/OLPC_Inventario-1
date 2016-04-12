@@ -7,7 +7,10 @@ use Silex\ControllerProviderInterface;
 use Silex\ControllerCollection;
 use Symfony\Component\Validator\Constraints as Assert;
 require_once '/../../Classes/PHPExcel.php';
-require_once '/../../Classes/PHPExcel/IOFactory.php';
+require_once '/../../Classes/PHPExcel.php';
+require_once('/../../Classes/tcpdf/examples/config/tcpdf_config_alt.php');
+require_once '/../../Classes/tcpdf/tcpdf.php';
+
 /**
  * Controller for the authors
  * @author Rein Bauwens	<rein.bauwens@student.odisee.be>
@@ -35,6 +38,11 @@ class ExportController implements ControllerProviderInterface {
 			->get('/excel/', array($this, 'excel'))
 			->method('GET|POST')
 			->bind('Export.excel');
+
+		$controllers
+			->get('/barcodes/', array($this, 'barcodes'))
+			->method('GET|POST')
+			->bind('Export.barcodes');
 		// Return ControllerCollection
 		return $controllers;
 
@@ -78,6 +86,271 @@ class ExportController implements ControllerProviderInterface {
 	}
 
 	/**
+	 * Export page
+	 * @param Application $app An Application instance
+	 * @return pdf file of a place with all users and barcodes.
+	 */
+	public function barcodes(Application $app) {
+				
+		$data='';
+
+		// check if user is already logged in
+		if ($app['session']->get('user') && ($app['db.people']->fetchAdminPerson($app['session']->get('user')))) {
+
+		}
+		else{
+
+			//redirect to login page if user is not logged in
+			return $app->redirect($app['url_generator']->generate('auth.login')); 
+		}
+		
+		//get all the data from the url and put them in an array
+		$obj = array('Ciudad' =>  $_GET["Ciudad"],
+					'Escuela' =>  $_GET["Escuela"],
+					'Turno' =>  $_GET["Turno"],
+					'grado' =>  $_GET["grado"],
+					'Seccion' =>  $_GET["Seccion"],
+					'Departamento' =>  $_GET["Departamento"]);
+
+		$peoplearray = array();
+		$Departamentoid = $app['db.places']->getPlace($obj['Departamento'], 2);
+		$cityid = $app['db.places']->getCityByName($obj['Ciudad']);
+		$placeid =1;
+		$schoolid = $app['db.places']->getitemByNameandAncestorID($obj['Escuela'], $cityid);
+		$turnoId = $app['db.places']->getitemByNameandAncestorID($obj['Turno'], $schoolid);
+		$gradoid = $app['db.places']->getitemByNameandAncestorID($obj['grado'], $turnoId);
+		$Seccionid = $app['db.places']->getitemByNameandAncestorID($obj['Seccion'], $gradoid);	
+		$data = array();
+		if(!empty($Seccionid)){
+			array_push($data, array('name' => $obj['Departamento'].' : '. $obj['Ciudad'].' : '. $obj['Escuela'].' : '. $obj['Turno'].' : '. $obj['grado'].' : '. $obj['Seccion'], 'data' => $app['db.laptops']->fetchbarcodeList($obj,$Seccionid)));
+		}
+		else if(!empty($gradoid)){
+			$seccions =  $app['db.places']->fetchSeccion($gradoid);
+			foreach ($seccions as $seccion) {
+				array_push($data, array('name' => $obj['Departamento'].' : '. $obj['Ciudad'].' : '. $obj['Escuela'].' : '. $obj['Turno'].' : '. $obj['grado'].' : '. $seccion['name'], 'data' => $app['db.laptops']->fetchbarcodeList($obj,$seccion['id'])));
+			}
+		}
+		else if(!empty($turnoId)){
+			$grades =  $app['db.places']->fetchGrade($turnoId);
+			foreach ($grades as $grade) {
+				$seccions =  $app['db.places']->fetchSeccion($grade['id']);
+				foreach ($seccions as $seccion) {
+					array_push($data, array('name' => $obj['Departamento'].' : '. $obj['Ciudad'].' : '. $obj['Escuela'].' : '. $obj['Turno'].' : '. $grade['name'].' : '. $seccion['name'], 'data' => $app['db.laptops']->fetchbarcodeList($obj,$seccion['id'])));
+				}
+			}
+		}
+		else if(!empty($schoolid)){
+			$teachers = $app['db.laptops']->fetchbarcodeList($obj,$schoolid);
+			array_push($data, array('name' => $obj['Departamento'].' : '. $obj['Ciudad'].' : '. $obj['Escuela'], 'data' => $teachers));
+			$turnos =  $app['db.places']->fetchTurno($schoolid);
+			foreach ($turnos as $turno) {
+				$grades =  $app['db.places']->fetchGrade($turno['id']);
+				foreach ($grades as $grade) {
+					$seccions =  $app['db.places']->fetchSeccion($grade['id']);
+					foreach ($seccions as $seccion) {
+						array_push($data, array('name' => $obj['Departamento'].' : '. $obj['Ciudad'].' : '. $obj['Escuela'].' : '. $turno['name'].' : '. $grade['name'].' : '. $seccion['name'], 'data' => $app['db.laptops']->fetchbarcodeList($obj,$seccion['id'])));
+					}
+				}
+			}
+		}
+
+	    $places='Nicaragua';
+	    if($_GET["Departamento"] != ''){
+	        $places .= ' : '. $_GET["Departamento"];
+	        if($_GET["Ciudad"] != ''){
+	            $places .= ' : '.$_GET["Ciudad"];
+	            if($_GET["Escuela"] != ''){
+	                $places .= ' : '.$_GET["Escuela"];
+	                if($_GET["Turno"] != ''){
+	                    $places .= ' : '.$_GET["Turno"];
+	                    if($_GET["grado"] != ''){
+	                        $places .= ' : '.$_GET["grado"];
+	                        if($_GET["Seccion"] != ''){
+	                            $places .= ' : '.$_GET["Seccion"];
+	                        }
+	                    }
+	                }
+	            }
+	        }
+	    }
+		// create new PDF document
+		$pdf = new \TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, false, 'ISO-8859-1', false);
+
+		// set document information
+		$pdf->SetCreator(PDF_CREATOR);
+		$pdf->SetAuthor('FZT');
+		$pdf->SetTitle('List of barcodes');
+		$pdf->SetSubject($places);
+
+		// set header and footer fonts
+		$pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
+		$pdf->setFooterFont(Array(PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA));
+
+		// set default monospaced font
+		$pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
+
+		// set margins
+		$pdf->SetMargins(PDF_MARGIN_LEFT, 10, PDF_MARGIN_RIGHT);
+		$pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
+		$pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
+
+		// set auto page breaks
+		$pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
+
+		// set image scale factor
+		$pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
+
+		// set some language-dependent strings (optional)
+		if (@file_exists(dirname(__FILE__).'/lang/eng.php')) {
+		    require_once(dirname(__FILE__).'/lang/eng.php');
+		    $pdf->setLanguageArray($l);
+		}
+
+		// set font
+		$pdf->SetFont('helvetica', 'B', 20);
+
+		// add a page
+		$pdf->AddPage();
+
+		//write text 
+		$pdf->Write(0, 'List of barcodes', '', 0, 'L', true, 0, false, false, 0);
+
+		// set font
+		$pdf->SetFont('helvetica', '', 15);
+
+		//write text 
+		$pdf->Write(0, $places, '', 0, 'L', true, 0, false, false, 0);
+
+		// set font
+		$pdf->SetFont('helvetica', '', 13);
+
+		foreach ($data as $class) {
+			$namesPerSchoolClass = '';
+			$barcodesoffallchildren = '<table cellspacing="0" cellpadding="1" border="1"  style="text-align: center; page-break-before: always;" ><tr>';
+			$pdf->Write(0, $class['name'], '', 0, 'L', true, 0, false, false, 0);
+			$tbl ="";
+			$teller =1;
+			$tellernamen = 1;
+			$total = count($class['data']);
+
+
+			foreach ($class['data'] as $child) {
+				$classname = '';
+				$place_type_id='';
+				switch (true) {
+				    case stristr($class['name'],'Primer Grado'):
+				        $place_type_id=1;
+				        break;
+				    case stristr($class['name'],'Segundo Grado'):
+				        $place_type_id=2;
+				        break;
+				    case stristr($class['name'],'Tercer Grado'):
+				        $place_type_id=3;
+				        break;
+				    case stristr($class['name'],'Cuarto Grado'):
+				        $place_type_id=4;
+				        break;
+				    case stristr($class['name'],'Quinto Grado'):
+				        $place_type_id=5;
+				        break;
+				    case stristr($class['name'],'Sexto Grado'):
+				        $place_type_id=6;
+				        break;
+				    case stristr($class['name'],'Septimo grado'):
+				        $place_type_id=7;
+				        break;
+				    case stristr($class['name'],'Octavo grado'):
+				        $place_type_id=8;
+				        break;
+				    case stristr($class['name'],'Noveno grado'):
+				        $place_type_id=9;
+				        break;
+				    case stristr($class['name'],'Preescolar'): 
+				        $place_type_id=Pr;
+				        break;
+				    case stristr($class['name'],'Educacion Especial'):
+				        $place_type_id=ES;
+				        break;
+				    }
+				$secciond_id='';
+				switch (true) {
+				    case stristr($class['name'],'Seccion A'):
+				        $secciond_id='A';
+				        break;
+				    case stristr($class['name'],'Seccion B'):
+				        $secciond_id='B';
+				        break;
+				    case stristr($class['name'],'Seccion C'):
+				        $secciond_id='C';
+				        break;
+				}
+
+			
+				if(!empty($child['fullname'])){
+					if($tellernamen % 2 == 0){
+						$namesPerSchoolClass .= '<td width="320"  border="1"  style="font-size: x-large;" 	height="35" cellpadding="12">'.((strlen($child['fullname'])>20)?substr($child['fullname'],0,20).'...':$child['fullname']).' '.$place_type_id.$secciond_id.'</td></tr>';
+					}
+					else{
+						$namesPerSchoolClass .= '<tr><td width="320"  border="1" height="35" style="font-size: x-large;" cellpadding="12">'.((strlen($child['fullname'])>20)?substr($child['fullname'],0,20).'...':$child['fullname']).' '.$place_type_id.$secciond_id.'</td>';
+					}
+					$params = $pdf->serializeTCPDFtagParameters(array($child['barcode'], 'C128A', '', '', 55, 15, 0.4, array('position'=>'C', 'border'=>false, 'padding'=>1, 'fgcolor'=>array(0,0,0), 'bgcolor'=>array(255,255,255), 'text'=>true, 'font'=>'helvetica', 'fontsize'=>5, 'stretchtext'=>4), 'N'));
+					$barcodesoffallchildren.= '<td width="214"><div><small>'.((strlen($child['fullname'])>22)?substr($child['fullname'],0,22).'...':$child['fullname'])."<br>". $class['name'].'</small></div><tcpdf method="write1DBarcode" params="'.$params.'" /></td>';
+					
+					if($teller % 24 == 0 && $total != $teller){
+						$barcodesoffallchildren.= '</tr></table><table cellspacing="0" cellpadding="1" border="1"  style="text-align: center; page-break-before: always;" ><tr>';		
+					}
+					else if($teller == $total){
+						$barcodesoffallchildren.= '</tr>';
+					}
+					else if($teller % 3 == 0){
+						$barcodesoffallchildren.= '</tr><tr>';
+					}
+
+					$teller++;
+					$tellernamen++;
+				}	
+				
+			}
+
+			
+			if(!empty($class['data'])){
+				if(substr($namesPerSchoolClass,-4)=='/tr>'){
+					$tbl = '<table cellspacing="0" cellpadding="1" style="text-align: center; padding-bottom: 5rem; padding-top: 5rem; font-size: 15rem;" >'
+						.$namesPerSchoolClass.
+						'</table>';
+				}
+				else if(substr($namesPerSchoolClass,-4)=='/td>'){
+					$tbl = '<table cellspacing="0" cellpadding="1" style="text-align: center; padding-bottom: 5rem; padding-top: 5rem; font-size: 15rem;" >'
+						.$namesPerSchoolClass.
+						'</tr></table>';
+				}
+
+				$pdf->SetFont('helvetica', '', 13);
+				$pdf->writeHTML($tbl, true, 0, true, 0);
+				if(substr($barcodesoffallchildren,-4)=='<tr>'){
+					$tbl = $barcodesoffallchildren.					    
+						'</tr></table>';
+				}
+				else{
+					$tbl = $barcodesoffallchildren.					    
+						'</table>';
+				}
+				$pdf->SetFont('helvetica', '', 13);
+				$pdf->writeHTML($tbl, true, 0, true, 0);
+			}
+			else{
+				$pdf->Write(0, 'class is empty', '', 0, 'L', true, 0, false, false, 0);
+			}
+		}
+		
+		//Close and output PDF document
+		$pdf->Output('barcodes.pdf', 'I');
+
+		//exit;
+		return $app['twig']->render('Ajax/Dump.twig');		
+	}
+
+	/**
 	 * Excel page
 	 * @param Application $app An Application instance
 	 * @return an excel file with all the data from a school, including all clases with students and laptop ids.
@@ -112,7 +385,7 @@ class ExportController implements ControllerProviderInterface {
 		if($_GET['formname']=='laptopsForm'){
 
 			//set the fullname of the school
-			$fullname = $_GET["Departamento"] . " " . $_GET["Ciudad"] . " " . $_GET["Escuela"];
+			$fullname = $_GET["Departamento"] . " : " . $_GET["Ciudad"] . " : " . $_GET["Escuela"];
 
 			//set the date
 			$date = date("m/d/Y");
@@ -242,7 +515,7 @@ class ExportController implements ControllerProviderInterface {
 
 		// Redirect output to a client’s web browser (Excel2007)
 		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-		header('Content-Disposition: attachment;filename="list.xls"');
+		header('Content-Disposition: attachment;filename="list.xlsx"');
 		header('Cache-Control: max-age=0');
 		// If you're serving to IE 9, then the following may be needed
 		header('Cache-Control: max-age=1');

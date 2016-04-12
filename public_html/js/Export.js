@@ -1,6 +1,10 @@
+//create the variables coloms, rows and total for the export page.
+//set them to default
 var columns = [];
 var rows = [];
 var total=0;
+
+//the function to let the accordion work
 $(document).ready(function() {
     function close_accordion_section() {
         $('.accordion .accordion-section-title').removeClass('active');
@@ -26,25 +30,33 @@ $(document).ready(function() {
     });
 });
 
+
+
+
+//when the previeuw button of laptops is clicked set the proper data in the screen and change the ref in the download excel button
 $( "#submitlaptop" ).click(function() {
     GetData(this, 'laptopsForm'); 
     changeHref(this, 'laptopsForm');
-   
 });
 
+//when the previeuw button of people is clicked set the proper data in the screen and change the ref in the download excel button
 $( "#submitpeople" ).click(function() {
     GetData(this, 'peopleForm');
     changeHref(this, 'peopleForm');    
 });
 
+//when the previeuw button of places is clicked set the proper data in the screen and change the ref in the download excel button
 $( "#submitplaces" ).click(function() {
     GetData(this, 'placesForm');  
     changeHref(this, 'placesForm');  
 });
 
-
+//change the href of the download excel button, in this way, the correct parameters are send to the php page.
 function changeHref(datainput, formname){
+
     var boxlist = '';
+    
+    //get the selected boxes
     var total = $("#"+formname+" input:checkbox:checked").length;
     $("#"+formname+" input:checkbox:checked").each(function(index) {
         if (index === total - 1) {
@@ -55,6 +67,8 @@ function changeHref(datainput, formname){
         }
         
     });
+
+    //get the sort items
     $("#exportTable tr").remove();
     var OrderByTerm = $(datainput).closest("form")   
                        .find("#orderByTerm")
@@ -68,12 +82,23 @@ function changeHref(datainput, formname){
     var inputfield = $(datainput).closest("form")   
                        .find("#inputfield")
                        .val();
+
+    //get the place items
     var Departamento = document.getElementById('Departamento').value;
     var Ciudad = document.getElementById('Ciudad').value;
     var Escuela = document.getElementById('Escuela').value;
     var Turno = document.getElementById('Turno').value;
     var grado = document.getElementById('grado').value;
     var Seccion = document.getElementById('Seccion').value;
+
+    document.getElementById("DownloadBarcodes").href='barcodes?Departamento='+Departamento+
+                                                                '&Ciudad='+Ciudad+
+                                                                '&Escuela='+Escuela+
+                                                                '&Turno='+Turno+
+                                                                '&grado='+grado+
+                                                                '&Seccion='+Seccion;
+
+    //set the data in the excel file
     document.getElementById("DownloadFileasExcel").href='excel?coloms='+boxlist+
                                                                 '&OrderByTerm='+OrderByTerm+
                                                                 '&orderList='+orderList+
@@ -85,12 +110,20 @@ function changeHref(datainput, formname){
                                                                 '&Turno='+Turno+
                                                                 '&grado='+grado+
                                                                 '&Seccion='+Seccion+
-                                                                "&formname="+formname; 
+                                                                "&formname="+formname;
+
+    //hide or show the buttons if a school is selected or not 
     if(document.getElementById('Escuela').value!=''){
-         document.getElementById("DownloadFileasExcel").style.display = "inherit";  
+         document.getElementById("DownloadFileasExcel").style.display = "inherit"; 
+         document.getElementById("DownloadBarcodes").style.display = "inherit";   
+    }
+    else{
+        document.getElementById("DownloadFileasExcel").style.display = "none";  
+        document.getElementById("DownloadBarcodes").style.display = "none";  
     }
 }
 
+//get the data from the server with a ajax request to set the data for the download pdf file.
 function GetData(datainput, formname){
 
     columns = [];
@@ -165,7 +198,6 @@ function GetData(datainput, formname){
                         "Departamento":Departamento
                     }
         var dataString = JSON.stringify(postData);
-        console.log()
         if(formname == 'laptopsForm'){
             $.ajax({
 
@@ -375,6 +407,8 @@ $('#Pais').on('input', function(){
        if (options[i].value == $(this).val()) 
          FillDataInDropdowon('json-datalistDepartamento', 'Departamento', 'Departamentohidden', "../ajax/placesstates/", this,  'Departamento');
     }
+    showdropdowns(1);
+   
 });
 
 $('#Departamento').on('input', function(){
@@ -383,6 +417,7 @@ $('#Departamento').on('input', function(){
        if (options[i].value == $(this).val()) 
          FillDataInDropdowon('json-datalistCiudad', 'ciudad', 'Ciudadhidden', "../ajax/placescitys/", this,  'Ciudad');
     }
+    showdropdowns(2);
 });
 
 $('#Ciudad').on('input', function(){
@@ -391,6 +426,7 @@ $('#Ciudad').on('input', function(){
        if (options[i].value == $(this).val()) 
          FillDataInDropdowon('json-datalistEscuela', 'Escuela', 'Escuelahidden', "../ajax/placesschools/", this,  'Escuela');
     }
+    showdropdowns(3);
 });
 
 $('#Escuela').on('input', function(){
@@ -399,6 +435,7 @@ $('#Escuela').on('input', function(){
        if (options[i].value == $(this).val()) 
          FillDataInDropdowon('json-datalistTurno', 'Turno', 'Turnohidden', "../ajax/placesturnos/", this,  'Turno');
     }
+    showdropdowns(4);
 });
 
 $('#Turno').on('input', function(){
@@ -407,6 +444,7 @@ $('#Turno').on('input', function(){
        if (options[i].value == $(this).val()) 
           FillDataInDropdowon('json-datalistgrado', 'grado', 'gradohidden', "../ajax/placesgrados/", this,  'grado');
     }
+    showdropdowns(5);
 });
 
 $('#grado').on('input', function(){
@@ -417,6 +455,35 @@ $('#grado').on('input', function(){
     }
 });
 
+//show or hide a few dropdowns deppeding on the number
+function showdropdowns(placetype){
+    if(placetype<=5){
+        if(placetype<=4){
+            if(placetype<=3){
+                if(placetype<=2){
+                    if(placetype<=1){
+                        clearChildren('json-datalistCiudad');
+                        $('.Ciudadhidden').css('display', 'none');
+                        $('.ciudad').val('');
+                    }
+                    $('.Escuelahidden').css('display', 'none');
+                    clearChildren('json-datalistEscuela');
+                    $('.Escuela').val('');   
+                }
+                $('.Turnohidden').css('display', 'none');
+                clearChildren('json-datalistTurno');
+                $('.Turno').val('');   
+            }
+            $('.gradohidden').css('display', 'none');
+            clearChildren('json-datalistgrado');
+            $('.grado').val('');   
+        }
+        clearChildren('json-datalistSeccion');
+        $('.Seccionhidden').css('display', 'none');
+        $('.Seccion').val('');   
+    }
+    document.getElementById("pdfcontent").style.display = "none";  
+}
 
 
 SetData('Pais','json-datalistPais');
