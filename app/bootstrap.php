@@ -1,5 +1,5 @@
 <?php
-
+var_dump('test');
 // Require Composer Autoloader
 require_once __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
 
@@ -25,7 +25,7 @@ $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
         'dbname' => 'OLPC_test1',
         'user' => 'root',
         'charset' => 'utf8mb4',
-        'password' => 'olpcolpc', //Mysql password
+        'password' => '', //Mysql password
     ),
 ));
 
