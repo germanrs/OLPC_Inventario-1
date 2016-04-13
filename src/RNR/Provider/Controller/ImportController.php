@@ -154,41 +154,82 @@ class ImportController implements ControllerProviderInterface {
 						'label' => 'File:'
 					));
 		
+		//process the data sended to the server
 		$uploadformstudents->handleRequest($app['request']);
 		$uploadformteachers->handleRequest($app['request']);
 		$uploadformlaptops->handleRequest($app['request']);
 		$uploadformescuelas->handleRequest($app['request']);
 
+		//get the file that was uploaded
 		$file = $app['request']->files->get($uploadformstudents->getName());
 		$file = $app['request']->files->get($uploadformteachers->getName());
 		$file = $app['request']->files->get($uploadformlaptops->getName());
 		$file = $app['request']->files->get($uploadformescuelas->getName());
 
+		//if the form students is valid, upload all the students from the form to the database
 		if ($uploadformstudents->isValid()) {
 
+			//get the data from the uploadform
 			$data= $uploadformstudents->getData();
+
+			//get the city id
 			$CiudadID =$data['CiudadID'];
+
+			//get the department id
 			$DepartamentoID=$data['DepartamentoID'];
+
+			//get the country id
 			$PaisID=$data['PaisID'];
+
+			//set the placename
 			$placename = $data['PaisID'] . ' > '. $data['DepartamentoID'] .  ' > '. $data['CiudadID'];
+
+			//get the id of the school
 			$Ciudad = $app['db.places']->getPlace($CiudadID, 3);
+
+			//get the id of the department
 			$Departamento = $app['db.places']->getPlace($DepartamentoID, 2);
+
+			//get the id of the country
 			$Pais = $app['db.places']->getPlace($PaisID, 1);
+
+			//set the laptop id to default
 			$laptopid ='';
-			$data= $uploadformstudents->getData();
+
+			//get the details from the uploaded file
 			$filename=$_FILES["uploadformstudents"]["tmp_name"]["file"];
+
+			//get the extention of the file
 			$extension=$_FILES["uploadformstudents"]["name"]["file"];
+
+			//if the extention is ok go on.
 			if(strpos(substr($extension,-4),'lsx') || strpos(substr($extension,-4),'xlsx'))
 		    {
+		    	//if the file is set, go on
 		    	if ( $_FILES["uploadformstudents"]["tmp_name"]['file'] )
 				{
+					//load the file into an PHP object
 					$objPHPExcel = \PHPExcel_IOFactory::load($filename);
+
+					//get the data from the active sheet
 					$sheetData = $objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
+
+					//set the data for the table in the template
 					$data = $sheetData;
+
+					//loop over all the data in the form
 					foreach ($sheetData as $value) {
+						
+						//set place to default
 						$place="";
+
+						//set profile to default
 						$profile="";
+
+						//set grade to default
 						$grade="";
+
+						
 						try {
 							$place= $app['db.places']->getSchool($value['D'],$Ciudad);
 							$schoolid = $place;
@@ -511,7 +552,8 @@ class ImportController implements ControllerProviderInterface {
 		    	if ( $_FILES["uploadformescuelas"]["tmp_name"]['file'] )
 				{
 					$objPHPExcel = \PHPExcel_IOFactory::load($filename);
-					$placeID=0;	
+					$placeID=0;
+					$schoolID='';	
 					$data = array();
 					for($i=0;$i<($objPHPExcel->getSheetCount());$i++){
 						$objPHPExcel->setActiveSheetIndex($i);
@@ -544,81 +586,104 @@ class ImportController implements ControllerProviderInterface {
 							foreach ($sheetData as $value) {
 								$remark='';
 								if(is_numeric($value[0]) && !empty($value[6])){
-									$person = $app['db.people']->getPerson($value[6]);
-									if(empty($person)){
-										//generate a barcode for the user
-										$barcode = 0;
-										do {
-										    $barcode = rand(1000000000, 9999999999);
-										} while (!empty($app['db.people']->findbarcode($barcode)));
-										
-										$names = explode(" ", $value[6]);
-										$firstname = '';
-										$lastname ='';
-										switch(count($names)){
-											case 2:
-										        $firstname = $names[0];
-										        $lastname = $names[1];
-										        break;
-										    case 3:
-										        $firstname = $names[0];
-										        $lastname = $names[1] . ' ' . $names[2];
-										        break;
-										    case 4:
-										        $firstname = $names[0] . ' ' . $names[1];
-										        $lastname = $names[2] . ' ' . $names[3];
-										        break;
-										    default:
-										        $firstname = $names[0] . ' ' . $names[1];
-										        $lastname = $names[2] . ' ' . $names[3] . ' ' . $names[4];
-										        break;
+									if(empty($value[3])){
+										$person = $app['db.people']->getPerson($value[6]);
+										if(empty($person)){
+											//generate a barcode for the user
+											$barcode = 0;
+											do {
+											    $barcode = rand(1000000000, 9999999999);
+											} while (!empty($app['db.people']->findbarcode($barcode)));
+											
+											$names = explode(" ", $value[6]);
+											$firstname = '';
+											$lastname ='';
+											switch(count($names)){
+												case 2:
+											        $firstname = $names[0];
+											        $lastname = $names[1];
+											        break;
+											    case 3:
+											        $firstname = $names[0];
+											        $lastname = $names[1] . ' ' . $names[2];
+											        break;
+											    case 4:
+											        $firstname = $names[0] . ' ' . $names[1];
+											        $lastname = $names[2] . ' ' . $names[3];
+											        break;
+											    default:
+											        $firstname = $names[0] . ' ' . $names[1];
+											        $lastname = $names[2] . ' ' . $names[3] . ' ' . $names[4];
+											        break;
+											}
+											
+											$object = array('created_at' => date("Y/m/d"), 'name' => $firstname,'lastname' => $lastname, 'school_name'=>$schoolname, 'barcode' => $barcode);
+											$app['db.people']->insert($object);
+											$person = $app['db.people']->Lastadded();
+											$perform = array('person_id' => $person, 'place_id' => $placeID, 'profile_id' => 5);
+											$app['db.performs']->insert($perform);
+											$remark =";person added";
 										}
-										
-										$object = array('created_at' => date("Y/m/d"), 'name' => $firstname,'lastname' => $lastname, 'school_name'=>$schoolname, 'barcode' => $barcode);
-										$app['db.people']->insert($object);
-										$person = $app['db.people']->Lastadded();
-										$perform = array('person_id' => $person, 'place_id' => $placeID, 'profile_id' => 5);
-										$app['db.performs']->insert($perform);
-										$remark =";person added";
-									}
-									if(!empty($value['7'])){
-										$laptopid = $app['db.laptops']->FindLaptopbySerialandOwner($value['7'], $person);
-										if(empty($laptopid)){
-											$laptopid = $app['db.laptops']->GetLaptopId($value['7']);
-											if(!empty($laptopid)){
-												if(ctype_digit($laptopid)){
-													$owner = $app['db.laptops']->GetownerbyId($value['7']);
-													$app['db.laptops']->updatelaptopbyID($laptopid, $person);
-													$movement = array('created_at' => date("Y-m-d"),'source_person_id' => $owner, 'destination_person_id' => $person,'comment' => 'excel_movement by:'.$username, 'movement_type_id'=> 11 ,'laptop_id'=>$laptopid);
-													$app['db.movements']->insert($movement);
+										if(!empty($value['7'])){
+											$laptopid = $app['db.laptops']->FindLaptopbySerialandOwner($value['7'], $person);
+											if(empty($laptopid)){
+												$laptopid = $app['db.laptops']->GetLaptopId($value['7']);
+												if(!empty($laptopid)){
+													if(ctype_digit($laptopid)){
+														$owner = $app['db.laptops']->GetownerbyId($value['7']);
+														$app['db.laptops']->updatelaptopbyID($laptopid, $person);
+														$movement = array('created_at' => date("Y-m-d"),'source_person_id' => $owner, 'destination_person_id' => $person,'comment' => 'excel_movement by:'.$username, 'movement_type_id'=> 11 ,'laptop_id'=>$laptopid);
+														$app['db.movements']->insert($movement);
+														$remark .=";laptop serial does not exist";
+													}
+												}
+												else{
 													$remark .=";laptop serial does not exist";
 												}
 											}
-											else{
-												$remark .=";laptop serial does not exist";
+										}
+										//check if user has a laptop, if so: reasign it to the fzt
+										else{
+
+											//does the user ahs a laptop??
+											$laptopid = $app['db.laptops']->FindLaptopbySerialandOwner($value['7'],$person);
+											if(!empty($laptopid)){
+												//user ahs a laptop, reasign it to the FZT office
+												$app['db.laptops']->updatelaptopbySerial($value['7'], 5);
+
+												//add movement
+												$movement = array('created_at' => date("Y-m-d"),'source_person_id' => $person, 'destination_person_id' => 5,'comment' => 'excel_movement by:'.$username, 'movement_type_id'=> 11 ,'laptop_id'=>$laptopid);
+												$app['db.movements']->insert($movement);
+												$remark .= ';laptop removed' ;
 											}
 										}
+										if($remark==''){
+											$remark= 'no changes';
+										}
+										$value = array('A' => $value[6],'B' => $value['7'],'C' => 'Teacher','D' => '','E' => '','F' => '', 'G'=>$remark);
+										array_push($data, $value);
 									}
 									else{
-										$laptopid = $app['db.laptops']->GetLaptopIdbyowner($person);
-										if(!empty($laptopid)){
-											$app['db.laptops']->updatelaptopbySerial($value['7'], 5);
-											$movement = array('created_at' => date("Y-m-d"),'source_person_id' => $person, 'destination_person_id' => 5,'comment' => 'excel_movement by:'.$username, 'movement_type_id'=> 11 ,'laptop_id'=>$laptopid);
-											$app['db.movements']->insert($movement);
-											$remark .= ';laptop removed' ;
+										$person = $app['db.people']->getPerson($value[6]);
+										if(!empty($person)){
+											$app['db.laptops']->changeOwnerToFZT($person);
+											$app['db.movements']->deleteperson($person);
+											$app['db.performs']->deleteperson($person);
+											$app['db.people']->deleteperson($person);
+											$remark= 'person deleted';
 										}
+										else{
+											$remark= "person not found";
+										}
+										$value = array('A' => $value[6],'B' => $value['7'],'C' => 'Student','D' => $places[0],'E' => $places[1],'F' => $places[2], 'G'=>$remark);
+										array_push($data, $value);
 									}
-									if($remark==''){
-										$remark= 'no changes';
-									}
-									$value = array('A' => $value[6],'B' => $value['7'],'C' => 'Teacher','D' => '','E' => '','F' => '', 'G'=>$remark);
-									array_push($data, $value);
 								}
 							}
 						}
 						else if(strlen($sheetName)==5){
-							$names = explode(" ", $sheetName);
-							$name = ($names[0] == 'M')? 'Turno Mañana': (($names[0] == 'T')? 'Turno Tarde': 'Turno Completo');
+							$places = explode(" ", $sheetName);
+							$name = ($places[0] == 'M')? 'Turno Mañana': (($places[0] == 'T')? 'Turno Tarde': 'Turno Completo');
 							$place= $app['db.places']->getitemByNameandAncestorID($name, $placeID);
 							$turnoid = $place;
 							if(empty($place)){
@@ -636,7 +701,7 @@ class ImportController implements ControllerProviderInterface {
 								$place= $app['db.places']->getitemByNameandAncestorID($name, $placeID);
 							}
 							$place_type_id='';
-							switch ($names[1]) {
+							switch ($places[1]) {
 							    case 1:
 							        $name = 'Primer Grado';
 							        $place_type_id=5;
@@ -697,7 +762,7 @@ class ImportController implements ControllerProviderInterface {
 								$app['db.places_dependencies']->insert($dependency);
 								$place= $app['db.places']->getgradeOfPlace($place, $name);
 							}
-							switch ($names[2]) {
+							switch ($places[2]) {
 							    case 'A':	
 							        $name = 'Seccion A';
 							        break;
@@ -726,73 +791,233 @@ class ImportController implements ControllerProviderInterface {
 								$place= $app['db.places']->getSeccionOfPlace($place, $name);
 							}
 							foreach ($sheetData as $value) {
+								$remark ="";
 								if(is_numeric($value[0]) && !empty($value[6])){
-									$person = $app['db.people']->getPerson($value[6]);
-									if(empty($person)){
-										//generate a barcode for the user
-										$barcode = 0;
-										do {
-										    $barcode = rand(1000000000, 9999999999);
-										} while (!empty($app['db.people']->findbarcode($barcode)));
-										
-										$names = explode(" ", $value[6]);
-										$firstname = '';
-										$lastname ='';
-										switch(count($names)){
-											case 2:
-										        $firstname = $names[0];
-										        $lastname = $names[1];
-										        break;
-										    case 3:
-										        $firstname = $names[0];
-										        $lastname = $names[1] . ' ' . $names[2];
-										        break;
-										    case 4:
-										        $firstname = $names[0] . ' ' . $names[1];
-										        $lastname = $names[2] . ' ' . $names[3];
-										        break;
-										    default:
-										        $firstname = $names[0] . ' ' . $names[1];
-										        $lastname = $names[2] . ' ' . $names[3] . ' ' . $names[4];
-										        break;
+									if(empty($value[3])){
+										$person = $app['db.people']->getPerson($value[6]);
+										if(empty($person)){
+											//generate a barcode for the user
+											$barcode = 0;
+											do {
+											    $barcode = rand(1000000000, 9999999999);
+											} while (!empty($app['db.people']->findbarcode($barcode)));
+											
+											$names = explode(" ", $value[6]);
+											$firstname = '';
+											$lastname ='';
+											switch(count($names)){
+												case 2:
+											        $firstname = $names[0];
+											        $lastname = $names[1];
+											        break;
+											    case 3:
+											        $firstname = $names[0];
+											        $lastname = $names[1] . ' ' . $names[2];
+											        break;
+											    case 4:
+											        $firstname = $names[0] . ' ' . $names[1];
+											        $lastname = $names[2] . ' ' . $names[3];
+											        break;
+											    case 4:
+											    	$firstname = $names[0] . ' ' . $names[1];
+											        $lastname = $names[2] . ' ' . $names[3]. ' ' . $names[4];
+											        break;
+											    default:
+											        $firstname = $names[0] . ' ' . $names[1];
+											        $lastname = $names[2] . ' ' . $names[3] . ' ' . $names[4]. ' ' . $names[5];
+											        break;
+											}
+											
+											$object = array('created_at' => date("Y/m/d"), 'name' => $firstname,'lastname' => $lastname, 'school_name'=>$schoolname, 'barcode' => $barcode);
+											$app['db.people']->insert($object);
+											$person = $app['db.people']->Lastadded();
+											$perform = array('person_id' => $person, 'place_id' => $place, 'profile_id' => 7);
+											$app['db.performs']->insert($perform);
+											$remark .= "user added";
 										}
-										
-										$object = array('created_at' => date("Y/m/d"), 'name' => $firstname,'lastname' => $lastname, 'school_name'=>$schoolname, 'barcode' => $barcode);
-										$app['db.people']->insert($object);
-										$person = $app['db.people']->Lastadded();
-									}
-									if(!empty($value['7'])){
-										$laptopid = $app['db.laptops']->FindLaptopbySerialandOwner($value['7'], $person);
-										if(empty($laptopid)){
-											$laptopid = $app['db.laptops']->GetLaptopId($value['7']);
-											if(!empty($laptopid)){
-												if(ctype_digit($laptopid)){
-													$owner = $app['db.laptops']->GetownerbyId($value['7']);
-													$app['db.laptops']->updatelaptopbyID($laptopid, $person);
-													$movement = array('created_at' => date("Y-m-d"),'source_person_id' => $owner, 'destination_person_id' => $person,'comment' => 'excel_movement by:'.$username, 'movement_type_id'=> 11 ,'laptop_id'=>$laptopid);
-													$app['db.movements']->insert($movement);
+										//check if user has a (new) laptop assigned
+										if(!empty($value['7'])){
+
+											//check if laptop is assigned to owner
+											$laptopid = $app['db.laptops']->FindLaptopbySerialandOwner($value['7'], $person);
+											if(empty($laptopid)){
+
+												//check if laptop exists
+												$laptopid = $app['db.laptops']->GetLaptopId($value['7']);
+												if(!empty($laptopid)){
+													if(ctype_digit($laptopid)){
+
+														//get the old owner
+														$owner = $app['db.laptops']->GetownerbyId($value['7']);
+
+														//change the laptop owner to the new one
+														$app['db.laptops']->updatelaptopbyID($laptopid, $person);
+
+														//add the movemnt to the database
+														$movement = array('created_at' => date("Y-m-d"),'source_person_id' => $owner, 'destination_person_id' => $person,'comment' => 'excel_movement by:'.$username, 'movement_type_id'=> 11 ,'laptop_id'=>$laptopid);
+														$app['db.movements']->insert($movement);
+
+														//add remark
+														$remark .=";laptop assigned";
+													}
+												}
+												else{
 													$remark .=";laptop serial does not exist";
 												}
 											}
-											else{
-												$remark .=";laptop serial does not exist";
+										}
+
+										//check if user has a laptop, if so: reasign it to the fzt
+										else{
+
+											//does the user ahs a laptop??
+											$laptopid = $app['db.laptops']->FindLaptopbySerialandOwner($value['7'],$person);
+											if(!empty($laptopid)){
+												//user ahs a laptop, reasign it to the FZT office
+												$app['db.laptops']->updatelaptopbySerial($value['7'], 5);
+
+												//add movement
+												$movement = array('created_at' => date("Y-m-d"),'source_person_id' => $person, 'destination_person_id' => 5,'comment' => 'excel_movement by:'.$username, 'movement_type_id'=> 11 ,'laptop_id'=>$laptopid);
+												$app['db.movements']->insert($movement);
+												$remark .= ';laptop removed' ;
 											}
 										}
+										if(!empty($value[4])){
+											$places = explode(" ", $value[4]);
+											$name = ($places[0] == 'M')? 'Turno Mañana': (($places[0] == 'T')? 'Turno Tarde': 'Turno Completo');
+											$place= $app['db.places']->getitemByNameandAncestorID($name, $schoolID);
+											$turnoid = $place;
+											if(empty($place)){
+												$turno = array('created_at' => date("Y-m-d"),'name' => $name,'place_id' => $schoolID,'place_type_id' => 12);
+												$app['db.places']->insert($turno);
+												$turnoid = $app['db.places']->Lastadded();
+												$Ancestors=$app['db.places_dependencies']->fetchAllAncestors($schoolID);
+												foreach ($Ancestors as $waarde) {
+												 	$dependency = array('descendant_id' => $turnoid, 'ancestor_id' => $waarde['ancestor_id']);
+													$app['db.places_dependencies']->insert($dependency);
+												}
+												$dependency =  array('descendant_id' => $turnoid, 'ancestor_id' => $turnoid);
+												$app['db.places_dependencies']->insert($dependency);
+
+												$place= $app['db.places']->getitemByNameandAncestorID($name, $schoolID);
+											}
+											$place_type_id='';
+											switch ($places[1]) {
+											    case 1:
+											        $name = 'Primer Grado';
+											        $place_type_id=5;
+											        break;
+											    case 2:
+											        $name = 'Segundo Grado';
+											        $place_type_id=6;
+											        break;
+											    case 3:
+											        $name = 'Tercer Grado';
+											        $place_type_id=7;
+											        break;
+											    case 4:
+											        $name = 'Cuarto Grado';
+											        $place_type_id=8;
+											        break;
+											    case 5:
+											        $name = 'Quinto Grado';
+											        $place_type_id=9;
+											        break;
+											    case 6:
+											        $name = 'Sexto Grado';
+											        $place_type_id=10;
+											        break;
+											    case 7:
+											        $name = 'Septimo Grado';
+											        $place_type_id=16;
+											        break;
+											    case 8:
+											        $name = 'Octavo Grado';
+											        $place_type_id=17;
+											        break;
+											    case 9:
+											        $name = 'Noveno Grado';
+											        $place_type_id=18;
+											        break;
+											    case 'k': 
+											        $name = 'Preescolar';
+											        $place_type_id=14;
+											        break;
+											    case 'special':
+											        $name = 'Educacion Especial';
+											        $place_type_id=13;
+											        break;
+											}
+											$place= $app['db.places']->getgradeOfPlace($place, $name);
+											$gradoid = $place;
+											if(empty($place)){
+												$grado = array('created_at' => date("Y-m-d"),'name' => $name,'place_id' => $turnoid,'place_type_id' => $place_type_id);
+												$app['db.places']->insert($grado);
+												$gradoid = $app['db.places']->Lastadded();
+												$Ancestors=$app['db.places_dependencies']->fetchAllAncestors($turnoid);
+												foreach ($Ancestors as $waarde) {
+												 	$dependency = array('descendant_id' => $gradoid, 'ancestor_id' => $waarde['ancestor_id']);
+													$app['db.places_dependencies']->insert($dependency);
+												}
+												$dependency =  array('descendant_id' => $gradoid, 'ancestor_id' => $gradoid);
+												$app['db.places_dependencies']->insert($dependency);
+												$place= $app['db.places']->getgradeOfPlace($place, $name);
+											}
+											switch ($places[2]) {
+											    case 'A':	
+											        $name = 'Seccion A';
+											        break;
+											    case 'B':
+											        $name = 'Seccion B';
+											        break;
+											    case 'C':
+											        $name = 'Seccion C';
+											        break;
+											    case 'D':
+											        $name = 'Seccion D';
+											        break;
+											}
+											$place= $app['db.places']->getSeccionOfPlace($place, $name);
+											if(empty($place)){
+												$seccion = array('created_at' => date("Y-m-d"),'name' => $name,'place_id' => $gradoid,'place_type_id' => 11);
+												$app['db.places']->insert($seccion);
+												$seccionid = $app['db.places']->Lastadded();
+												$Ancestors=$app['db.places_dependencies']->fetchAllAncestors($gradoid);
+												foreach ($Ancestors as $waarde) {
+												 	$dependency = array('descendant_id' => $seccionid, 'ancestor_id' => $waarde['ancestor_id']);
+													$app['db.places_dependencies']->insert($dependency);
+												}
+												$dependency =  array('descendant_id' => $seccionid, 'ancestor_id' => $seccionid);
+												$app['db.places_dependencies']->insert($dependency);
+												$place= $app['db.places']->getSeccionOfPlace($place, $name);
+											}
+											$person = $app['db.people']->getPerson($value[6]);
+											$perform = array('person_id' => $person, 'place_id' => $place, 'profile_id' => 7);
+											$app['db.performs']->updatePerform($perform);
+											$remark.= '; person changed class';
+										}
+										
+										if($remark==''){
+											$remark= 'no changes';
+										}
+										$value = array('A' => $value[6],'B' => $value['7'],'C' => 'Student','D' => $places[0],'E' => $places[1],'F' => $places[2], 'G'=>$remark);
+										array_push($data, $value);
 									}
 									else{
-										$laptopid = $app['db.laptops']->GetLaptopIdbyowner($person);
-										if(!empty($laptopid)){
-											$app['db.laptops']->updatelaptopbySerial($value['7'], 5);
-											$movement = array('created_at' => date("Y-m-d"),'source_person_id' => $person, 'destination_person_id' => 5,'comment' => 'excel_movement by:'.$username, 'movement_type_id'=> 11 ,'laptop_id'=>$laptopid);
-											$app['db.movements']->insert($movement);
-											$remark .= ';laptop removed' ;
+										$person = $app['db.people']->getPerson($value[6]);
+										if(!empty($person)){
+											$app['db.laptops']->changeOwnerToFZT($person);
+											$app['db.movements']->deleteperson($person);
+											$app['db.performs']->deleteperson($person);
+											$app['db.people']->deleteperson($person);
+											$remark= 'person deleted';
 										}
+										else{
+											$remark= "person not found";
+										}
+										$value = array('A' => $value[6],'B' => $value['7'],'C' => 'Student','D' => $places[0],'E' => $places[1],'F' => $places[2], 'G'=>$remark);
+										array_push($data, $value);
 									}
-									if($remark==''){
-										$remark= 'no changes';
-									}
-									$value = array('A' => $value[6],'B' => $value['7'],'C' => 'Student','D' => $names[0],'E' => $names[1],'F' => $names[2], 'G'=>$remark);
-									array_push($data, $value);
 								}
 							}
 						}
