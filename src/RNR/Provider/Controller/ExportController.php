@@ -6,10 +6,10 @@ use Silex\Application;
 use Silex\ControllerProviderInterface;
 use Silex\ControllerCollection;
 use Symfony\Component\Validator\Constraints as Assert;
-require_once '/../../Classes/PHPExcel.php';
-require_once '/../../Classes/PHPExcel.php';
-require_once('/../../Classes/tcpdf/examples/config/tcpdf_config_alt.php');
-require_once '/../../Classes/tcpdf/tcpdf.php';
+require_once dirname(__FILE__).'/../../Classes/PHPExcel.php';
+require_once dirname(__FILE__).'/../../Classes/PHPExcel.php';
+require_once dirname(__FILE__).'/../../Classes/tcpdf/examples/config/tcpdf_config_alt.php';
+require_once dirname(__FILE__).'/../../Classes/tcpdf/tcpdf.php';
 
 /**
  * Controller for the authors
