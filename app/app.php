@@ -1,5 +1,4 @@
 <?php
-var_dump('ffff');
 // Require Bootstrap
 require __DIR__ . DIRECTORY_SEPARATOR . 'bootstrap.php';
 
