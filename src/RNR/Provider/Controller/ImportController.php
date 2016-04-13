@@ -371,7 +371,8 @@ class ImportController implements ControllerProviderInterface {
 							$barcode = 0;
 							do {
 							    $barcode = rand(1000000000, 9999999999);
-							} while (!empty($app['db.people']->findbarcode($barcode)));
+							    $controlbarcode = $app['db.people']->findbarcode($barcode);
+							} while (!empty($controlbarcode));
 							
 
 							$object = array('created_at' => date("Y/m/d"), 'name' => $value['A'],'lastname' => $value['B'], 'school_name'=> $value['D'], 'barcode'=>$barcode);
