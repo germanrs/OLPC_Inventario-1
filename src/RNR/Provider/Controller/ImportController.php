@@ -595,7 +595,8 @@ class ImportController implements ControllerProviderInterface {
 											$barcode = 0;
 											do {
 											    $barcode = rand(1000000000, 9999999999);
-											} while (!empty($app['db.people']->findbarcode($barcode)));
+											    $testcontrole =$app['db.people']->findbarcode($barcode); 
+											} while (!empty($testcontrole));
 											
 											$names = explode(" ", $value[6]);
 											$firstname = '';
@@ -802,7 +803,8 @@ class ImportController implements ControllerProviderInterface {
 											$barcode = 0;
 											do {
 											    $barcode = rand(1000000000, 9999999999);
-											} while (!empty($app['db.people']->findbarcode($barcode)));
+											    $testbarcode = $app['db.people']->findbarcode($barcode);
+											} while (!empty($testbarcode));
 											
 											$names = explode(" ", $value[6]);
 											$firstname = '';
