@@ -664,7 +664,8 @@ class AjaxController implements ControllerProviderInterface {
 			$upperbound = 0;
 			do {
 			    $upperbound = rand(1000000000, 9999999999);
-			} while (!empty($app['db.people']->findbarcode($upperbound)));
+			    $testbarcode =$app['db.people']->findbarcode($upperbound); 
+			} while (!empty($testbarcode));
 			$obj['barcode'] = $upperbound;
 			
 			if($obj['profiles'] == 'Estudiante'){
