@@ -61,7 +61,7 @@ $app['paths'] = array(
 
 //DOMPDF REQUIRES
 // Composer's auto-loading functionality
-require "../vendor/autoload.php";
+require __DIR__ . DIRECTORY_SEPARATOR."../vendor/autoload.php";
 
 // Use UrlGenerator Service Provider - @note: Be sure to install "symfony/twig-bridge" via Composer if you want to use the `url` & `path` functions in Twig
 $app->register(new Silex\Provider\UrlGeneratorServiceProvider());
