@@ -27,7 +27,7 @@ $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
         'dbname' => 'OLPC_test1',
         'user' => 'root',
         'charset' => 'utf8mb4',
-        'password' => 'olpc', //Mysql password
+        'password' => 'olpcolpc', //Mysql password
     ),
 ));
 
