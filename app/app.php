@@ -65,20 +65,18 @@ $app->before(function (Request $request) use ($app) {
 });
 
 // Redirect to home on root access
-/*$app->get('/', function(Silex\Application $app) {
-	return $app->redirect($app['url_generator']->generate('Inventory.laptops')); //from home we need to check if someone is logged in
-});*/
+$app->get('/', function(Silex\Application $app) {
+	return $app->redirect($app['url_generator']->generate('Auth.Login')); //from home we need to check if someone is logged in
+});
 
 //Attatch the user session to the 
 $app['twig']->addGlobal('user',$app['session']->get('user'));
 
-var_dump('test123');
-
 // Mount our controllers (dynamic routes)
-$app->mount('/auth/', new RNR\Provider\Controller\AuthController());
-$app->mount('/inventory/', new RNR\Provider\Controller\InventoryController());
-$app->mount('/ajax/', new RNR\Provider\Controller\AjaxController());
-$app->mount('/export/', new RNR\Provider\Controller\ExportController());
-$app->mount('/import/', new RNR\Provider\Controller\ImportController());
+$app->mount('/Auth/', new RNR\Provider\Controller\AuthController());
+$app->mount('/Inventory/', new RNR\Provider\Controller\InventoryController());
+$app->mount('/Ajax/', new RNR\Provider\Controller\AjaxController());
+$app->mount('/Export/', new RNR\Provider\Controller\ExportController());
+$app->mount('/Import/', new RNR\Provider\Controller\ImportController());
 
 

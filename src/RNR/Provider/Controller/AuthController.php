@@ -26,16 +26,16 @@ class AuthController implements ControllerProviderInterface {
 
 		// Bind sub-routes
 		$controllers
-			->get('/login/', array($this, 'login'))
+			->get('/Login/', array($this, 'login'))
 			->method('GET|POST')
-			->bind('auth.login');
+			->bind('Auth.Login');
 		$controllers
 			->get('/logout/', array($this, 'logout'))
-			->bind('auth.logout');
+			->bind('Auth.Logout');
 
 		// Redirect to login by default
 		$controllers->get('/', function(Application $app) {
-			return $app->redirect($app['url_generator']->generate('login'));
+			return $app->redirect($app['url_generator']->generate('Auth.Login'));
 		});	
 
 		// Return ControllerCollection
@@ -56,7 +56,7 @@ class AuthController implements ControllerProviderInterface {
 
 		// check if user is already logged in
 		if ($app['session']->get('user') && ($app['db.people']->fetchAdminPerson($app['session']->get('user')))) {
-			return $app->redirect($app['url_generator']->generate('Inventory.laptops'));
+			return $app->redirect($app['url_generator']->generate('Inventory.Laptops'));
 		}
 
 		// Create Login Form
@@ -117,7 +117,7 @@ class AuthController implements ControllerProviderInterface {
 		$app['session']->remove('user');
 
 		//return to the login page
-		return $app->redirect($app['url_generator']->generate('auth.login'));
+		return $app->redirect($app['url_generator']->generate('Auth.Login'));
 	}
 }
 

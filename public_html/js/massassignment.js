@@ -11,7 +11,7 @@ function Fbarcode(){
 	if($( ".barcode" ).last().val().length==10){
 		console.log($( ".barcode" ).last().val());
 		var div = document.createElement('div');
-		div.innerHTML = '<input type="text" class="serial" id="serial" name="serial"  onkeyup="Fserial()" value="" placeholder="barcode..."><input type="text" onkeyup="Fbarcode()"  class="barcode" name="barcode"  id="barcode" value="" placeholder="Serial number..."><p id="alert" name="error"></p><div class="clear rows"></div>';	
+		div.innerHTML = '<input type="text" class="serial" id="serial" name="serial"  onkeyup="Fserial()" value="" placeholder="Serial..."><input type="text" onkeyup="Fbarcode()"  class="barcode" name="barcode"  id="barcode" value="" placeholder="Barcode..."><p id="alert" name="error"></p><div class="clear rows"></div>';	
 		div.setAttribute('class', 'input'); 
 		$( ".form-group" ).last().append(div);
 		$( ".serial" ).last().focus();

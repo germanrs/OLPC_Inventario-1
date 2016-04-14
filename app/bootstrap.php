@@ -1,12 +1,10 @@
 <?php
 
-var_dump('blalba');
+//set date time zone
+date_default_timezone_set("America/Managua");
 
 // Require Composer Autoloader
 require_once __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
-
-//set date time zone
-date_default_timezone_set("America/Managua");
 
 // Create new Silex App
 $app = new Silex\Application();
@@ -27,7 +25,7 @@ $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
         'dbname' => 'OLPC_test1',
         'user' => 'root',
         'charset' => 'utf8mb4',
-        'password' => 'olpcolpc', //Mysql password
+        'password' => '', //Mysql password
     ),
 ));
 

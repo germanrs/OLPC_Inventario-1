@@ -208,7 +208,7 @@ class InventoryController implements ControllerProviderInterface {
 		}
 
 		//return the rendered twig with parameters
-		return $app['twig']->render('inventory/Laptops.twig', array(
+		return $app['twig']->render('Inventory/Laptops.twig', array(
 			'filterform' => $filterform->createView(),
 			'laptops' => $laptoparray,
 			'curPage'=>$curPage,
