@@ -73,7 +73,7 @@ $app->get('/', function(Silex\Application $app) {
 $app['twig']->addGlobal('user',$app['session']->get('user'));
 
 // Mount our controllers (dynamic routes)
-$app->mount('/Auth/', new RNR\Provider\Controller\AuthController());
+$app->mount('/Auth/', new CNR\Provider\Controller\AuthController());
 $app->mount('/Inventory/', new RNR\Provider\Controller\InventoryController());
 $app->mount('/Ajax/', new RNR\Provider\Controller\AjaxController());
 $app->mount('/Export/', new RNR\Provider\Controller\ExportController());
