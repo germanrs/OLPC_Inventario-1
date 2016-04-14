@@ -36,7 +36,7 @@ class InventoryController implements ControllerProviderInterface {
 		$controllers
 			->get('/laptops/', array($this, 'laptops'))
 			->method('GET|POST')
-			->bind('Inventory.laptops');
+			->bind('Inventory.Laptops');
 
 		$controllers
 			->get('/people/', array($this, 'people'))
@@ -382,7 +382,7 @@ class InventoryController implements ControllerProviderInterface {
 		}
 
 		//return the rendered twig with parameters
-		return $app['twig']->render('inventory/people.twig', array(
+		return $app['twig']->render('Inventory/people.twig', array(
 			'access_level' => $access_level,
 			'username' => $username,
 			'filterform' => $filterform->createView(),
@@ -427,7 +427,7 @@ class InventoryController implements ControllerProviderInterface {
 		}
 		
 		//return the rendered twig with parameters
-		return $app['twig']->render('inventory/places.twig', array(
+		return $app['twig']->render('Inventory/places.twig', array(
 			'access_level' => $access_level,
 			'username' => $username
 		));
@@ -463,7 +463,7 @@ class InventoryController implements ControllerProviderInterface {
 		}
 		
 		//return the rendered twig with parameters
-		return $app['twig']->render('inventory/massassignment.twig', array(
+		return $app['twig']->render('Inventory/massassignment.twig', array(
 			'access_level' => $access_level,
 			'username' => $username
 		));
