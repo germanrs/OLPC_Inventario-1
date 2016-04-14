@@ -81,9 +81,9 @@ class AjaxController implements ControllerProviderInterface {
 			->bind('Ajax.placesseccions');
 
 		$controllers
-		->get('/getdataforplacestable/', array($this, 'getdataforplacestable'))
-		->method('GET|POST')
-		->bind('Ajax.getdataforplacestable');
+			->get('/getdataforplacestable/', array($this, 'getdataforplacestable'))
+			->method('GET|POST')
+			->bind('Ajax.getdataforplacestable');
 
 		$controllers
 			->get('/profiles/', array($this, 'profiles'))
@@ -111,9 +111,9 @@ class AjaxController implements ControllerProviderInterface {
 			->bind('Ajax.getList');
 
 		$controllers
-		->get('/getuserbyid/', array($this, 'getuserbyid'))
-		->method('GET|POST')
-		->bind('Ajax.getuserbyid');
+			->get('/getuserbyid/', array($this, 'getuserbyid'))
+			->method('GET|POST')
+			->bind('Ajax.getuserbyid');
 
 		$controllers
 			->get('/addlaptop/', array($this, 'addlaptop'))

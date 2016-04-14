@@ -65,9 +65,9 @@ $app->before(function (Request $request) use ($app) {
 });
 
 // Redirect to home on root access
-$app->get('/', function(Silex\Application $app) {
+/*$app->get('/', function(Silex\Application $app) {
 	return $app->redirect($app['url_generator']->generate('Inventory.laptops')); //from home we need to check if someone is logged in
-});
+});*/
 
 //Attatch the user session to the 
 $app['twig']->addGlobal('user',$app['session']->get('user'));
