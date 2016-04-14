@@ -66,7 +66,7 @@ $app->before(function (Request $request) use ($app) {
 
 // Redirect to home on root access
 $app->get('/', function(Silex\Application $app) {
-	return $app->redirect($app['request']->getBaseUrl() . '/auth/login'); //from home we need to check if someone is logged in
+	return $app->redirect($app['url_generator']->generate('auth.login')); //from home we need to check if someone is logged in
 });
 
 //Attatch the user session to the 
