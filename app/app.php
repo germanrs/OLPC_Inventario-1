@@ -72,6 +72,8 @@ $app->before(function (Request $request) use ($app) {
 //Attatch the user session to the 
 $app['twig']->addGlobal('user',$app['session']->get('user'));
 
+var_dump('test123');
+
 // Mount our controllers (dynamic routes)
 $app->mount('/auth/', new RNR\Provider\Controller\AuthController());
 $app->mount('/inventory/', new RNR\Provider\Controller\InventoryController());
