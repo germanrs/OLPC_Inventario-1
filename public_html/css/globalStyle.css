@@ -339,9 +339,7 @@ header ul.main-menu li:hover ul {
     z-index: 9001;
 }
 
-.side-menu li.active {
-    background-color: #c3d7df;
-}
+
 
 .side-menu span {
     display: inline-block;

@@ -27,6 +27,11 @@
   padding: 0;
   width: 100%;
 }
+
+.menu-left li .active {
+    background-color: #c3d7df;
+}
+
 /* General link styling */
 .menu-left > ul li a {
   /* Layout */
