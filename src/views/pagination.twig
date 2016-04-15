@@ -8,7 +8,7 @@
     <ul class="pagination pagination-sm">
 
         {% if curPage > 1 %}
-            <li class="previousPage"><a href="{{ baseUrl }}{{ requestParams|merge({ 'p': prevPage })|querystring }}"
+            <li class="previousPage"><a href="{{ app.request.baseUrl }}{{ requestParams|merge({ 'p': prevPage })|querystring }}"
 data-p="{{ prevPage }}">Previous</a></li>
         {% else %}
             <li class="previousPage disabled"><span>Previous</span></li>
@@ -21,14 +21,14 @@ data-p="{{ prevPage }}">Previous</a></li>
             {% elseif page == '..' %}
                 <span>…</span>
             {% else %}
-                <a href="{{ baseUrl }}{{ requestParams|merge({ 'p': page })|querystring }}"
+                <a href="{{ app.request.baseUrl }}{{ requestParams|merge({ 'p': page })|querystring }}"
 data-p="{{ page }}">{{ page }}</a>
             {% endif %}
         </li>
         {% endfor %}
 
         {% if curPage < numPages %}
-            <li class="nextPage"><a href="{{ baseUrl }}{{ requestParams|merge({ 'p': nextPage })|querystring }}"
+            <li class="nextPage"><a href="{{ app.request.baseUrl }}{{ requestParams|merge({ 'p': nextPage })|querystring }}"
 data-p="{{ nextPage }}">Next</a></li>
         {% else %}
             <li class="nextPage disabled"><span>Next</span></li>
