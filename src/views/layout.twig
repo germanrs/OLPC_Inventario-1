@@ -19,7 +19,7 @@
 			<div class="headdercontent"></div>
 			{% if access_level > 299 %}
 				<ul class="main-menu">
-					<li class="{% if 'Inventario' in app.request.attributes.get('_route') %}active{% endif %}"> <a href="{{ path('Inventory.laptops') }}">Inventario</a></li>
+					<li class="{% if 'Inventario' in app.request.attributes.get('_route') %}active{% endif %}" data="{{app.request.attributes.get('_route')}}"> <a href="{{ path('Inventory.laptops') }}">Inventario</a></li>
 					<li> <a href="{{ path('Import') }}">Import</a></li>				
 					<li> <a href="{{ path('Export') }}">Export</a></li>
 					{% if access_level > 499 %}
