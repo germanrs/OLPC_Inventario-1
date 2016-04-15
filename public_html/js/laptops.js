@@ -62,7 +62,7 @@ function SetData(input, datalist){
     value = 'people';
   }
   // Set up and make the request.
-  request.open('GET', '../ajax/'+value+'/', true);
+  request.open('GET', '../Ajax/'+value+'/', true);
   request.send();
 }
 
@@ -245,7 +245,7 @@ $( "#AddLaptop" ).click(function() {
       $.ajax({
               method: "POST",
               data: {action:dataString},
-              url: "../../ajax/addlaptop/",
+              url: "../../Ajax/addlaptop/",
               success: function(data){
                   $("#alert").html(data);
                   var table = document.getElementById("table");
@@ -272,7 +272,7 @@ $( "#AddLaptop" ).click(function() {
                   $.ajax({
                         method: "POST",
                         data: {action:dataString},
-                        url: "../../ajax/getidoflaptop/",
+                        url: "../../Ajax/getidoflaptop/",
                         success: function(data){
                             var data2 = data
                             cell1.innerHTML = '<input type="checkbox" id="'+data2+'" name="checkbox"> '
@@ -329,7 +329,7 @@ $( "#AddLaptop" ).click(function() {
           $.ajax({
                   method: "POST",
                   data: {action:dataString},
-                  url: "../../ajax/editlaptop/",
+                  url: "../../Ajax/editlaptop/",
                   success: function(data){
                       $("#alert").html(data); 
                       var index = $("#"+res[teller]).closest("tr").index();
@@ -381,7 +381,7 @@ $( "#AddLaptop" ).click(function() {
         $.ajax({
                 method: "POST",
                 data: {action:dataString},
-                url: "../../ajax/editlaptop/",
+                url: "../../Ajax/editlaptop/",
                 success: function(data){
                     $("#alert").html(data);
                     console.log(data);
@@ -435,7 +435,7 @@ function deletelaptop(datainput){
   $.ajax({
           method: "POST",
           data: {action:dataString},
-          url: "../../ajax/deletelaptop/",
+          url: "../../Ajax/deletelaptop/",
           success: function(data){
               $("#alert").html(data);
               var index = $(datainput).closest("tr").index();
@@ -480,7 +480,7 @@ function editlaptop(datainput){
   $.ajax({
           method: "POST",
           data: {action:dataString},
-          url: "../../ajax/getuserbyid/",
+          url: "../../Ajax/getuserbyid/",
           success: function(data){
             console.log(data);
              document.getElementById("assignee").value = data;

@@ -12,7 +12,7 @@ function SetDepartments(){
   $.ajax({
     method: "POST",
     data: {action:dataString},
-    url: "../../ajax/placesstates/",
+    url: "../../Ajax/placesstates/",
     success: function(data){
       console.log(data);
       var dataList = document.getElementById('json-datalistDepartamento');
@@ -97,7 +97,7 @@ function SetData(input, datalist){
   input.placeholder = "Loading options...";
 
   // Set up and make the request.
-  request.open('GET', '../ajax/'+value+'/', true);
+  request.open('GET', '../Ajax/'+value+'/', true);
   request.send();
 }
 
@@ -165,7 +165,7 @@ $('#Departamento').on('input', function(){
           $.ajax({
             method: "POST",
             data: {action:dataString},
-            url: "../../ajax/placescitys/",
+            url: "../../Ajax/placescitys/",
             success: function(data){
               document.getElementById("Ciudad").disabled=false;
               console.log(data);
@@ -228,7 +228,7 @@ $('#Ciudad').on('input', function(){
           $.ajax({
             method: "POST",
             data: {action:dataString},
-            url: "../../ajax/placesschools/",
+            url: "../../Ajax/placesschools/",
             success: function(data){
               document.getElementById("Escuela").disabled=false;
               console.log(data);
@@ -288,7 +288,7 @@ $('#Escuela').on('input', function(){
           $.ajax({
             method: "POST",
             data: {action:dataString},
-            url: "../../ajax/placesturnos/",
+            url: "../../Ajax/placesturnos/",
             success: function(data){
               document.getElementById("Turno").disabled=false;
               console.log(data);
@@ -347,7 +347,7 @@ $('#Turno').on('input', function(){
           $.ajax({
             method: "POST",
             data: {action:dataString},
-            url: "../../ajax/placesgrados/",
+            url: "../../Ajax/placesgrados/",
             success: function(data){
               document.getElementById("grade").disabled=false;
               console.log(data);
@@ -403,7 +403,7 @@ $('#grade').on('input', function(){
           $.ajax({
             method: "POST",
             data: {action:dataString},
-            url: "../../ajax/placesseccions/",
+            url: "../../Ajax/placesseccions/",
             success: function(data){
               document.getElementById("Seccion").disabled=false;
               console.log(data);
@@ -532,7 +532,7 @@ $( "#AddPlace" ).click(function() {
       $.ajax({
               method: "POST",
               data: {action:dataString},
-              url: "../../ajax/addplace/",
+              url: "../../Ajax/addplace/",
               success: function(data){
                   $("#alert").html(data);
                   if($("#alert").html() == 'place added'){
@@ -556,7 +556,7 @@ $( "#AddPlace" ).click(function() {
                     $.ajax({
                           method: "POST",
                           data: {action:dataString},
-                          url: "../../ajax/getidofplace/",
+                          url: "../../Ajax/getidofplace/",
                           success: function(data){
                               var data2 = data
                               cell1.innerHTML = '<input type="checkbox" id="'+data2+'" name="checkbox"> '
@@ -603,7 +603,7 @@ $( "#AddPlace" ).click(function() {
       $.ajax({
               method: "POST",
               data: {action:dataString},
-              url: "../../ajax/editplace/",
+              url: "../../Ajax/editplace/",
               success: function(data){
                   $("#alert").html(data);
                   var index = $('#AddPlace').attr("index");
@@ -649,7 +649,7 @@ function Deleteplace(datainput){
   $.ajax({
           method: "POST",
           data: {action:dataString},
-          url: "../../ajax/deleteplace/",
+          url: "../../Ajax/deleteplace/",
           success: function(data){
               $("#alert").html(data);
               var index = $(datainput).closest("tr").index();
@@ -727,7 +727,7 @@ function setDataInTable(){
   $.ajax({
     method: "POST",
     data: {action:dataString},
-    url: "../../ajax/getdataforplacestable/",
+    url: "../../Ajax/getdataforplacestable/",
     success: function(data){
       console.log(data);
       var jsonOptions = JSON.parse(data);

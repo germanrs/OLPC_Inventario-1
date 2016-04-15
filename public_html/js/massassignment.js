@@ -55,7 +55,7 @@ $( "#assignall" ).click(function() {
    $.ajax({
           method: "POST",
           data: {action:dataString},
-          url: "../../ajax/massassignment/",
+          url: "../../Ajax/massassignment/",
           success: function(data){
               $("#alert").css("display", "initial");
               var res = data.split("$");

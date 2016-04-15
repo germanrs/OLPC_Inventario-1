@@ -17,7 +17,7 @@ function SetDepartments(){
   $.ajax({
     method: "POST",
     data: {action:dataString},
-    url: "../../ajax/placesstates/",
+    url: "../../Ajax/placesstates/",
     success: function(data){
       console.log(data);
       var dataList = document.getElementById('json-datalistDepartamento');
@@ -134,7 +134,7 @@ function SetData(input, datalist){
   input.placeholder = "Loading options...";
 
   // Set up and make the request.
-  request.open('GET', '../ajax/'+value+'/', true);
+  request.open('GET', '../Ajax/'+value+'/', true);
   request.send();
 }
 
@@ -214,7 +214,7 @@ $('#Departamento').on('input', function(){
           $.ajax({
             method: "POST",
             data: {action:dataString},
-            url: "../../ajax/placescitys/",
+            url: "../../Ajax/placescitys/",
             success: function(data){
               document.getElementById("Ciudad").disabled=false;
               console.log(data);
@@ -265,7 +265,7 @@ $('#Ciudad').on('input', function(){
           $.ajax({
             method: "POST",
             data: {action:dataString},
-            url: "../../ajax/placesschools/",
+            url: "../../Ajax/placesschools/",
             success: function(data){
               document.getElementById("Escuela").disabled=false;
               console.log(data);
@@ -488,7 +488,7 @@ $( "#AddPerson" ).click(function() {
       $.ajax({
               method: "POST",
               data: {action:dataString},
-              url: "../../ajax/addperson/",
+              url: "../../Ajax/addperson/",
               success: function(data){
                   $("#alert").html(data);
                   console.log(data);
@@ -517,7 +517,7 @@ $( "#AddPerson" ).click(function() {
                     $.ajax({
                           method: "POST",
                           data: {action:dataString},
-                          url: "../../ajax/getidofperson/",
+                          url: "../../Ajax/getidofperson/",
                           success: function(data){                          
                               console.log(data);
                               var data2 = data
@@ -582,7 +582,7 @@ $( "#AddPerson" ).click(function() {
           $.ajax({
                   method: "POST",
                   data: {action:dataString},
-                  url: "../../ajax/editperson/",
+                  url: "../../Ajax/editperson/",
                   success: function(data){
                       $("#alert").html(data); 
                       var index = $("#"+res[teller]).closest("tr").index();
@@ -643,7 +643,7 @@ $( "#AddPerson" ).click(function() {
         $.ajax({
                 method: "POST",
                 data: {action:dataString},
-                url: "../../ajax/editperson/",
+                url: "../../Ajax/editperson/",
                 success: function(data){
                     $("#alert").html(data);
                     var table = document.getElementById("table");
@@ -703,7 +703,7 @@ function deleteperson(datainput){
   $.ajax({
           method: "POST",
           data: {action:dataString},
-          url: "../../ajax/deleteperson/",
+          url: "../../Ajax/deleteperson/",
           success: function(data){
               $("#alert").html(data);
               console.log(data);
