@@ -203,7 +203,7 @@ function GetData(datainput, formname){
 
                     method: "POST",
                     data: {action:dataString},
-                    url: "../ajax/getList/",
+                    url: "../Ajax/getList/",
                     success: function(data){
                         var table = document.getElementById("exportTable");
                         var jsonOptions = JSON.parse(data);
@@ -251,7 +251,7 @@ function GetData(datainput, formname){
             $.ajax({
                     method: "POST",
                     data: {action:dataString},
-                    url: "../ajax/getList/",
+                    url: "../Ajax/getList/",
                     success: function(data){
                         var table = document.getElementById("exportTable");
                         var jsonOptions = JSON.parse(data);
@@ -405,7 +405,7 @@ $('#Pais').on('input', function(){
     console.log(options);
     for (var i=0;i<options.length;i++){
        if (options[i].value == $(this).val()) 
-         FillDataInDropdowon('json-datalistDepartamento', 'Departamento', 'Departamentohidden', "../ajax/placesstates/", this,  'Departamento');
+         FillDataInDropdowon('json-datalistDepartamento', 'Departamento', 'Departamentohidden', "../Ajax/placesstates/", this,  'Departamento');
     }
     showdropdowns(1);
    
@@ -415,7 +415,7 @@ $('#Departamento').on('input', function(){
     var options = document.getElementById("json-datalistDepartamento").options
     for (var i=0;i<options.length;i++){
        if (options[i].value == $(this).val()) 
-         FillDataInDropdowon('json-datalistCiudad', 'ciudad', 'Ciudadhidden', "../ajax/placescitys/", this,  'Ciudad');
+         FillDataInDropdowon('json-datalistCiudad', 'ciudad', 'Ciudadhidden', "../Ajax/placescitys/", this,  'Ciudad');
     }
     showdropdowns(2);
 });
@@ -424,7 +424,7 @@ $('#Ciudad').on('input', function(){
     var options = document.getElementById("json-datalistCiudad").options
     for (var i=0;i<options.length;i++){
        if (options[i].value == $(this).val()) 
-         FillDataInDropdowon('json-datalistEscuela', 'Escuela', 'Escuelahidden', "../ajax/placesschools/", this,  'Escuela');
+         FillDataInDropdowon('json-datalistEscuela', 'Escuela', 'Escuelahidden', "../Ajax/placesschools/", this,  'Escuela');
     }
     showdropdowns(3);
 });
@@ -433,7 +433,7 @@ $('#Escuela').on('input', function(){
     var options = document.getElementById("json-datalistEscuela").options
     for (var i=0;i<options.length;i++){
        if (options[i].value == $(this).val()) 
-         FillDataInDropdowon('json-datalistTurno', 'Turno', 'Turnohidden', "../ajax/placesturnos/", this,  'Turno');
+         FillDataInDropdowon('json-datalistTurno', 'Turno', 'Turnohidden', "../Ajax/placesturnos/", this,  'Turno');
     }
     showdropdowns(4);
 });
@@ -442,7 +442,7 @@ $('#Turno').on('input', function(){
     var options = document.getElementById("json-datalistTurno").options
     for (var i=0;i<options.length;i++){
        if (options[i].value == $(this).val()) 
-          FillDataInDropdowon('json-datalistgrado', 'grado', 'gradohidden', "../ajax/placesgrados/", this,  'grado');
+          FillDataInDropdowon('json-datalistgrado', 'grado', 'gradohidden', "../Ajax/placesgrados/", this,  'grado');
     }
     showdropdowns(5);
 });
@@ -451,7 +451,7 @@ $('#grado').on('input', function(){
     var options = document.getElementById("json-datalistgrado").options
     for (var i=0;i<options.length;i++){
        if (options[i].value == $(this).val()) 
-         FillDataInDropdowon('json-datalistSeccion', 'Seccion', 'Seccionhidden', "../ajax/placesseccions/", this,  'Seccion');
+         FillDataInDropdowon('json-datalistSeccion', 'Seccion', 'Seccionhidden', "../Ajax/placesseccions/", this,  'Seccion');
     }
 });
 
@@ -565,7 +565,7 @@ function SetData(input, datalist){
   input.placeholder = "Loading options...";
 
   // Set up and make the request.
-  request.open('GET', '../ajax/placescountries/', true);
+  request.open('GET', '../Ajax/placescountries/', true);
   request.send();
 }
 

@@ -23,7 +23,7 @@ $('.Pais').on('input', function(){
         $.ajax({
           method: "POST",
           data: {action:dataString},
-          url: "../ajax/placesstates/",
+          url: "../Ajax/placesstates/",
           success: function(data){
             console.log(data);
             var dataList = document.getElementById('json-datalistDepartamento');
@@ -70,7 +70,7 @@ $('.Departamento').on('input', function(){
           $.ajax({
             method: "POST",
             data: {action:dataString},
-            url: "../ajax/placescitys/",
+            url: "../Ajax/placescitys/",
             success: function(data){
               console.log(data);
               var dataList = document.getElementById('json-datalistCiudad');
@@ -228,6 +228,6 @@ function SetData(input, datalist){
   input.placeholder = "Loading options...";
 
   // Set up and make the request.
-  request.open('GET', '../ajax/placescountries/', true);
+  request.open('GET', '../Ajax/placescountries/', true);
   request.send();
 }
