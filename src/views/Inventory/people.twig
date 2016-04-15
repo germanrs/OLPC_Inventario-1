@@ -17,7 +17,7 @@
 	<h1><a href="{{ path('Inventory.people') }}">People</a></h1>
 	<a class="button" id="openAddModal"  role="button">Add</a>
 			<div class="h_search">
-			<form action="{{ baseUrl }}" method="GET" {{ form_enctype(filterform) }}  novalidate="novalidate" role="form">
+			<form action="{{ app.request.baseUrl }}" method="GET" {{ form_enctype(filterform) }}  novalidate="novalidate" role="form">
 				<h2 class="text-danger">{{ form_errors(filterform.genres)|striptags }}</h2>	
 				{{ form_widget(filterform.genres, { 'attr': {'class': 'form-control'} })  }}
 				{{ form_widget(filterform.searchstring, { 'attr': {'class': 'form-control'} }) }}
