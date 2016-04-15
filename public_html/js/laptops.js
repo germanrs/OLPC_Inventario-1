@@ -62,7 +62,7 @@ function SetData(input, datalist){
     value = 'people';
   }
   // Set up and make the request.
-  request.open('GET', 'http://localhost:8080/rein.bauwens/site%20OLPC/website/source/public_html/ajax/'+value+'/', true);
+  request.open('GET', '../ajax/'+value+'/', true);
   request.send();
 }
 

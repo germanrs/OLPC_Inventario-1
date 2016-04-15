@@ -228,6 +228,6 @@ function SetData(input, datalist){
   input.placeholder = "Loading options...";
 
   // Set up and make the request.
-  request.open('GET', 'http://localhost:8080/rein.bauwens/site%20OLPC/website/source/public_html/ajax/placescountries/', true);
+  request.open('GET', '../ajax/placescountries/', true);
   request.send();
 }
