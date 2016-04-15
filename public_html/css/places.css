@@ -9,6 +9,10 @@
 }
 
 .righttable{
-    width: 58%;
+    width: 70%;
     float: left;
+}
+
+input[type="text"], input[type="password"], select {
+    width: 80%;
 }

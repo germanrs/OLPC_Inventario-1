@@ -6,7 +6,7 @@ fieldset{
 
 .labels h2{
 	float: left;
-	margin-left: 7rem;
+	margin-left: 5rem;
 }
 
 .labels h2:first-child{
@@ -15,23 +15,15 @@ fieldset{
 }
 
 input[type="text"]{
-	margin-left: 0rem;
-	margin-right: 3rem;
-	width: 30rem;
+	margin-left: 0%;
+	margin-right: 5rem;
+	width: 25rem;
 }
 
-#assignall {
-    margin-right: 10rem;
-    float: right;
-}
-
-.menu-right {
-    width: 70%;
-}
 
 .input {
     float: left;
-	width: inherit;
+	width: 100%;
 }
 
 .menu-right h1{
@@ -41,4 +33,20 @@ input[type="text"]{
 #alert{
 	margin-top: 0.5rem;
 	display: inherit;
+}
+
+.menu-left {
+    width: 20rem;
+        max-width: inherit;
+}
+
+.menu-right {
+    float: left;
+    width: 60rem;
+}
+
+.group{
+	float: left;
+	margin-right: 5rem;
+	margin-left: 1rem;
 }

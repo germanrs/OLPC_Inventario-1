@@ -67,7 +67,8 @@ h1 a{
 .wrapper {
     position: relative;
     height: auto;
-    margin: 0rem 10rem 0rem 10rem;
+    margin: auto;
+    width: 90%;
 }
 
 .structural {
@@ -214,9 +215,10 @@ h1 a{
 /* =============== HEADER =============== */
 
 header {
-    min-height: 10rem;
     margin-top: 0.5rem;
-    margin-left: 10rem;
+    height: auto;
+    margin: auto;
+    width: 90%;
 }
 
 header * {
@@ -272,7 +274,7 @@ header ul.main-menu li:active {
 }
 
 header ul.main-menu li.active {
-    background-color:  #87d53a;
+    background-color: #87d53a;
 }
 
 header ul.main-menu li a {
@@ -324,7 +326,6 @@ header ul.main-menu li:hover ul {
     position: relative;
     width: auto;
     height: 100%;
-    padding-right: 2rem;
     padding-left: 2rem;
     line-height: 4.5rem;
     color: #fff;
@@ -368,7 +369,6 @@ header ul.main-menu li:hover ul {
     padding-left: 1rem;
     border: 0.2rem solid #fff;
     color: #008dd3;
-    margin-right: 7rem;
 }
 
 .side-menu .auth-link:hover {

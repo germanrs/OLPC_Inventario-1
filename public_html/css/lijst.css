@@ -16,7 +16,6 @@
 .menu-left > ul {
   display: block;
   position: relative;
-  width: 20rem;
   /* The list elements which contain the links */
 
 }
@@ -27,11 +26,6 @@
   padding: 0;
   width: 100%;
 }
-
-.menu-left > ul li .active {
-    background-color: #87d53a;
-}
-
 /* General link styling */
 .menu-left > ul li a {
   /* Layout */
@@ -133,13 +127,14 @@
 /* =============== top-menu =============== */
 
 .menu-left{
+  max-width: 15%;
+  margin-right: 2%;
   float: left;
-  width: 15%;
 }
 
 .menu-right{
-  float: left;
-  width: 85%;
+  float: right;
+  width: 83%;
 }
 .h_search{
     float: right;
