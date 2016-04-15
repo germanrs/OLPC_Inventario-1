@@ -134,7 +134,7 @@ function SetData(input, datalist){
   input.placeholder = "Loading options...";
 
   // Set up and make the request.
-  request.open('GET', '../Ajax/'+value+'/', true);
+  request.open('GET', '../../Ajax/'+value+'/', true);
   request.send();
 }
 
