@@ -22,10 +22,10 @@ $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
     'db.options' => array(
         'driver' => 'pdo_mysql',
         'dbhost' => 'localhost',
-        'dbname' => 'OLPC_test1',
+        'dbname' => 'laatsteversieolpc',
         'user' => 'root',
         'charset' => 'utf8mb4',
-        'password' => 'olpcolpc', //Mysql password
+        'password' => '', //Mysql password
     ),
 ));
 
@@ -44,7 +44,7 @@ $app->register(new Knp\Provider\RepositoryServiceProvider(), array(
         'db.profiles' => 'RNR\\Repository\\ProfilesRepository',
         'db.school_infos' => 'RNR\\Repository\\SchoolinfosRepository',
         'db.statuses' => 'RNR\\Repository\\StatusesRepository',
-        'db.users' => 'RNR\\Repository\\usersRepository',
+        'db.users' => 'RNR\\Repository\\UsersRepository',
     )
 ));
 
