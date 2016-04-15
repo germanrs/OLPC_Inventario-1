@@ -28,7 +28,7 @@
   width: 100%;
 }
 
-.menu-left > ul li .active {
+.active {
     background-color: #c3d7df;
 }
 
