@@ -1,5 +1,4 @@
-//call the function setData to fill in the datalist.
-SetData('grade','json-datalistgrade');
+
 SetDepartments();
 
 //set the data from the department list
