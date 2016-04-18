@@ -542,24 +542,24 @@ class AjaxController implements ControllerProviderInterface {
 						$laptopID = $app['db.laptops']->FindnewestId();
 						$movement = array('created_at' => date("Y-m-d"),'source_person_id' => $obj['assignee_id'], 'destination_person_id' => $obj['assignee_id'],'comment' => 'Manual created', 'movement_type_id'=> 11 ,'laptop_id'=>$laptopID);
 						$app['db.movements']->insert($movement);
-						echo "laptop added";
+						echo "laptop agregan";
 					} catch (Exception $e) {
-						echo "server down, try again later";
+						echo "Servidor colapsado, intente más tarde.";
 					}
 				}
 				else if($value==1){
-					echo "serial and uuid already in use";
+					echo "uuid de serie y ya está en uso";
 				}
 				else if($value==2){
-					echo "uuid already in use";
+					echo "uuid ya en uso";
 				}
 				else{
-					echo "serial already in use";
+					echo "serial ya en uso";
 				}		
 				
 			}
 			else{
-				echo 'Select a laptop/user/status from the list.';
+				echo 'Seleccione un laptop/usuario/estado de la lista.';
 			}
 			
 		}
@@ -585,13 +585,13 @@ class AjaxController implements ControllerProviderInterface {
 			if(ctype_digit($obj['model_id']) && ctype_digit($obj['owner_id']) && ctype_digit($obj['status_id']) && ctype_digit($obj['assignee_id'])){
 				try {
 					$app['db.laptops']->updateLaptop($obj);
-					echo "laptop edited";
+					echo "laptop editado";
 				} catch (Exception $e) {
-					echo "server down, try again later";
+					echo "Servidor colapsado, intente más tarde.";
 				}
 			}
 			else{
-				echo 'Select a laptop/user/status from the list.';
+				echo 'Seleccione un laptop/usuario/estado de la lista.';
 			}
 			
 		}
@@ -610,9 +610,9 @@ class AjaxController implements ControllerProviderInterface {
 			$obj = json_decode($_POST['action'], true);
 			try {
 				echo $app['db.laptops']->deletelaptop($obj['id']);
-				echo "laptop deleted";
+				echo "laptop eliminado";
 			} catch (Exception $e) {
-				echo "laptop already deleted";
+				echo "laptop ya eliminado";
 			}
 		}
 		return $app['twig']->render('Ajax/Dump.twig');	
@@ -638,7 +638,7 @@ class AjaxController implements ControllerProviderInterface {
 			} catch (Exception $e) {
 
 				//error
-				echo "Not found";
+				echo "Extraviado";
 			}
 		}
 
@@ -786,10 +786,10 @@ class AjaxController implements ControllerProviderInterface {
 					$person_id = $app['db.people']->FindPeopleId($obj);
 					$perform = array('person_id' => $person_id, 'place_id' => $Seccionid, 'profile_id' => 7);
 					$app['db.performs']->insert($perform);
-					echo "Student added";
+					echo "estudiante agregan";
 				}
 				else{
-					echo 'profile or place does not exist.';
+					echo 'del perfil o lugar no existe.';
 				}
 
 			}
@@ -819,10 +819,10 @@ class AjaxController implements ControllerProviderInterface {
 					$person_id = $app['db.people']->FindPeopleId($obj);
 					$perform = array('person_id' => $person_id, 'place_id' => $place, 'profile_id' => $profile);
 					$app['db.performs']->insert($perform);
-					echo "person added";
+					echo "Persona agregada!";
 				}
 				else{
-					echo 'profile or place does not exist.';
+					echo 'del perfil o lugar no existe.';
 				}
 				
 			}
@@ -966,10 +966,10 @@ class AjaxController implements ControllerProviderInterface {
 					}
 					$perform = array('person_id' => $obj['id'], 'place_id' => $Seccionid, 'profile_id' => 7);
 					$app['db.performs']->updatePerform($perform);
-					echo "Student updated";
+					echo "Person editadar";
 				}
 				else{
-					echo 'profile or place does not exist.';
+					echo 'del perfil o lugar no existe.';
 				}
 
 			}
@@ -1004,10 +1004,10 @@ class AjaxController implements ControllerProviderInterface {
 					}
 					$perform = array('person_id' => $obj['id'], 'place_id' => $place, 'profile_id' => $profile);
 					$app['db.performs']->updatePerform($perform);
-					echo "person changed";
+					echo "Person editadar";
 				}
 				else{
-					echo 'profile or place does not exist.';
+					echo 'del perfil o lugar no existe.';
 				}
 				
 			}
@@ -1048,7 +1048,7 @@ class AjaxController implements ControllerProviderInterface {
 			try {
 				echo $app['db.people']->FindPeopleId($obj);
 			} catch (Exception $e) {
-				echo "Not found";
+				echo "Extraviado";
 			}
 		}
 		return $app['twig']->render('Ajax/Dump.twig');	
@@ -1084,7 +1084,7 @@ class AjaxController implements ControllerProviderInterface {
 				}
 				if($obj['place_type']=="Grado"){
 					if($app['db.place_types']->getGrade($obj['name'])==''){
-						echo "grade does not excists, change name to resolve problem.";
+						echo "grado no existe, cambio de nombre para resolver el problema.";
 					}
 					else{
 						$place_type = $app['db.place_types']->getGrade($obj['name']);
@@ -1115,7 +1115,7 @@ class AjaxController implements ControllerProviderInterface {
 					}
 					echo "place added";
 				} catch (Exception $e) {
-					echo "server down, try again later";
+					echo "Servidor colapsado, intente más tarde.";
 				}	
 			}
 		}
@@ -1145,7 +1145,7 @@ class AjaxController implements ControllerProviderInterface {
 				}
 				echo "place updated";
 			}catch (Exception $e) {
-				echo "server down, try again later";
+				echo "Servidor colapsado, intente más tarde.";
 			}
 		}
 		return $app['twig']->render('Ajax/Dump.twig');	
@@ -1195,7 +1195,7 @@ class AjaxController implements ControllerProviderInterface {
 			try {
 				echo $app['db.places']->FindnewestId();
 			} catch (Exception $e) {
-				echo "Not found";
+				echo "Extraviado";
 			}
 		}
 		return $app['twig']->render('Ajax/Dump.twig');	
@@ -1207,7 +1207,7 @@ class AjaxController implements ControllerProviderInterface {
 			try {
 				echo $app['db.people']->FindPeopleById($obj['assignee_id']);
 			} catch (Exception $e) {
-				echo "Not found";
+				echo "Extraviado";
 			}
 		}
 		return $app['twig']->render('Ajax/Dump.twig');	
@@ -1230,7 +1230,7 @@ class AjaxController implements ControllerProviderInterface {
 					}
 				}
 			} catch (Exception $e) {
-				echo "Not found";
+				echo "Extraviado";
 			}
 		}
 		return $app['twig']->render('Ajax/Dump.twig');	
@@ -1271,7 +1271,7 @@ class AjaxController implements ControllerProviderInterface {
 				}
 				echo json_encode($data);
 			} catch (Exception $e) {
-				echo "Not found";
+				echo "Extraviado";
 			}
 		}
 		return $app['twig']->render('Ajax/Dump.twig');	

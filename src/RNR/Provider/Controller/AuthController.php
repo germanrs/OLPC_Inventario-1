@@ -93,7 +93,7 @@ class AuthController implements ControllerProviderInterface {
 
             // Password does not check out: add an error to the form
             else {
-				$loginform->get('password')->addError(new \Symfony\Component\Form\FormError('Invalid credentials'));
+				$loginform->get('password')->addError(new \Symfony\Component\Form\FormError('Credenciales no válidas'));
 			}
 		}
 

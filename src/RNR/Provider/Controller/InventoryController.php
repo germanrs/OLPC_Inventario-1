@@ -183,13 +183,13 @@ class InventoryController implements ControllerProviderInterface {
 				))
 				->add('genres', 'choice', array(
     				'choices'  => array(
-    					'laptops.serial_number' => 'serial nbr',
-    					'people.lastname' => 'owner',
-    					'places.name' => 'school',
-    					'models.name' => 'model',
-    					'statuses.description' => 'status',
+    					'laptops.serial_number' => 'Número serial',
+    					'people.lastname' => 'Propietario',
+    					'places.name' => 'Escuela',
+    					'models.name' => 'Versión',
+    					'statuses.description' => 'Estado',
     					'laptops.uuid' => 'uuid'),
-    				'placeholder' => 'Choose wisely!',
+    				'placeholder' => 'Elige sabiamente!',
     				'required' => false,
 					'attr' => array('class' => 'required'),
 					'data' => $genre,
@@ -360,10 +360,10 @@ class InventoryController implements ControllerProviderInterface {
 				))
 				->add('genres', 'choice', array(
     				'choices'  => array(
-    					'CONCAT(people.name," ",people.lastname)' => 'name',
-    					'places.name' => 'school',
-    					'profiles.description' => 'profiles'),
-    				'placeholder' => 'Choose wisely!',
+    					'CONCAT(people.name," ",people.lastname)' => 'Nombre',
+    					'places.name' => 'Escuela',
+    					'profiles.description' => 'perfiles'),
+    				'placeholder' => 'Elige sabiamente!',
     				'required' => false,
 					'attr' => array('class' => 'required'),
 					'data' => $genre

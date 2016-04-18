@@ -49,13 +49,13 @@ function SetData(input, datalist){
       } else {
 
         // An error occured :(
-        input.placeholder = "Couldn't load datalist options :(";
+        input.placeholder = "No se pudo cargar la lista de opciones :(";
       }
     }
   };
 
   // Update the placeholder text.
-  input.placeholder = "Loading options...";
+  input.placeholder = "Cargando opciones...";
 
   //workaround for assignee, he needs the same data as people.
   if(value == 'assignee'){
@@ -186,18 +186,18 @@ $( "#AddLaptop" ).click(function() {
   //check if all the fields are used
   if(!Serial || 0 === Serial.length ||!Model || 0 === Model.length || Model === parseInt(Model, 10) || !assignee || 0 === assignee.length || assignee === parseInt(assignee, 10)  || !People || 0 === People.length || People === parseInt(People, 10) ||!Status || 0 === Status.length || Status === parseInt(Status, 10) ||!Uuid || 0 === Uuid.length){
     $("#alert").css("display", "initial");
-    $("#alert").html("Fill in all fields!");
+    $("#alert").html("Rellene todos los campos!");
   }
 
   //check length of serial
   else if(Serial.length != 11){
-    $("#alert").html("Serial length is incorrect!");
+    $("#alert").html("Formato de serial incorrecto!");
     $("#alert").css("display", "initial");
   }
 
   //check length of uuid
   else if(Uuid.length != 36){
-    $("#alert").html("Uuid length is incorrect!");
+    $("#alert").html("Formato de UUID incorrecto!");
     $("#alert").css("display", "initial");
   }
 
@@ -276,7 +276,7 @@ $( "#AddLaptop" ).click(function() {
                         success: function(data){
                             var data2 = data
                             cell1.innerHTML = '<input type="checkbox" id="'+data2+'" name="checkbox"> '
-                            cell10.innerHTML = '<a class="button EditLaptop" onclick="editlaptop(this)"  id="EditLaptop" data="'+data2+'"  role="button">Edit</a>';
+                            cell10.innerHTML = '<a class="button EditLaptop" onclick="editlaptop(this)"  id="EditLaptop" data="'+data2+'"  role="button">Editar</a>';
                             //hide the form
                              $("#openModal").css("opacity", "0");
                              $("#openModal").css("pointer-events", "none");
@@ -338,7 +338,7 @@ $( "#AddLaptop" ).click(function() {
                       table.rows[index].cells[2].innerHTML = People;
                       table.rows[index].cells[4].innerHTML = Model;
                       table.rows[index].cells[5].innerHTML = Status;
-                      table.rows[index].cells[8].innerHTML = ((assignee==People)?'yes':'no');
+                      table.rows[index].cells[8].innerHTML = ((assignee==People)?'Si':'No');
                       teller++;
 
                       //hide the form
@@ -349,7 +349,7 @@ $( "#AddLaptop" ).click(function() {
                       $("#alert").html(e);
                   }
           });
-          if($("#alert").html() != 'laptops edited'){
+          if($("#alert").html() != 'Laptops editadas'){
             $("#alert").css("display", "initial");
             
           }
@@ -401,7 +401,7 @@ $( "#AddLaptop" ).click(function() {
                     console.log(e);
                 }
         });
-        if($("#alert").html() != 'laptop edited'){
+        if($("#alert").html() != 'Laptop editada'){
           $("#alert").css("display", "initial");
           
         }

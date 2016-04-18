@@ -37,9 +37,9 @@ $app->error(function (\Exception $e, $code) use ($app) {
 		//set the breadcrumbs for the page
 
 		$title = 'Something went horribly wrong';
-		$title_error = 'General server error';
-		$msgOne = 'We are so sorry, we seem to have made a little error.';
-		$msgTwo = 'Please go grab a coffee and come back after a little while.';
+		$title_error = 'Error general en el servidor';
+		$msgOne = 'Lo sentimos, parece que hemos tenido un pequeño error.';
+		$msgTwo = 'Por favor, ve a tomar un café y regresa en unos minutos.';
 		$error = false;
 	}
 	if($app['debug']){

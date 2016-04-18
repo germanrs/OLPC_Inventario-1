@@ -14,8 +14,8 @@
 	{% include  'menu.twig' %}
 <div class="menu-right">
 	<div class="top-menu">
-	<h1><a href="{{ path('Inventory.people') }}">People</a></h1>
-	<a class="button" id="openAddModal"  role="button">Add</a>
+	<h1><a href="{{ path('Inventory.people') }}">Propietario</a></h1>
+	<a class="button" id="openAddModal"  role="button">agregar</a>
 			<div class="h_search">
 			<form action="{{ app.request.baseUrl }}" method="GET" {{ form_enctype(filterform) }}  novalidate="novalidate" role="form">
 				<h2 class="text-danger">{{ form_errors(filterform.genres)|striptags }}</h2>	
@@ -35,31 +35,31 @@
 				<input type="checkbox" id="chechallboxes" name="checkbox">   
 			</th>
 			<th>
-				name
+				Nombre
 			</th>
 			<th>
-				lastname
+				Apellido
 			</th>
 			<th>
-				phone
+				Teléfono
 			</th>
 			<th>
-				email
+				Email
 			</th>
 			<th>
-				region
+				Región
 			</th>
 			<th>
-				school
+				Escuela
 			</th>
 			<th>
-				profile
+				Perfil
 			</th>
 			<th>
-				edit
+				Editar
 			</th> 
 			<th>
-				delete
+				Eliminar
 			</th>
 		</tr>
 		{% for person in people %}
@@ -85,16 +85,16 @@
 				<td class="Grade displaynone">{{ person.grade }}</td>
 				<td class="city displaynone">{{ person.city }}</td>
 				<td class="text-right">
-					<a class="button Editperson" id="Editperson" data="{{ person.id }}"  role="button">Edit</a>
+					<a class="button Editperson" id="Editperson" data="{{ person.id }}"  role="button">Editar</a>
 				</td>
 				<td class="text-right">
-					<a class="button DeletePerson" id="DeletePerson" data="{{ person.id }}" role="button">delete</a>
+					<a class="button DeletePerson" id="DeletePerson" data="{{ person.id }}" role="button">Eliminar</a>
 				</td> 
 			</tr>
 		{% endfor %}
 	</table>
-	<a class="button" id="EditSelectedPeople" role="button">Edit selected</a>
-	<a class="button" id="DeleteSelectedPeople" role="button">delete selected</a>
+	<a class="button" id="EditSelectedPeople" role="button">Editar seleccionados</a>
+	<a class="button" id="DeleteSelectedPeople" role="button">Eliminar Seleccionados</a>
 	<div class="center">
 		<div class="pages">
 			{% include  'pagination.twig' %}
@@ -103,7 +103,7 @@
 		<div id="openModal" class="modalDialog">
 			<div>
 				<a id="CloseAddModal"  class="close">X</a>
-				<h3 id="change">Add Person</h3>
+				<h3 id="change">Agregar Person</h3>
 				<div class="clear"></div>
 				<div class="well clearfix" id="addUserForm">
 					<form novalidate="novalidate" role="form">
@@ -111,42 +111,42 @@
 							<div class="form-group">
 								<div class="formleft">
 									<div class="label">
-										Name
+										Nombre
 									</div>
 									<div class="input">
 										<input type="text" id="Name" placeholder="Name...">
 									</div>
 									<div class="clear"></div>
 									<div class="label">
-										Lastname
+										Apellido
 									</div>
 									<div class="input">
 										<input type="text" id="Lastname" placeholder="Lastname...">
 									</div>
 									<div class="clear"></div>
 									<div class="label">
-										birth_date
+										Fecha de Nacimiento
 									</div>
 									<div class="input">
 										<input type="text" id="birth_date" name="login" value="" placeholder="birth_date...">
 									</div>
 									<div class="clear"></div>
 									<div class="label">
-										phone
+										Teléfono
 									</div>
 									<div class="input">
 										<input type="text" id="phone" name="login" value="" placeholder="phone...">
 									</div>
 									<div class="clear"></div>
 									<div class="label">
-										email
+										Email
 									</div>
 									<div class="input">
 										<input type="text" id="email" name="login" value="" placeholder="email...">
 									</div>
 									<div class="clear"></div>
 									<div class="label">
-										notes
+										Notas
 									</div>
 									<div class="input">
 										<input type="text" id="notes" name="login" value="" placeholder="notes...">
@@ -154,7 +154,7 @@
 								</div>
 								<div class="formright">
 									<div class="label">
-										profiles
+										Perfil
 									</div>
 									<div class="input">
 										<input type="text" id="profiles" list="json-datalistprofiles" placeholder="profiles..">
@@ -211,8 +211,8 @@
 									<div class="clear"></div>
 								</div>
 							</div>
-							<a class="button" id="AddPerson" data="" role="button">Add</a>
-							<p id="alert">Fill in all fields!</p>
+							<a class="button" id="AddPerson" data="" role="button">Agregar</a>
+							<p id="alert">Rellene todos los campos!</p>
 						</fieldset>
 					</form>
 				</div>

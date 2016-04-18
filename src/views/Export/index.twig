@@ -9,27 +9,27 @@
 {% block pageContent %}
 	<div class="left">
 		{# Page specific content #}
-		<h1>Export</h1>
+		<h1>Exportar</h1>
 		<div class="clear"></div>
 		<section class="active">
 			<div class="accordion">
 				<div class="accordion-section">
 					<a class="accordion-section-title active" href="#accordion-1">Laptops</a>
 					<div id="accordion-1" style="display: block;" class="accordion-section-content">
-						<h3>include</h3>
+						<h3>Incluir</h3>
 						<form action="includelaptops" id="laptopsForm" >
 							<div class="checkboxes">
-								<input type="checkbox" name="laptops" value="CONCAT(people.name,' ',people.lastname) as name"><div class="boxlabel">owner</div>
-								<input type="checkbox" name="laptops" value="laptops.serial_number"><div class="boxlabel">serial_number</div>
-								<input type="checkbox" name="laptops" value="models.name as model"><div class="boxlabel">model</div>
+								<input type="checkbox" name="laptops" value="CONCAT(people.name,' ',people.lastname) as name"><div class="boxlabel">Propietario</div>
+								<input type="checkbox" name="laptops" value="laptops.serial_number"><div class="boxlabel">Número serial</div>
+								<input type="checkbox" name="laptops" value="models.name as model"><div class="boxlabel">Versión</div>
 								<div class="clear"></div>
-								<input type="checkbox" name="laptops" value="statuses.description as status"><div class="boxlabel">status</div>
+								<input type="checkbox" name="laptops" value="statuses.description as status"><div class="boxlabel">Estado</div>
 								<input type="checkbox" name="laptops" value="laptops.uuid"><div class="boxlabel">uuid</div>
-								<input type="checkbox" onclick="ShowCountry()" name="laptops" value="places.name as place"><div class="boxlabel">place</div>
+								<input type="checkbox" onclick="ShowCountry()" name="laptops" value="places.name as place"><div class="boxlabel">Localidad</div>
 								<div class="clear"></div>
-								<input type="checkbox" name="laptops" value="people.id_document"><div class="boxlabel">document id</div>
-								<input type="checkbox" name="laptops" value="people.barcode"><div class="boxlabel">barcode</div>
-								<input type="checkbox" name="laptops" value="IF (laptops.assignee_id = laptops.owner_id, 'yes' ,'No') AS InHands"><div class="boxlabel">In hands</div>
+								<input type="checkbox" name="laptops" value="people.id_document"><div class="boxlabel">Id del documento</div>
+								<input type="checkbox" name="laptops" value="people.barcode"><div class="boxlabel">Código de bar</div>
+								<input type="checkbox" name="laptops" value="IF (laptops.assignee_id = laptops.owner_id, 'yes' ,'No') AS InHands"><div class="boxlabel">En manos</div>
 							</div>
 							<div class="clear"></div>
 							<div class="label Paishidden">
@@ -82,21 +82,21 @@
 							</div>
 							<datalist id="json-datalistSeccion"></datalist>
 							<div class="order">
-								<h3>Order by</h3>
+								<h3>Ordenar por</h3>
 								<select id='orderByTerm'>
-									<option value="null">Choose wisely!</option>
-									<option value="serial_number">serial_number</option>
-									<option value="model">model</option>
-									<option value="name">name</option>
-									<option value="status">status</option>
+									<option value="null">Elige sabiamente!</option>
+									<option value="serial_number">Número serial</option>
+									<option value="model">Versión</option>
+									<option value="name">Nombre</option>
+									<option value="status">Estado</option>
 									<option value="uuid">uuid</option>
-									<option value="place">place</option>
-									<option value="id_document">document id</option>
-									<option value="barcode">barcode</option>
+									<option value="place">Localidades</option>
+									<option value="id_document">Id del documento</option>
+									<option value="barcode">Código de bar</option>
 								</select>
 								<select id='orderList'>
-									<option value="ASC">Ascending</option>
-									<option value="DESC">Descending</option>
+									<option value="ASC">Ascendente</option>
+									<option value="DESC">Descendente</option>
 								</select>
 								{#<a href="default.asp">
 								  <img id='buttonPlus1' class='buttonplus'  src="{{ app.request.baseUrl }}/img/plus.png">
@@ -106,17 +106,17 @@
 								</a>#}
 							</div>
 							<div class="filter">
-								<h3>Filter</h3>
+								<h3>Filtrar</h3>
 								<select id='GroupByTerm'>
-									<option value="null">Choose wisely!</option>
-									<option value="laptops.serial_number">serial_number</option>
-									<option value="models.name">model</option>
-									<option value="CONCAT(people.name,' ',people.lastname)">name</option>
-									<option value="statuses.description">status</option>
+									<option value="null">Elige sabiamente!</option>
+									<option value="laptops.serial_number">Número serial</option>
+									<option value="models.name">Versión</option>
+									<option value="CONCAT(people.name,' ',people.lastname)">Nombre</option>
+									<option value="statuses.description">Estado</option>
 									<option value="laptops.uuid">uuid</option>
-									<option value="places.name">place</option>
-									<option value="people.id_document">document id</option>
-									<option value="people.barcode">barcode</option>
+									<option value="places.name">Localidad</option>
+									<option value="people.id_document">Id del documento</option>
+									<option value="people.barcode">Código de bar</option>
 								</select>
 								<input type="text" name="fname" id="inputfield" placeholder="search field..."><br>
 								<a class="button" id="submitlaptop" role="button">Preview</a>
@@ -125,26 +125,26 @@
 					</div><!--end .accordion-section-content-->
 				</div><!--end .accordion-section-->
 				<div class="accordion-section">
-					<a class="accordion-section-title" href="#accordion-2">Places</a>
+					<a class="accordion-section-title" href="#accordion-2">Localidades</a>
 					<div id="accordion-2" class="accordion-section-content">
-						<h3>places</h3>
+						<h3>Localidades</h3>
 						<form action="includelaptops" id="placesForm">
 							<div class="checkboxes">
-								<input type="checkbox" name="laptops" value="places.name"><div class="boxlabel">Name</div>
-								<input type="checkbox" name="laptops" value="place_types.name as typename"><div class="boxlabel">type</div>
-								<input type="checkbox" name="laptops" value="school_infos.server_hostname"><div class="boxlabel">server_hostname</div>
+								<input type="checkbox" name="laptops" value="places.name"><div class="boxlabel">Nombre</div>
+								<input type="checkbox" name="laptops" value="place_types.name as typename"><div class="boxlabel">Tipo</div>
+								<input type="checkbox" name="laptops" value="school_infos.server_hostname"><div class="boxlabel">nombre de host del servidor</div>
 							</div>
 							<div class="order">
-								<h3>Order by</h3>
+								<h3>Ordenar por</h3>
 								<select id='orderByTerm'>
-									<option value="null">Choose wisely!</option>
-									<option value="places.name">Name</option>
-									<option value="typename">type</option>
-									<option value="server_hostname">server_hostname</option>
+									<option value="null">Elige sabiamente!</option>
+									<option value="places.name">Nombre</option>
+									<option value="typename">Tipo</option>
+									<option value="server_hostname">nombre de host del servidor</option>
 								</select>
 								<select id='orderList'>
-									<option value="ASC">Ascending</option>
-									<option value="DESC">Descending</option>
+									<option value="ASC">Ascendente</option>
+									<option value="DESC">Descendente</option>
 								</select>
 								{#<a href="default.asp">
 								  <img id='buttonPlus1' class='buttonplus'  src="{{ app.request.baseUrl }}/img/plus.png">
@@ -154,15 +154,15 @@
 								</a>#}
 							</div>
 							<div class="filter">
-								<h3>Filter</h3>
+								<h3>Filtrar</h3>
 								<select id='GroupByTerm'>
-									<<option value="null">Choose wisely!</option>
-									<option value="places.name">Name</option>
-									<option value="place_types.name">type</option>
-									<option value="school_infos.server_hostname">server_hostname</option>
+									<<option value="null">Elige sabiamente!</option>
+									<option value="places.name">Nombre</option>
+									<option value="place_types.name">Tipo</option>
+									<option value="school_infos.server_hostname">nombre de host del servidor</option>
 								</select>
 								<input type="text" name="fname" id="inputfield" placeholder="search field..."><br>
-								<a class="button" id="submitplaces" role="button">Preview</a>
+								<a class="button" id="submitplaces" role="button">Vista previa</a>
 							</div>
 						</form>
 					</div><!--end .accordion-section-content-->
@@ -171,7 +171,7 @@
 		</section>
 	</div>			
 	<div class="preview">
-		<h1>preview</h1>
+		<h1>Vista previa</h1>
 		<div class="clear"></div>
 		<div id="pdfcontent">
 			<h3 id="place"></h3>
@@ -179,9 +179,9 @@
 			<table id="exportTable">
 				
 			</table>
-			<a class="button" id="DownloadFile" role="button">Download PDF</a>
-			<a class="button" id="DownloadFileasExcel" href="excel?data=AZE&test=123" role="button">Download Excel</a>
-			<a class="button" id="DownloadBarcodes" href="excel?data=AZE&test=123" role="button">Download barcodes</a>
+			<a class="button" id="DownloadFile" role="button">Descargar PDF</a>
+			<a class="button" id="DownloadFileasExcel" href="excel?data=AZE&test=123" role="button">Descargar Excel</a>
+			<a class="button" id="DownloadBarcodes" href="excel?data=AZE&test=123" role="button">Descargar barcodes</a>
 		</div>
 	</div>
 	

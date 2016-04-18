@@ -13,24 +13,24 @@
 	{# Page specific content #}
 	{% include  'menu.twig' %}
 <div class="menu-right">
-	<h1>Mass assignment</h1>
+	<h1>Asignaciones por lote</h1>
 	<form novalidate="novalidate" role="form">
 		<fieldset>
 			<div class="form-group">
 				<div class="labels">
-					<h2>laptop Serial number</h2>
-					<h2>Person Barcode<h2>
+					<h2>Laptop número serial</h2>
+					<h2>Código de barras del propietario<h2>
 				</div>
 				<div class="clear"></div>
 				<div class="input">
-					<input type="text" class="serial" name="serial" id="serial" value="" placeholder="Serial...">
-					<input type="text" class="barcode" name="barcode" id="barcode" style="margin-left: -0.4rem; margin-right:0rem;" value="" placeholder="Barcode...">
+					<input type="text" class="serial" name="serial" id="serial" value="" placeholder="número serial...">
+					<input type="text" class="barcode" name="barcode" id="barcode" style="margin-left: -0.4rem; margin-right:0rem;" value="" placeholder="Código de barras...">
 					<p id="alert" name="error"></p>
 					<div class="clear rows"></div>
 				</div>
 			</div>
 			<div class="clear rows"></div>
-			<a class="button" id="assignall" data="" role="button">Add</a>
+			<a class="button" id="assignall" data="" role="button">agregar</a>
 			
 		</fieldset>
 	</form>

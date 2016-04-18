@@ -14,7 +14,7 @@
 	{% include  'menu.twig' %}
 <div class="menu-right">
 	<div class="top-menu">
-	<h1><a href="{{ path('Inventory.places') }}">Places</a></h1>
+	<h1><a href="{{ path('Inventory.places') }}">Localidades</a></h1>
 	
 </div>
 <div class="overvieuw">
@@ -76,34 +76,34 @@
 					<input type="checkbox" id="chechallboxes" name="checkbox">   
 				</th>
 				<th>
-					name
+					Nombre
 				</th>
 				<th>
-					school server hostname
+					nombre de host del servidor
 				</th>
 				<th>
-					edit
+					Editar
 				</th>
 				<th>
-					delete
+					Eliminar
 				</th> 
 			</tr>
 			
 		</table>
-		<a class="button" id="openAddModal"  role="button">Add</a>
-	    <a class="button" id="DeleteSelectedplaces" role="button">delete selected</a>
+		<a class="button" id="openAddModal"  role="button">Agregar</a>
+	    <a class="button" id="DeleteSelectedplaces" role="button">Eliminar Seleccionados</a>
     </div>
 		<div id="openModal" class="modalDialog">
 			<div>
 				<a id="CloseAddModal"  class="close">X</a>
-				<h3 id="change">Add User</h3>
+				<h3 id="change">Agregar Localidade</h3>
 				<div class="clear"></div>
 				<div class="well clearfix" id="addUserForm">
 					<form novalidate="novalidate" role="form">
 						<fieldset>
 							<div class="form-group">
 								<div class="label">
-									Name
+									Nombre
 								</div>
 								<div class="input">
 									<input type="text" name="login" id="Name" value="" placeholder="Name...">
@@ -133,8 +133,8 @@
 								<datalist id="json-datalistancestor"></datalist>
 								<div class="clear"></div>
 							</div>
-							<a class="button" id="AddPlace" data="" role="button">Add</a>
-							<p id="alert">Fill in all fields!</p>
+							<a class="button" id="AddPlace" data="" role="button">Agregar</a>
+							<p id="alert">Rellene todos los campos!</p>
 						</fieldset>
 					</form>
 				</div>

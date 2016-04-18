@@ -125,13 +125,13 @@ function SetData(input, datalist){
       } else {
 
         // An error occured :(
-        input.placeholder = "Couldn't load datalist options :(";
+        input.placeholder = "No se pudo cargar la lista de opciones :(";
       }
     }
   };
 
   // Update the placeholder text.
-  input.placeholder = "Loading options...";
+  input.placeholder = "Cargando opciones...";
 
   // Set up and make the request.
   request.open('GET', '../../Ajax/'+value+'/', true);
@@ -522,8 +522,8 @@ $( "#AddPerson" ).click(function() {
                               console.log(data);
                               var data2 = data
                               cell1.innerHTML = '<input type="checkbox" id="'+data2+'" name="checkbox"> '
-                              cell9.innerHTML = '<a class="button EditLaptop" onclick="editperson(this)"  id="EditLaptop" data="'+data2+'"  role="button">Edit</a>';
-                              cell10.innerHTML = '<a class="button DeleteLaptop" onclick="deleteperson(this)" id="Deleteperson" data="'+data2+'" role="button">delete</a>';
+                              cell9.innerHTML = '<a class="button EditLaptop" onclick="editperson(this)"  id="EditLaptop" data="'+data2+'"  role="button">Editar</a>';
+                              cell10.innerHTML = '<a class="button DeleteLaptop" onclick="deleteperson(this)" id="Deleteperson" data="'+data2+'" role="button">Eliminar</a>';
                               //hide the form
                              $("#openModal").css("opacity", "0");
                              $("#openModal").css("pointer-events", "none");
@@ -541,7 +541,7 @@ $( "#AddPerson" ).click(function() {
       });
 
       //if laptop is not added, show the form with the error.
-      if($("#alert").html() != 'Person added'){
+      if($("#alert").html() != 'Persona agregada!'){
         $("#alert").css("display", "initial");
         
       }
@@ -602,7 +602,7 @@ $( "#AddPerson" ).click(function() {
                       console.log(e);
                   }
           });
-          if($("#alert").html() != 'laptops edited'){
+          if($("#alert").html() != 'Laptops editadas'){
             $("#alert").css("display", "initial");
             
           }
@@ -665,7 +665,7 @@ $( "#AddPerson" ).click(function() {
                     console.log(e);
                 }
         });
-        if($("#alert").html() != 'Person edited'){
+        if($("#alert").html() != 'Person editadar'){
           $("#alert").css("display", "initial");
           
         }

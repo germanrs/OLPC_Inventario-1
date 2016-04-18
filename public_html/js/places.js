@@ -87,13 +87,13 @@ function SetData(input, datalist){
       } else {
 
         // An error occured :(
-        input.placeholder = "Couldn't load datalist options :(";
+        input.placeholder = "No se pudo cargar la lista de opciones :(";
       }
     }
   };
 
   // Update the placeholder text.
-  input.placeholder = "Loading options...";
+  input.placeholder = "Cargando opciones...";
 
   // Set up and make the request.
   request.open('GET', '../Ajax/'+value+'/', true);
@@ -436,7 +436,7 @@ $('#grade').on('input', function(){
 $( "#openAddModal" ).click(function() {
   document.getElementById("Name").value = '';
   document.getElementById("server_hostname").value = '';
-  document.getElementById("AddPlace").text = 'Add';
+  document.getElementById("AddPlace").text = 'Agregar';
 
   //if the city is selected and the school not, then the user can add a school => he can add a server_hostname
   if(document.getElementById("Ciudad").value!='' && document.getElementById("Escuela").value==''){
@@ -507,7 +507,7 @@ $( "#AddPlace" ).click(function() {
     created_at = yyyy+'/'+mm+'/'+dd;
 
     //add 1 laptop
-    if(document.getElementById("AddPlace").text == 'Add'){
+    if(document.getElementById("AddPlace").text == 'Agregar'){
 
       //set the data for an ajax request to add a place
       var postData = 
@@ -561,12 +561,12 @@ $( "#AddPlace" ).click(function() {
                               cell1.innerHTML = '<input type="checkbox" id="'+data2+'" name="checkbox"> '
                               
                               if(document.getElementById("Ciudad").value!='' && document.getElementById("Escuela").value==''){
-                                cell5.innerHTML = '<a class="button DeleteLaptop" onclick="Deleteplace(this)" id="Deleteperson" data="'+data2+'" role="button">delete</a>';
-                                cell4.innerHTML = '<a class="button EditLaptop" onclick="Editplace(this)"  id="EditLaptop" data="'+data2+'"  role="button">Edit</a>';
+                                cell5.innerHTML = '<a class="button DeleteLaptop" onclick="Deleteplace(this)" id="Deleteperson" data="'+data2+'" role="button">Eliminar</a>';
+                                cell4.innerHTML = '<a class="button EditLaptop" onclick="Editplace(this)"  id="EditLaptop" data="'+data2+'"  role="button">Editar</a>';
                               }
                               else{
-                                cell3.innerHTML = '<a class="button DeleteLaptop" onclick="Deleteplace(this)" id="Deleteperson" data="'+data2+'" role="button">delete</a>';
-                                cell4.innerHTML = '<a class="button EditLaptop" onclick="Editplace(this)"  id="EditLaptop" data="'+data2+'"  role="button">Edit</a>';
+                                cell3.innerHTML = '<a class="button DeleteLaptop" onclick="Deleteplace(this)" id="Deleteperson" data="'+data2+'" role="button">Eliminar</a>';
+                                cell4.innerHTML = '<a class="button EditLaptop" onclick="Editplace(this)"  id="EditLaptop" data="'+data2+'"  role="button">Editar</a>';
                               }
                               
                           },
@@ -587,7 +587,7 @@ $( "#AddPlace" ).click(function() {
     }
 
     //edit a laptop
-    else if(document.getElementById("AddPlace").text == 'Edit'){
+    else if(document.getElementById("AddPlace").text == 'Editar'){
       var Id = $('#AddPlace').attr("data");
       var postData = 
                 {
@@ -664,7 +664,7 @@ function Deleteplace(datainput){
 // when the function edotplace is been called, set the form with the proper data to edit.
 function Editplace(datainput){
   $("#alert").css("display", "none");
-  document.getElementById("AddPlace").text = 'Edit';
+  document.getElementById("AddPlace").text = 'Editar';
   var table = document.getElementById("table");
   var element = document.getElementById($(datainput).attr("data"));
   
@@ -748,8 +748,8 @@ function setDataInTable(){
         cell0.innerHTML = '<input type="checkbox" id="'+jsonOptions[$index]['id']+'" name="checkbox"> '
         cell1.innerHTML = jsonOptions[$index]['name'];
         cell2.innerHTML = jsonOptions[$index]['server_hostname'];
-        cell3.innerHTML = '<a class="button EditLaptop" onclick="Editplace(this)"  id="EditLaptop" data="'+jsonOptions[$index]['id']+'"  role="button">Edit</a>';
-        cell4.innerHTML = '<a class="button DeleteLaptop" onclick="Deleteplace(this)" id="Deleteperson" data="'+jsonOptions[$index]['id']+'" role="button">delete</a>'; 
+        cell3.innerHTML = '<a class="button EditLaptop" onclick="Editplace(this)"  id="EditLaptop" data="'+jsonOptions[$index]['id']+'"  role="button">Editar</a>';
+        cell4.innerHTML = '<a class="button DeleteLaptop" onclick="Deleteplace(this)" id="Deleteperson" data="'+jsonOptions[$index]['id']+'" role="button">Eleminar</a>'; 
       }
 
       if(document.getElementById("Ciudad").value!='' && document.getElementById("Escuela").value==''){

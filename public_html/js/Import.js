@@ -220,12 +220,12 @@ function SetData(input, datalist){
       } else {
 
         // An error occured :(
-        input.placeholder = "Couldn't load datalist options :(";
+        input.placeholder = "No se pudo cargar la lista de opciones :(";
       }
     }
   };
     // Update the placeholder text.
-  input.placeholder = "Loading options...";
+  input.placeholder = "Cargando opciones...";
 
   // Set up and make the request.
   request.open('GET', '../Ajax/placescountries/', true);

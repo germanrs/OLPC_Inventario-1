@@ -365,7 +365,6 @@ class ImportController implements ControllerProviderInterface {
 						} catch (Exception $e) {
 							var_dump($e);
 						}
-						var_dump($place);
 						if(ctype_digit($place)){
 							//generate a barcode for the user
 							$barcode = 0;
@@ -386,9 +385,9 @@ class ImportController implements ControllerProviderInterface {
 								}
 								$perform = array('person_id' => $person_id, 'place_id' => $place, 'profile_id' => 7);
 								$app['db.performs']->insert($perform);
-								$error = "Students added";
+								$error = "estudiantes agregan";
 							} catch (Exception $e) {
-								$error =  "server down, try again later";
+								$error =  "Servidor colapsado, intente más tarde.";
 							}	
 						}
 						else{
@@ -403,7 +402,7 @@ class ImportController implements ControllerProviderInterface {
 				}
 		    }
 		    else{
-		        $error = 'Invalid File:Please Upload XLSX File';
+		        $error = 'Archivo no válido, ingrese un archivo XLSX';
 		    }
 		}
 
@@ -473,9 +472,9 @@ class ImportController implements ControllerProviderInterface {
 								}
 								$perform = array('person_id' => $person_id, 'place_id' => $place, 'profile_id' => 5);
 								$app['db.performs']->insert($perform);
-								$error = "Teachers added";
+								$error = "Profesor agregan";
 							} catch (Exception $e) {
-								$error =  "server down, try again later";
+								$error =  "Servidor colapsado, intente más tarde.";
 							}	
 						}
 						else{
@@ -486,7 +485,7 @@ class ImportController implements ControllerProviderInterface {
 				$value = 2;
 		    }
 		    else{
-		        $error = 'Invalid File:Please Upload XLSX File';
+		        $error = 'Archivo no válido, ingrese un archivo XLSX';
 		    }
 		}
 
@@ -514,36 +513,36 @@ class ImportController implements ControllerProviderInterface {
 								$laptopID = $app['db.laptops']->FindnewestId();
 								$movement = array('created_at' => date("Y-m-d"),'source_person_id' => 5, 'destination_person_id' => 5,'comment' => 'created by uploading excel file', 'movement_type_id'=> 11 ,'laptop_id'=>$laptopID);
 								$app['db.movements']->insert($movement);
-								$error ="laptop added";
+								$error ="Laptop agregan";
 							}
 							else if($controle != 0) {
-								$error ="Laptop already exists";
+								$error ="Laptop ya existe";
 							}
 							else if(empty($model)) {
-								$error ="model does not exists";
+								$error ="Versión no existe";
 							}
 							else if(strlen($value['A']) != 11) {
-								$error ="length of serial is incorrect";
+								$error ="Longitud de serie es incorrecto";
 							}
 							else if(strlen($value['B']) != 36) {
-								$error ="length of uuid is incorrect";
+								$error ="Longitud de UUID es incorrecta";
 							}
 							else{
-								$error ="server error";
+								$error ="Error del Servidor";
 							}
 							$value['D'] = $error;
 							$error ='';
 							array_push($data, $value);
 						}
 						catch (Exception $e) {
-								$error =  "server down, try again later";
+								$error =  "Servidor colapsado, intente más tarde.";
 						}	
 					}	
 				}
 				$value = 3;
 	    	}
 		    else{
-		        $error = 'Invalid File:Please Upload XLSX File';
+		        $error = 'Archivo no válido, ingrese un archivo XLSX';
 		    }
 		}
 
@@ -627,7 +626,7 @@ class ImportController implements ControllerProviderInterface {
 											$person = $app['db.people']->Lastadded();
 											$perform = array('person_id' => $person, 'place_id' => $placeID, 'profile_id' => 5);
 											$app['db.performs']->insert($perform);
-											$remark =";person added";
+											$remark =";persona agregada";
 										}
 										if(!empty($value['7'])){
 											$laptopid = $app['db.laptops']->FindLaptopbySerialandOwner($value['7'], $person);
@@ -639,11 +638,11 @@ class ImportController implements ControllerProviderInterface {
 														$app['db.laptops']->updatelaptopbyID($laptopid, $person);
 														$movement = array('created_at' => date("Y-m-d"),'source_person_id' => $owner, 'destination_person_id' => $person,'comment' => 'excel_movement by:'.$username, 'movement_type_id'=> 11 ,'laptop_id'=>$laptopid);
 														$app['db.movements']->insert($movement);
-														$remark .=";laptop serial does not exist";
+														$remark .=";Laptop seral no existe";
 													}
 												}
 												else{
-													$remark .=";laptop serial does not exist";
+													$remark .=";Laptop seral no existe";
 												}
 											}
 										}
@@ -659,11 +658,11 @@ class ImportController implements ControllerProviderInterface {
 												//add movement
 												$movement = array('created_at' => date("Y-m-d"),'source_person_id' => $person, 'destination_person_id' => 5,'comment' => 'excel_movement by:'.$username, 'movement_type_id'=> 11 ,'laptop_id'=>$laptopid);
 												$app['db.movements']->insert($movement);
-												$remark .= ';laptop removed' ;
+												$remark .= ';laptop eliminar' ;
 											}
 										}
 										if($remark==''){
-											$remark= 'no changes';
+											$remark= 'sin cambios';
 										}
 										$value = array('A' => $value[6],'B' => $value['7'],'C' => 'Teacher','D' => '','E' => '','F' => '', 'G'=>$remark);
 										array_push($data, $value);
@@ -675,7 +674,7 @@ class ImportController implements ControllerProviderInterface {
 											$app['db.movements']->deleteperson($person);
 											$app['db.performs']->deleteperson($person);
 											$app['db.people']->deleteperson($person);
-											$remark= 'person deleted';
+											$remark= 'person eliminar';
 										}
 										else{
 											$remark= "person not found";
@@ -864,11 +863,11 @@ class ImportController implements ControllerProviderInterface {
 														$app['db.movements']->insert($movement);
 
 														//add remark
-														$remark .=";laptop assigned";
+														$remark .=";laptop asignado";
 													}
 												}
 												else{
-													$remark .=";laptop serial does not exist";
+													$remark .=";laptop serial no existe";
 												}
 											}
 										}
@@ -885,7 +884,7 @@ class ImportController implements ControllerProviderInterface {
 												//add movement
 												$movement = array('created_at' => date("Y-m-d"),'source_person_id' => $person, 'destination_person_id' => 5,'comment' => 'excel_movement by:'.$username, 'movement_type_id'=> 11 ,'laptop_id'=>$laptopid);
 												$app['db.movements']->insert($movement);
-												$remark .= ';laptop removed' ;
+												$remark .= ';laptop eleminar' ;
 											}
 										}
 										if(!empty($value[4])){
@@ -1000,11 +999,11 @@ class ImportController implements ControllerProviderInterface {
 											$person = $app['db.people']->getPerson($value[6]);
 											$perform = array('person_id' => $person, 'place_id' => $place, 'profile_id' => 7);
 											$app['db.performs']->updatePerform($perform);
-											$remark.= '; person changed class';
+											$remark.= '; persona cambiada de clase';
 										}
 										
 										if($remark==''){
-											$remark= 'no changes';
+											$remark= 'no cambio';
 										}
 										$value = array('A' => $value[6],'B' => $value['7'],'C' => 'Student','D' => $places[0],'E' => $places[1],'F' => $places[2], 'G'=>$remark);
 										array_push($data, $value);
@@ -1016,10 +1015,10 @@ class ImportController implements ControllerProviderInterface {
 											$app['db.movements']->deleteperson($person);
 											$app['db.performs']->deleteperson($person);
 											$app['db.people']->deleteperson($person);
-											$remark= 'person deleted';
+											$remark= 'person eliminar';
 										}
 										else{
-											$remark= "person not found";
+											$remark= "person extraviado";
 										}
 										$value = array('A' => $value[6],'B' => $value['7'],'C' => 'Student','D' => $places[0],'E' => $places[1],'F' => $places[2], 'G'=>$remark);
 										array_push($data, $value);
@@ -1032,7 +1031,7 @@ class ImportController implements ControllerProviderInterface {
 				$value = 4;
 	    	}
 		    else{
-		        $error = 'Invalid File:Please Upload XLSX File';
+		        $error = 'Archivo no válido, ingrese un archivo XLSX';
 		    }
 		}
 
