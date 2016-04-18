@@ -232,7 +232,6 @@ class ImportController implements ControllerProviderInterface {
 						
 						try {
 							$place= $app['db.places']->getSchool($value['D'],$Ciudad);
-							$schoolid = $place;
 							if(empty($place)){
 								$school = array('created_at' => date("Y-m-d"),'name' => $value['D'],'place_id' => $Ciudad,'place_type_id' => 4);
 								$app['db.places']->insert($school);
@@ -246,10 +245,10 @@ class ImportController implements ControllerProviderInterface {
 								$app['db.places_dependencies']->insert($dependency);
 								$place= $app['db.places']->getSchool($value['D'],$Ciudad);
 							}
+							$schoolid = $place;
 							if(!empty($value['F'])){
 								$name = ($value['F'] == 'm')? 'Turno Mañana': (($value['F'] == 't')? 'Turno Tarde': 'Turno Completo');
-								$place= $app['db.places']->getTimeOfPlace($place, $name);
-								$turnoid = $place;
+								$place= $app['db.places']->getTimeOfPlace($schoolid, $name);
 								if(empty($place)){
 									$turno = array('created_at' => date("Y-m-d"),'name' => $name,'place_id' => $schoolid,'place_type_id' => 12);
 									$app['db.places']->insert($turno);
@@ -261,9 +260,11 @@ class ImportController implements ControllerProviderInterface {
 									}
 									$dependency =  array('descendant_id' => $turnoid, 'ancestor_id' => $turnoid);
 									$app['db.places_dependencies']->insert($dependency);
-									$place= $app['db.places']->getTimeOfPlace($place, $name);
+									$place= $app['db.places']->getTimeOfPlace($schoolid, $name);
 								}
+								$turnoid = $place;
 							}
+							
 							if(!empty($value['H'])){
 								$laptopid = $app['db.laptops']->GetLaptopId($value['H']);
 							}
@@ -315,8 +316,7 @@ class ImportController implements ControllerProviderInterface {
 								        $place_type_id=13;
 								        break;
 								}
-								$place= $app['db.places']->getgradeOfPlace($place, $name);
-								$gradoid = $place;
+								$place= $app['db.places']->getgradeOfPlace($turnoid, $name);
 								if(empty($place)){
 									$grado = array('created_at' => date("Y-m-d"),'name' => $name,'place_id' => $turnoid,'place_type_id' => $place_type_id);
 									$app['db.places']->insert($grado);
@@ -328,8 +328,9 @@ class ImportController implements ControllerProviderInterface {
 									}
 									$dependency =  array('descendant_id' => $gradoid, 'ancestor_id' => $gradoid);
 									$app['db.places_dependencies']->insert($dependency);
-									$place= $app['db.places']->getgradeOfPlace($place, $name);
+									$place= $app['db.places']->getgradeOfPlace($turnoid, $name);
 								}
+								$gradoid = $place;
 							}
 							if(!empty($value['G'])){
 								switch ($value['G']) {
@@ -346,8 +347,7 @@ class ImportController implements ControllerProviderInterface {
 								        $name = 'Seccion D';
 								        break;
 								}
-								$place= $app['db.places']->getSeccionOfPlace($place, $name);
-
+								$place= $app['db.places']->getSeccionOfPlace($gradoid, $name);
 								if(empty($place)){
 									$seccion = array('created_at' => date("Y-m-d"),'name' => $name,'place_id' => $gradoid,'place_type_id' => 11);
 									$app['db.places']->insert($seccion);
@@ -359,13 +359,13 @@ class ImportController implements ControllerProviderInterface {
 									}
 									$dependency =  array('descendant_id' => $seccionid, 'ancestor_id' => $seccionid);
 									$app['db.places_dependencies']->insert($dependency);
-									$place= $app['db.places']->getSeccionOfPlace($place, $name);
+									$place= $app['db.places']->getSeccionOfPlace($gradoid, $name);
 								}
 							}
 						} catch (Exception $e) {
 							var_dump($e);
 						}
-						
+						var_dump($place);
 						if(ctype_digit($place)){
 							//generate a barcode for the user
 							$barcode = 0;
@@ -392,6 +392,8 @@ class ImportController implements ControllerProviderInterface {
 							}	
 						}
 						else{
+							var_dump($place);
+							var_dump($value);
 							$error ='The grade doesnt fit the school.';
 						}	
 					}
@@ -450,7 +452,7 @@ class ImportController implements ControllerProviderInterface {
 						} catch (Exception $e) {
 							var_dump($e);
 						}
-						if(ctype_digit($place)){
+						if(ctype_digit(intval($place))){
 
 							//generate a barcode for the user
 							$barcode = 0;

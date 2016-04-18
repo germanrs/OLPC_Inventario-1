@@ -44,6 +44,7 @@ h1 {
   background-size: cover;
   margin:0;
   height: 80vh;
+  width: 100%;
 }
 
 .text-danger{
