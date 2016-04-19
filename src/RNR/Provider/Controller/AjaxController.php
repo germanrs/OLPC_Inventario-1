@@ -185,6 +185,10 @@ class AjaxController implements ControllerProviderInterface {
 			->method('GET|POST')
 			->bind('Ajax.getBarcodeList');
 
+		$controllers
+			->get('/getusersdata/', array($this, 'getusersdata'))
+			->method('GET|POST')
+			->bind('Ajax.getusersdata');
 			
 
 		// Return ControllerCollection
@@ -1276,6 +1280,21 @@ class AjaxController implements ControllerProviderInterface {
 		}
 		return $app['twig']->render('Ajax/Dump.twig');	
 	}
+
+	/**
+	 * home page
+	 * @param Application $app An Application instance
+	 * @return string A blob of HTML
+	 */
+	public function getusersdata(Application $app) {
+		if(isset($_POST['action'])){
+			$obj = json_decode($_POST['action'], true);
+			$data = $app['db.people']->fetchAllusersbyfirstletter($obj['name']);
+			echo json_encode($data);
+		}
+		return $app['twig']->render('Ajax/Dump.twig');	
+	}
+	
 }
 
 

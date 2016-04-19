@@ -3,9 +3,6 @@ body{
 }
 
 .login {
-  position: relative;
-  margin: 0 auto;
-  width: 310px;
   background: white;
   border: solid 1px #008dd3;
   border-radius: 3px;

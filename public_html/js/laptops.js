@@ -1,9 +1,69 @@
 //call the function setData to fill in the datalists.
 SetData('Model','json-datalistModel');
-SetData('People','json-datalistPeople');
-SetData('assignee','json-datalistassignee');
 SetData('Status','json-datalistStatus');
 
+//when the users enter a name, search for the 5 names that are alike
+$( "#People" ).keyup(function() {
+  clearChildren('json-datalistPeople');
+  if($('#People').val().length>0){
+    GetUsersdata($('#People').val(),'json-datalistPeople');
+  }
+});
+
+//when the users enter a name, search for the 5 names that are alike
+$( "#assignee" ).keyup(function() {
+  clearChildren('json-datalistassignee');
+  if($('#assignee').val().length>0){
+    GetUsersdata($('#assignee').val(),'json-datalistassignee');
+  }
+});
+
+//clear all the itemes in the datalist
+function clearChildren( parent_id ) {
+    var childArray = document.getElementById( parent_id ).children;
+    if ( childArray.length > 0 ) {
+        document.getElementById( parent_id ).removeChild( childArray[ 0 ] );
+        clearChildren( parent_id );
+    }
+}
+
+//get the names of the users that are like 'input' and put them in the datalist 'datalist'
+function GetUsersdata(input, datalist) {
+  var postData = 
+    {
+      "name": input
+    }
+  var dataString = JSON.stringify(postData);
+  $.ajax({
+    method: "POST",
+    data: {action:dataString},
+    url: "../Ajax/getusersdata/",
+    success: function(data){
+      console.log(data);
+      var dataList = document.getElementById(datalist);
+      var input = document.getElementById(input);
+      var jsonOptions = JSON.parse(data);
+      
+      // Loop over the JSON array.
+      jsonOptions.forEach(function(item) {
+      
+      // Create a new <option> element.
+      var option = document.createElement('option');
+
+      // Set the value using the item in the JSON array.
+      option.text = item.id;
+      option.value = item.name;
+
+      // Add the <option> element to the <datalist>.
+      dataList.appendChild(option);
+      }); 
+    },
+    error: function(e){
+      console.log(e);
+      $("#alert").html(e);
+    }
+  });
+}
 //set the data of a datalist
 //input = ID of textbox
 //dataliist = id of datalist

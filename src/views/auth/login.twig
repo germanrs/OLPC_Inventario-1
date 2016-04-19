@@ -18,7 +18,7 @@
 				
 				<p>{{ form_widget(loginform.username, { 'attr' : { 'class': 'form-control','placeholder':'Nombre de usuario' }} ) }}</p>
 				<p>{{ form_widget(loginform.password, { 'attr' : { 'class': 'form-control','placeholder':'Contraseña' }} ) }}</p>
-				<h2 class="text-danger">{{ form_errors(loginform.password)|striptags }}</h2><p class="submit"><input type="submit" name="commit" value="Iniciar sesión"></p>
+				<h2 id='error' class="text-danger">{{ form_errors(loginform.password)|striptags }}</h2><p class="submit"><input type="submit" name="commit" value="Iniciar sesión"></p>
 				<input type="hidden" name="moduleAction" id="moduleAction" value="login" />
 				{{ form_widget(loginform._token) }}
 	</form>

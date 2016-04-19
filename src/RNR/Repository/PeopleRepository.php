@@ -20,6 +20,15 @@ class PeopleRepository extends \Knp\Repository {
 				'SELECT people.id as id, CONCAT(people.name," ",people.lastname) as name FROM people');
 	}
 
+	public function fetchAllusersbyfirstletter($name) {
+		return $this->db->fetchAll(
+				'SELECT people.id as id, CONCAT(people.name," ",people.lastname) as name FROM people
+				where people.name LIKE "'.$name.'%" LIMIT 5');
+	}
+
+
+
+
 	/**
 	 * get the requested person
 	 * @param String $PersonName
