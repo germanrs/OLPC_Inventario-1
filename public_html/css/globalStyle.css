@@ -110,6 +110,22 @@ h1 a{
     pointer-events: auto;
 }
 
+/* =============== stiky footer =============== */
+
+html, body {
+height: 100%;
+}
+.wrapper {
+min-height: 88%;
+height: auto !important;
+height: 100%;
+margin: 0 auto -4.9em;
+}
+
+footer {
+height: 4em;
+}
+
 /* =============== MODAL =============== */
 
 .screen-overlay {
@@ -277,6 +293,10 @@ header ul.main-menu li.active {
     background-color: #87d53a;
 }
 
+div.menu-left ul li a.active {
+    background-color: #87d53a;
+}
+
 header ul.main-menu li a {
     display: inline-block;
     width: auto;
@@ -441,7 +461,7 @@ ul.settings-dropdown li a.logout:before {
 footer {
     background-color: #1b4371;
     color: #6d9ed5;
-    padding: 45px 0;
+    padding: 35px 0 0 0;
     text-align: center;
     font-size: 13px;
 }

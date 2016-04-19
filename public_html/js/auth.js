@@ -1,7 +1,4 @@
 
-if(document.getElementById("error").innerHTML==''){
-  alert('1');
-}
-else{
+if(document.getElementById("error").innerHTML!=''){
   $('.login').css( "height", "24rem" );
 }

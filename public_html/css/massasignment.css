@@ -10,16 +10,17 @@ fieldset{
 }
 
 .labels h2:first-child{
+	margin-right: 6.4rem;
+}
 
-	margin-right: 12rem;
+input[type="text"]:first-child{
+	margin-right: 5rem;
 }
 
 input[type="text"]{
 	margin-left: 0%;
-	margin-right: 5rem;
 	width: 25rem;
 }
-
 
 .input {
     float: left;
@@ -27,7 +28,7 @@ input[type="text"]{
 }
 
 .menu-right h1{
-	margin-left: 24rem;
+	margin-left: 18rem;
 }    
 
 #alert{
