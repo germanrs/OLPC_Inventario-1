@@ -169,6 +169,7 @@ function Edituser(datainput){
 	document.getElementById("EditPerson").text = 'Guardar cambios';
 	$("#divAddPerson").addClass("hidden");
 	$('#Persons').attr('disabled', true);
+	$('#Profiles').removeAttr('disabled');
 	$("#AddPerson").addClass("hidden");
 	$("#EditPerson").removeClass("hidden");
 	document.getElementById("Name").value = "";
@@ -196,6 +197,7 @@ function Edituser(datainput){
 
 $("#EditPerson").on("click", function(){
 	var usuario = document.getElementById("Name").value;
+	var perfil = document.getElementById("Profiles").value;
 	var clave = document.getElementById("Password").value;
 	var clave2 = document.getElementById("Password2").value;
 
@@ -221,10 +223,12 @@ $("#EditPerson").on("click", function(){
 	}
 	else{
 		var id = $("#EditPerson").attr("data");
+		var profile_id = $('[value="'+perfil+'"]').attr('data');
 		var postData = {
 			"id":id,
 			"usuario":usuario,
 			"clave":clave,
+			"profile_id":profile_id
 		}
 		var dataString = JSON.stringify(postData);
 		$.ajax({
@@ -237,7 +241,7 @@ $("#EditPerson").on("click", function(){
 				var index = $("#EditPerson").attr("index");
 				var table = document.getElementById("table");
 				table.rows[index].cells[0].innerHTML = usuario;
-				//table.rows[index].cells[1].innerHTML = ;
+				table.rows[index].cells[1].innerHTML = perfil;
 				
 				$("#openModal").css("opacity", "0");
                 $("#openModal").css("pointer-events", "none");
@@ -256,6 +260,7 @@ function Adduser(){
 
 	$("#divAddPerson").removeClass("hidden");
 	$('#Persons').removeAttr('disabled');
+	$('#Profiles').attr('disabled', true);
 	$("#AddPerson").removeClass("hidden");
 	$("#EditPerson").addClass("hidden");
 	document.getElementById("Name").value = "";

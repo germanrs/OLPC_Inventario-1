@@ -52,6 +52,10 @@ class UsersRepository extends \Knp\Repository {
 		return $this->db->fetchAssoc('SELECT users.id, users.usuario FROM '. $this->getTableName() . ' WHERE usuario = ?', array($user));
 	}
 
+	public function getUserPerson($user){
+		return $this->db->fetchAll('SELECT users.id, users.usuario, users.person_id FROM '. $this->getTableName() . ' WHERE id = '.$user);
+	}
+
 	public function deleteUser($userID) {
 		return $this->db->delete('users', array('id' => $userID));
 	}

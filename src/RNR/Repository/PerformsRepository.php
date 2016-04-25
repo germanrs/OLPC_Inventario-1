@@ -35,6 +35,15 @@ class PerformsRepository extends \Knp\Repository {
 		return $this->db->executeUpdate($result);
 	}
 
+	public function updatePerformProfile($perform) {
+		
+		$result = 'UPDATE performs SET '.
+		'profile_id = '. $this->db->quote($perform['profile_id'], \PDO::PARAM_STR) .
+		' WHERE person_id = '.$this->db->quote($perform['person_id'], \PDO::PARAM_INT);
+		
+		return $this->db->executeUpdate($result);
+	}
+
 	public function fetchAllByPersonId($person_id) {
 		return $this->db->fetchAll(
 				'SELECT performs.* FROM performs where performs.person_id ='.  $this->db->quote($person_id, \PDO::PARAM_STR));

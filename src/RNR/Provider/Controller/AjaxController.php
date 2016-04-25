@@ -1387,7 +1387,12 @@ class AjaxController implements ControllerProviderInterface {
 				$user = array('usuario' => $obj['usuario'], 
 					'clave' => sha1($obj['clave']), 
 					'id' => $obj['id']);
-				$data = $app['db.users']->updateUser($user);
+				$app['db.users']->updateUser($user);
+				$data = $app['db.users']->getUserPerson($obj['id']);
+				//
+				$perform = array('profile_id' => $obj['profile_id'], 'person_id' => $data[0]['person_id']);
+				$app['db.performs']->updatePerformProfile($perform);
+				//
 				echo "usuario editado";
 			} catch (Exception $e) {
 				echo "Servidor colapsado, intente más tarde.";
