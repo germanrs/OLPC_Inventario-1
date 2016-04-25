@@ -1,0 +1,118 @@
+{% extends 'layout.twig' %}
+{% set pageTitle = 'Admin' %}
+
+{% block pageCss %}
+	<link rel="stylesheet" media="screen" href="{{ app.request.baseUrl }}/css/Admin.css" />
+	<link rel="stylesheet" media="screen" href="{{ app.request.baseUrl }}/css/lijst.css" />
+{% endblock %}
+{% block pageContent %}
+
+<div class="leftsort">
+	<div class="title">
+		<h1>Información de Usuario</h1>	
+	</div>
+
+	<div class="clear"></div>
+	<div class="label">Nombre de Usuario</div>
+	<div class="input">
+		<input type="text" id="userName" value="{{ usuario }}">
+	</div>
+	<div class="clear"></div>
+	<div class="label">Contraseña</div>
+	<div class="input">
+		<input type="password" id="password" value="{{ usuario }}" disabled="true">
+	</div>
+	<div class="clear"></div>
+	<div class="label">Nueva Contraseña</div>
+	<div class="input">
+		<input type="password" id="newPassword1"></input>
+	</div>
+	<div class="clear"></div>
+	<div class="label">Confirmar Nueva Contraseña</div>
+	<div class="input">
+		<input type="password" id="newPassword2"></input>
+	</div>
+	<div class="clear"></div>
+	<div  id="error" class="errorPass hidden">Contraseñas no coinciden</div>
+	<div class="clear"></div>
+	<a class="button" id="save" role="button">Guardar Cambios</a>
+</div>
+{% if access_level > 499 %}
+<div class="righttable">
+	<div class="title">
+		<h1 id="titleUser"><a href="#">Usuarios</a></h1>
+	</div>
+	<table class="responstable" id="table">
+		<tr>
+			<th>Nombre de Usuario</th>
+			<th>Perfil</th>
+			<th>Editar</tH>
+			<tH>Eliminar</tH>
+		</tr>
+	</table>
+	<a class="button" id="addUser" role="button">Agregar Usuario</a>
+</div>
+{% endif %}
+
+<div id="openModal" class="modalDialog">
+	<div>
+		<a id="CloseAddModal"  class="close">X</a>
+		<h3 id="change">Editar Usuario</h3>
+		<div class="clear"></div>
+		<div class="well clearfix" id="addUserForm">
+			<form novalidate="novalidate" role="form">
+				<fieldset>
+					<div class="form-group">
+						<div class="formleft">
+							<div class="label">
+								Nombre de Usuario
+							</div>
+							<div class="input">
+								<input type="text" id="Name" placeholder="Name...">
+							</div>
+							<div class="clear"></div>
+							<div class="label">
+								Perfil
+							</div>
+							<div class="input">
+								<input type="text" id="Profile" placeholder="Profile..." disabled="disabled">
+							</div>
+							<div class="clear"></div>
+							<div id="divAddPerson" class="">
+								<div class="label">
+									Propietario
+								</div>
+								<div class="input">
+									<input type="text" id="Persons" list="json-datalistpersons" placeholder="Propietario...">
+								</div>
+								<datalist id="json-datalistpersons"></datalist>
+								<div class="clear"></div>
+								<div class="label">
+									Contraseña
+								</div>
+								<div class="input">
+									<input type="password" id="Password" placeholder="Contraseña...">
+								</div>
+								<div class="clear"></div>
+								<div class="label">
+									Confirmar contraseña
+								</div>
+								<div class="input">
+									<input type="password" id="Password2" placeholder="Contraseña...">
+								</div>
+							</div>
+						</div>
+					</div>
+					<a class="button hidden" id="AddPerson" data="" role="button">Agregar</a>
+					<a class="button" id="EditPerson" data="" role="button">Agregar</a>
+					<p id="alert">Rellene todos los campos!</p>
+				</fieldset>
+			</form>
+		</div>
+	</div>
+</div>
+
+{% endblock %}
+{% block pageScripts %}
+	<script src="{{ app.request.baseUrl }}/js/Admin.js"></script>
+{% endblock %}

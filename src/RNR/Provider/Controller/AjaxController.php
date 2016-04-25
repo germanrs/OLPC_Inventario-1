@@ -86,6 +86,12 @@ class AjaxController implements ControllerProviderInterface {
 			->bind('Ajax.getdataforplacestable');
 
 		$controllers
+			->get('/getdataforuserstable/', array($this, 'getdataforuserstable'))
+			->method('GET|POST')
+			->bind('Ajax.getdataforuserstable');
+
+
+		$controllers
 			->get('/profiles/', array($this, 'profiles'))
 			->method('GET|POST')
 			->bind('Ajax.profiles');
@@ -189,7 +195,26 @@ class AjaxController implements ControllerProviderInterface {
 			->get('/getusersdata/', array($this, 'getusersdata'))
 			->method('GET|POST')
 			->bind('Ajax.getusersdata');
-			
+
+		$controllers
+			->get('/getusersinfo/', array($this, 'getusersinfo'))
+			->method('GET|POST')
+			->bind('Ajax.getusersinfo');
+
+		$controllers
+			->get('/deleteUser/', array($this, 'deleteUser'))
+			->method('GET|POST')
+			->bind('Ajax.deleteUser');
+
+		$controllers
+			->get('/persons/', array($this, 'persons'))
+			->method('GET|POST')
+			->bind('Ajax.persons');
+
+		$controllers
+			->get('/addUser/', array($this, 'addUser'))
+			->method('GET|POST')
+			->bind('Ajax.addUser');
 
 		// Return ControllerCollection
 		return $controllers;
@@ -1281,6 +1306,14 @@ class AjaxController implements ControllerProviderInterface {
 		return $app['twig']->render('Ajax/Dump.twig');	
 	}
 
+	public function getdataforuserstable(Application $app){
+		$data ='';
+		//var_dump($app['session']->get('user'));
+		$data = $app['db.users']->getUsers($app['session']->get('user')['ID']);
+		echo json_encode($data);
+		return $app['twig']->render('Ajax/Dump.twig');	
+	}
+
 	/**
 	 * home page
 	 * @param Application $app An Application instance
@@ -1293,6 +1326,53 @@ class AjaxController implements ControllerProviderInterface {
 			echo json_encode($data);
 		}
 		return $app['twig']->render('Ajax/Dump.twig');	
+	}
+
+
+	public function getusersinfo(Application $app) {
+		if(isset($_POST['action'])){
+			$obj = json_decode($_POST['action'], true);
+			$data = $app['db.users']->getUsersInfo($obj['name']);
+			echo json_encode($data);
+		}
+		return $app['twig']->render('Ajax/Dump.twig');	
+	}
+
+	public function deleteUser(Application $app) {
+		if(isset($_POST['action'])){
+			$obj = json_decode($_POST['action'], true);
+			try {
+				$app['db.users']->deleteUser($obj['id']);
+				echo "person deleted";
+			} catch (Exception $e) {
+				echo "person already deleted";
+			}
+		}
+		return $app['twig']->render('Ajax/Dump.twig');
+	}
+
+	public function persons(Application $app) {
+		$data = $app['db.people']->fetchAll();
+		echo json_encode($data);
+		return $app['twig']->render('Ajax/Dump.twig');	
+	}
+
+	public function addUser(Application $app) {
+		if (isset($_POST['action'])) {
+			$obj = json_decode($_POST['action'], true);
+			try {
+				$user = array('usuario' => $obj['usuario'], 
+					'clave' => sha1($obj['clave']), 
+					'person_id' => $obj['person_id']);
+				$app['db.users']->insert($user);
+				$id = $app['db.users']->Lastadded();
+				$data = $app["db.users"]->getUser($id['id']);
+				echo json_encode($data);
+			} catch (Exception $e) {
+				echo "person already added";
+			}
+		}
+		return $app['twig']->render('Ajax/Dump.twig');
 	}
 	
 }

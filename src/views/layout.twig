@@ -23,14 +23,14 @@
 					<li class="{% if 'Import' in app.request.attributes.get('_route') %}active{% endif %}"> <a href="{{ path('Import') }}">Importar</a></li>				
 					<li class="{% if 'Export' in app.request.attributes.get('_route') %}active{% endif %}"> <a href="{{ path('Export') }}">Exportar</a></li>
 					{% if access_level > 499 %}
-					<li> <a href="{{ path('Export') }}">Administrar</a></li>
+					<li class="{% if 'Admin' in app.request.attributes.get('_route') %}active{% endif %}"> <a href="{{ path('Admin') }}">Administrar</a></li>
 					{% endif %}
 				</ul>
+			{% endif %}
 				<div class="side-menu">
 					<div id="holaUsername">Hola {{username}}</div>
 					<a class="auth-link" href="{{ app.request.baseUrl }}/Auth/logout">Cerrar sesión</a>
 				</div>
-			{% endif %}
 		</header>
 		<div class="clear"></div>
 		<div class="wrapper">

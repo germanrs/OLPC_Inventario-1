@@ -303,7 +303,8 @@ class PeopleRepository extends \Knp\Repository {
 
 	public function fetchAdminPerson($id) {
 		return $this->db->fetchAll(
-	    		'SELECT people.id, profiles.access_level, people.name from people 
+	    		'SELECT people.id, profiles.access_level, people.name, users.usuario from people 
+				INNER JOIN users on users.person_id = people.id 
 				INNER JOIN performs on performs.person_id = people.id
 				INNER JOIN profiles on performs.profile_id = profiles.id
 				where people.id ='.  $this->db->quote($id['ID'], \PDO::PARAM_STR));

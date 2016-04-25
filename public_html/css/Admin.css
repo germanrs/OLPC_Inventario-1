@@ -1,0 +1,48 @@
+.modalDialog > div {
+    width: 800px;
+}
+
+.title{
+	border-bottom: 1px solid black;
+	margin-bottom: 2rem;
+}
+
+.leftsort {
+    width: 30%;
+    float: left;
+    margin-top: 2rem;
+}
+
+.label{
+  float: left;
+  width: 33%;
+  padding-top: 0.7rem;
+}
+
+.input{
+  float: left;
+  width: 67%;
+  margin-bottom: 2rem;  
+}
+
+.righttable{
+    width: 60%;
+    float: left;
+    padding-left: 5%;
+    margin-top: 2rem;
+}
+
+#titleUser{
+  width: 50%;
+}
+
+.hidden{
+  display: none;
+}
+
+.errorPass{
+  color: red;
+  font-weight: bold;
+  margin: 1rem;
+  margin-left: 50%;
+}
