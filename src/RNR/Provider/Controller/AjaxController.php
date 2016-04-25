@@ -216,6 +216,11 @@ class AjaxController implements ControllerProviderInterface {
 			->method('GET|POST')
 			->bind('Ajax.addUser');
 
+		$controllers
+			->get('/editUser/', array($this, 'editUser'))
+			->method('GET|POST')
+			->bind('Ajax.editUser');
+
 		// Return ControllerCollection
 		return $controllers;
 	}
@@ -1373,6 +1378,22 @@ class AjaxController implements ControllerProviderInterface {
 			}
 		}
 		return $app['twig']->render('Ajax/Dump.twig');
+	}
+
+	public function editUser(Application $app) {
+		if(isset($_POST['action'])){
+			$obj = json_decode($_POST['action'], true);
+			try {
+				$user = array('usuario' => $obj['usuario'], 
+					'clave' => sha1($obj['clave']), 
+					'id' => $obj['id']);
+				$data = $app['db.users']->updateUser($user);
+				echo "usuario editado";
+			} catch (Exception $e) {
+				echo "Servidor colapsado, intente más tarde.";
+			}
+		}
+		return $app['twig']->render('Ajax/Dump.twig');	
 	}
 	
 }
