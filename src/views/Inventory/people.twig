@@ -153,13 +153,16 @@
 									</div>
 								</div>
 								<div class="formright">
-									<div class="label">
+									{% if access_level > 299 %}
+										<div class="label">
 										Perfil
-									</div>
+										</div>
+									
 									<div class="input">
 										<input type="text" id="profiles" list="json-datalistprofiles" placeholder="profiles..">
 									</div>
 									<datalist id="json-datalistprofiles"></datalist>
+									{% endif %}
 									<div class="clear"></div>
 									<div class="label">
 										Departamento
