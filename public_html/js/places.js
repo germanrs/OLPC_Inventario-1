@@ -463,7 +463,7 @@ $( ".Editplace" ).click(function() {
 
 //call the function to delete the place
 $( ".Deleteplace" ).click(function() {
-  Deleteplace(this);
+    Deleteplace(this);
 });
 
 //delete all the selected places
@@ -631,34 +631,37 @@ $( "#AddPlace" ).click(function() {
 
 //delete a place
 function Deleteplace(datainput){
-   var ID = $(datainput).attr("data");
-  //get the index of the deleted row
-  var index = $(datainput).closest("tr").index();
+  var r = confirm("Estas seguro que deseas eliminar este lugar");
+  if (r == true) {
+    var ID = $(datainput).attr("data");
+    //get the index of the deleted row
+    var index = $(datainput).closest("tr").index();
 
-  //set the data for an ajax request
-  var postData = 
-          {
-              "id":ID
-          }
+    //set the data for an ajax request
+    var postData = 
+            {
+                "id":ID
+            }
 
-  //Make a json from the data 
-  var dataString = JSON.stringify(postData);
+    //Make a json from the data 
+    var dataString = JSON.stringify(postData);
 
-  //make an ajax request to the php server to delete a place to the database
-  $.ajax({
-          method: "POST",
-          data: {action:dataString},
-          url: "../../Ajax/deleteplace/",
-          success: function(data){
-              $("#alert").html(data);
-              var index = $(datainput).closest("tr").index();
-              console.log(data);
-              document.getElementById("table").deleteRow(index); 
-          },
-          error: function(e){
-              $("#alert").html(e);
-          }
-  });
+    //make an ajax request to the php server to delete a place to the database
+    $.ajax({
+            method: "POST",
+            data: {action:dataString},
+            url: "../../Ajax/deleteplace/",
+            success: function(data){
+                $("#alert").html(data);
+                var index = $(datainput).closest("tr").index();
+                console.log(data);
+                document.getElementById("table").deleteRow(index); 
+            },
+            error: function(e){
+                $("#alert").html(e);
+            }
+    });
+  }
 }
   
 // when the function edotplace is been called, set the form with the proper data to edit.
