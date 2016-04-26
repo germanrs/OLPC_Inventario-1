@@ -2,6 +2,7 @@ $(document).ready(function() {
     setDataUsers();
     enabledPass();
     SetData('Persons','json-datalistpersons');
+    SetData('Profiles','json-datalistprofiles');
 });
 
 $('#newPassword1').on('input', function(){
@@ -120,33 +121,36 @@ function getUserInfo(){
 }
 
 function Deleteuser(datainput){
-	var id = $(datainput).closest("tr").find(".EditUser").attr("data");
-	var index = $(datainput).closest("tr").index();
+	var resp = confirm("Esta seguro de eliminar este registro?");
+    if (resp == true) {
+        var id = $(datainput).closest("tr").find(".EditUser").attr("data");
+		var index = $(datainput).closest("tr").index();
 
-	console.log(id);
-	console.log(index);
+		console.log(id);
+		console.log(index);
 
-	var postData = {
-		"id":id
-	}
-	var dataString = JSON.stringify(postData);
-
-	//make a json request to delete 1 person.
-	$.ajax({
-		method: "POST",
-		data: {action:dataString},
-		url: "../Ajax/deleteUser/",
-		success: function(data){
-			$("#alert").html(data);
-			console.log(data);
-			var index = $(datainput).closest("tr").index();
-			document.getElementById("table").deleteRow(index); 
-		},
-		error: function(e){
-			$("#alert").html(e);
-			console.log(e);
+		var postData = {
+			"id":id
 		}
-	});
+		var dataString = JSON.stringify(postData);
+
+		//make a json request to delete 1 person.
+		$.ajax({
+			method: "POST",
+			data: {action:dataString},
+			url: "../Ajax/deleteUser/",
+			success: function(data){
+				$("#alert").html(data);
+				console.log(data);
+				var index = $(datainput).closest("tr").index();
+				document.getElementById("table").deleteRow(index); 
+			},
+			error: function(e){
+				$("#alert").html(e);
+				console.log(e);
+			}
+		});
+    }
 }
 
 $('#addUser').on('click', function(){
@@ -163,12 +167,13 @@ $( "#CloseAddModal" ).click(function() {
 function Edituser(datainput){
 	$("#alert").css("display", "none");
 	document.getElementById("EditPerson").text = 'Guardar cambios';
-	//$("#divAddPerson").addClass("hidden");
+	$("#divAddPerson").addClass("hidden");
 	$('#Persons').attr('disabled', true);
+	$('#Profiles').removeAttr('disabled');
 	$("#AddPerson").addClass("hidden");
 	$("#EditPerson").removeClass("hidden");
 	document.getElementById("Name").value = "";
-	document.getElementById("Profile").value = "";
+	document.getElementById("Profiles").value = "";
 	document.getElementById("Persons").value = "";
 	document.getElementById("Password").value = "";
 	document.getElementById("Password2").value = "";
@@ -181,10 +186,10 @@ function Edituser(datainput){
 	var $Name = table.rows[index].cells[0].innerHTML;
 	var $Profile = table.rows[index].cells[1].innerHTML;
 
-	document.getElementById("AddPerson").setAttribute("data", $ID);
-	document.getElementById("AddPerson").setAttribute("index", index);
+	document.getElementById("EditPerson").setAttribute("data", $ID);
+	document.getElementById("EditPerson").setAttribute("index", index);
 	document.getElementById("Name").value = $Name;
-	document.getElementById("Profile").value = $Profile;
+	document.getElementById("Profiles").value = $Profile;
 
 	$("#openModal").css("opacity", "1");
 	$("#openModal").css("pointer-events", "auto");
@@ -192,6 +197,7 @@ function Edituser(datainput){
 
 $("#EditPerson").on("click", function(){
 	var usuario = document.getElementById("Name").value;
+	var perfil = document.getElementById("Profiles").value;
 	var clave = document.getElementById("Password").value;
 	var clave2 = document.getElementById("Password2").value;
 
@@ -216,31 +222,27 @@ $("#EditPerson").on("click", function(){
 	    $("#alert").html("Contraseñas no coinciden!");
 	}
 	else{
-		var id = $("#AddPerson").attr("data");
+		var id = $("#EditPerson").attr("data");
+		var profile_id = $('[value="'+perfil+'"]').attr('data');
 		var postData = {
 			"id":id,
 			"usuario":usuario,
 			"clave":clave,
+			"profile_id":profile_id
 		}
 		var dataString = JSON.stringify(postData);
 		$.ajax({
 			method: "POST",
 			data: {action:dataString},
-			url: "../Ajax/addUser/",
+			url: "../Ajax/editUser/",
 			success: function(data){
-				var jsonOptions = JSON.parse(data);
 				console.log(data);
+				
+				var index = $("#EditPerson").attr("index");
 				var table = document.getElementById("table");
-                var row = table.insertRow(1);
-				var cell0 = row.insertCell(0);
-				var cell1 = row.insertCell(1);
-				var cell2 = row.insertCell(2);
-				var cell3 = row.insertCell(3);
-				cell0.innerHTML = jsonOptions[0]['usuario'];
-				cell1.innerHTML = jsonOptions[0]['description'];
-				cell2.innerHTML = '<a class="button EditUser" onclick="Edituser(this)"  id="EditUser" data="'+jsonOptions[0]['id']+'"  role="button">Editar</a>';
-				cell3.innerHTML = '<a class="button DeleteUser" onclick="Deleteuser(this)" id="DeleteUser" data="'+jsonOptions[0]['id']+'" role="button">Eliminar</a>'; 
-
+				table.rows[index].cells[0].innerHTML = usuario;
+				table.rows[index].cells[1].innerHTML = perfil;
+				
 				$("#openModal").css("opacity", "0");
                 $("#openModal").css("pointer-events", "none");
 			},
@@ -250,19 +252,19 @@ $("#EditPerson").on("click", function(){
 		});
 	}
 
-	//INCOMPLETO
 });
 
 function Adduser(){
 	$("#alert").css("display", "none");
 	document.getElementById("AddPerson").text = 'Agregar usuario';
 
-	//$("#divAddPerson").removeClass("hidden");
+	$("#divAddPerson").removeClass("hidden");
 	$('#Persons').removeAttr('disabled');
+	$('#Profiles').attr('disabled', true);
 	$("#AddPerson").removeClass("hidden");
 	$("#EditPerson").addClass("hidden");
 	document.getElementById("Name").value = "";
-	document.getElementById("Profile").value = "";
+	document.getElementById("Profiles").value = "";
 	document.getElementById("Persons").value = "";
 	document.getElementById("Password").value = "";
 	document.getElementById("Password2").value = "";

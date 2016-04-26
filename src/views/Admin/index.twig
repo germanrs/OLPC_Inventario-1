@@ -68,17 +68,18 @@
 								Nombre de Usuario
 							</div>
 							<div class="input">
-								<input type="text" id="Name" placeholder="Name...">
+								<input type="text" id="Name" placeholder="Nombre de usuario...">
 							</div>
 							<div class="clear"></div>
 							<div class="label">
 								Perfil
 							</div>
 							<div class="input">
-								<input type="text" id="Profile" placeholder="Profile..." disabled="disabled">
+								<input type="text" id="Profiles" list='json-datalistprofiles' placeholder="Perfil..." >
 							</div>
+							<datalist id="json-datalistprofiles"></datalist>
 							<div class="clear"></div>
-							<div id="divAddPerson" class="">
+							<div id="divAddPerson" class="hidden">
 								<div class="label">
 									Propietario
 								</div>
@@ -86,20 +87,20 @@
 									<input type="text" id="Persons" list="json-datalistpersons" placeholder="Propietario...">
 								</div>
 								<datalist id="json-datalistpersons"></datalist>
-								<div class="clear"></div>
-								<div class="label">
-									Contraseña
-								</div>
-								<div class="input">
-									<input type="password" id="Password" placeholder="Contraseña...">
-								</div>
-								<div class="clear"></div>
-								<div class="label">
-									Confirmar contraseña
-								</div>
-								<div class="input">
-									<input type="password" id="Password2" placeholder="Contraseña...">
-								</div>
+							</div>
+							<div class="clear"></div>
+							<div class="label">
+								Contraseña
+							</div>
+							<div class="input">
+								<input type="password" id="Password" placeholder="Contraseña...">
+							</div>
+							<div class="clear"></div>
+							<div class="label">
+								Confirmar contraseña
+							</div>
+							<div class="input">
+								<input type="password" id="Password2" placeholder="Contraseña...">
 							</div>
 						</div>
 					</div>

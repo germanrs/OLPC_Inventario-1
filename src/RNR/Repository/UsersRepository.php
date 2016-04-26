@@ -52,6 +52,10 @@ class UsersRepository extends \Knp\Repository {
 		return $this->db->fetchAssoc('SELECT users.id, users.usuario FROM '. $this->getTableName() . ' WHERE usuario = ?', array($user));
 	}
 
+	public function getUserPerson($user){
+		return $this->db->fetchAll('SELECT users.id, users.usuario, users.person_id FROM '. $this->getTableName() . ' WHERE id = '.$user);
+	}
+
 	public function deleteUser($userID) {
 		return $this->db->delete('users', array('id' => $userID));
 	}
@@ -59,9 +63,9 @@ class UsersRepository extends \Knp\Repository {
 	public function updateUser($user) {
 		
 		$result = 'UPDATE users SET '.
-		'usuario = '.
-		'school_name = '. $this->db->quote($people['school_name'], \PDO::PARAM_STR) .
-		' WHERE id = '.$this->db->quote($people['id'], \PDO::PARAM_INT);
+		'usuario = '.$this->db->quote($user['usuario'], \PDO::PARAM_STR).','.
+		'clave = '.$this->db->quote($user['clave'], \PDO::PARAM_STR).' '.
+		'WHERE id = '.$this->db->quote($user['id'], \PDO::PARAM_INT);
 		return $this->db->executeUpdate($result);
 	}
 
