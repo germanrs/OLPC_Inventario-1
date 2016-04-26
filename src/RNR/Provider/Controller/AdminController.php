@@ -20,6 +20,12 @@ class AdminController implements ControllerProviderInterface{
 		return $controllers;
 	}
 
+	/**
+	 * [admin]
+	 * This is the admin method. 
+	 * @param  Application $app
+	 * @return [blob] tha admin page
+	 */
 	public function admin(Application $app) {
 				
 		//check if the user is logged in

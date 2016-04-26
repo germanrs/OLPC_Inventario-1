@@ -86,7 +86,7 @@ class ExportController implements ControllerProviderInterface {
 	}
 
 	/**
-	 * Export page
+	 * barcodes 
 	 * @param Application $app An Application instance
 	 * @return pdf file of a place with all users and barcodes.
 	 */
@@ -111,7 +111,7 @@ class ExportController implements ControllerProviderInterface {
 					'grado' =>  $_GET["grado"],
 					'Seccion' =>  $_GET["Seccion"],
 					'Departamento' =>  $_GET["Departamento"]);
-
+		//get the id's of the sended places
 		$peoplearray = array();
 		$Departamentoid = $app['db.places']->getPlace($obj['Departamento'], 2);
 		$cityid = $app['db.places']->getCityByName($obj['Ciudad']);
@@ -121,15 +121,21 @@ class ExportController implements ControllerProviderInterface {
 		$gradoid = $app['db.places']->getitemByNameandAncestorID($obj['grado'], $turnoId);
 		$Seccionid = $app['db.places']->getitemByNameandAncestorID($obj['Seccion'], $gradoid);	
 		$data = array();
+
+		//if Seccionid is not empty, get all the data from a seccion
 		if(!empty($Seccionid)){
 			array_push($data, array('name' => $obj['Departamento'].' : '. $obj['Ciudad'].' : '. $obj['Escuela'].' : '. $obj['Turno'].' : '. $obj['grado'].' : '. $obj['Seccion'], 'data' => $app['db.laptops']->fetchbarcodeList($obj,$Seccionid)));
 		}
+
+		//if gradoid is not empty, get all the data from a grade and the children of it
 		else if(!empty($gradoid)){
 			$seccions =  $app['db.places']->fetchSeccion($gradoid);
 			foreach ($seccions as $seccion) {
 				array_push($data, array('name' => $obj['Departamento'].' : '. $obj['Ciudad'].' : '. $obj['Escuela'].' : '. $obj['Turno'].' : '. $obj['grado'].' : '. $seccion['name'], 'data' => $app['db.laptops']->fetchbarcodeList($obj,$seccion['id'])));
 			}
 		}
+
+		//if turnoId is not empty, get all the data from a turno and the children of it
 		else if(!empty($turnoId)){
 			$grades =  $app['db.places']->fetchGrade($turnoId);
 			foreach ($grades as $grade) {
@@ -139,6 +145,8 @@ class ExportController implements ControllerProviderInterface {
 				}
 			}
 		}
+
+		//if schoolid is not empty, get all the data from a school and the children of it
 		else if(!empty($schoolid)){
 			$teachers = $app['db.laptops']->fetchbarcodeList($obj,$schoolid);
 			array_push($data, array('name' => $obj['Departamento'].' : '. $obj['Ciudad'].' : '. $obj['Escuela'], 'data' => $teachers));
@@ -154,6 +162,7 @@ class ExportController implements ControllerProviderInterface {
 			}
 		}
 
+		//set the name
 	    $places='Nicaragua';
 	    if($_GET["Departamento"] != ''){
 	        $places .= ' : '. $_GET["Departamento"];
@@ -224,6 +233,7 @@ class ExportController implements ControllerProviderInterface {
 		// set font
 		$pdf->SetFont('helvetica', '', 13);
 
+		// for every class, set the correct data in the pdf file
 		foreach ($data as $class) {
 			$namesPerSchoolClass = '';
 			$barcodesoffallchildren = '<table cellspacing="0" cellpadding="1" border="1"  style="text-align: center; page-break-before: always;" ><tr>';
@@ -233,7 +243,7 @@ class ExportController implements ControllerProviderInterface {
 			$tellernamen = 1;
 			$total = count($class['data']);
 
-
+			//get the correct full name of the class
 			foreach ($class['data'] as $child) {
 				$classname = '';
 				$place_type_id='';
@@ -273,6 +283,8 @@ class ExportController implements ControllerProviderInterface {
 				        break;
 				    }
 				$secciond_id='';
+
+				//get the correct full name of the class
 				switch (true) {
 				    case stristr($class['name'],'Seccion A'):
 				        $secciond_id='A';
@@ -285,7 +297,7 @@ class ExportController implements ControllerProviderInterface {
 				        break;
 				}
 
-			
+				// if the child exists, add it to the list of children, the design of the html depends on wich child in the list he is
 				if(!empty($child['fullname'])){
 					if($tellernamen % 2 == 0){
 						$namesPerSchoolClass .= '<td width="320"  border="1"  style="font-size: x-large;" 	height="35" cellpadding="12">'.((strlen($child['fullname'])>20)?substr($child['fullname'],0,20).'...':$child['fullname']).' '.$place_type_id.$secciond_id.'</td></tr>';
@@ -312,8 +324,9 @@ class ExportController implements ControllerProviderInterface {
 				
 			}
 
-			
+			//if the field $class['data'] is not empty set the proper data, else writh class is empty
 			if(!empty($class['data'])){
+				//add a proper anding to the barcodes list
 				if(substr($namesPerSchoolClass,-4)=='/tr>'){
 					$tbl = '<table cellspacing="0" cellpadding="1" style="text-align: center; padding-bottom: 5rem; padding-top: 5rem; font-size: 15rem;" >'
 						.$namesPerSchoolClass.
@@ -324,9 +337,13 @@ class ExportController implements ControllerProviderInterface {
 						.$namesPerSchoolClass.
 						'</tr></table>';
 				}
-
+				//set the font
 				$pdf->SetFont('helvetica', '', 13);
+
+				//write the html
 				$pdf->writeHTML($tbl, true, 0, true, 0);
+
+				//add a proper anding to the barcodes list
 				if(substr($barcodesoffallchildren,-4)=='<tr>'){
 					$tbl = $barcodesoffallchildren.					    
 						'</tr></table>';

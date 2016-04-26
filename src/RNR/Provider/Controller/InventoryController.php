@@ -59,7 +59,7 @@ class InventoryController implements ControllerProviderInterface {
 	}
 
 	/**
-	 * home page
+	 * laptops page
 	 * @param Application $app An Application instance
 	 * @return string A blob of HTML
 	 */
@@ -224,7 +224,7 @@ class InventoryController implements ControllerProviderInterface {
 	}
 
 	/**
-	 * home page
+	 * people page
 	 * @param Application $app An Application instance
 	 * @return string A blob of HTML
 	 */
@@ -399,7 +399,7 @@ class InventoryController implements ControllerProviderInterface {
 	}
 
 	/**
-	 * home page
+	 * places page
 	 * @param Application $app An Application instance
 	 * @return string A blob of HTML
 	 */
@@ -435,7 +435,7 @@ class InventoryController implements ControllerProviderInterface {
 	}
 
 	/**
-	 * home page
+	 * massassignment page
 	 * @param Application $app An Application instance
 	 * @return string A blob of HTML
 	 */

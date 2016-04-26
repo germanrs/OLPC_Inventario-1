@@ -4,7 +4,7 @@ SetData('Pais','json-datalistPais');
 /*SetData('Departamento','json-datalistDepartamento');
 SetData('Ciudad','json-datalistCiudad');*/
 
-
+// if the country changes, set the correct data in the following list
 $('.Pais').on('input', function(){
     var options = document.getElementById("json-datalistPais").options
     console.log(options);
@@ -52,6 +52,7 @@ $('.Pais').on('input', function(){
     }
 });
 
+// if the Departamento changes, set the correct data in the following list
 $('.Departamento').on('input', function(){
     var options = document.getElementById("json-datalistDepartamento").options
     for (var i=0;i<options.length;i++){
@@ -98,6 +99,7 @@ $('.Departamento').on('input', function(){
     }
 });
 
+// if the ciudad changes, change the form
 $('.ciudad').on('input', function(){
     var options = document.getElementById("json-datalistCiudad").options
     for (var i=0;i<options.length;i++){
@@ -110,29 +112,31 @@ $('.ciudad').on('input', function(){
 });
 
 
-
+//when the ImportButtonEstudiantes is clicked, do an automatick click on uploadformstudents_file
 $( "#ImportButtonEstudiantes" ).click(function() {
   var fileinput = document.getElementById("uploadformstudents_file")
   fileinput.click();
 });
 
+//when the ImportButtonProfesores is clicked, do an automatick click on uploadformstudents_file
 $( "#ImportButtonProfesores" ).click(function() {
   var fileinput = document.getElementById("uploadformteachers_file")
   fileinput.click();
 });
 
-
+//when the ImportButtonLaptops is clicked, do an automatick click on uploadformstudents_file
 $( "#ImportButtonLaptops" ).click(function() {
   var fileinput = document.getElementById("uploadformlaptops_file")
   fileinput.click();
 });
 
+//when the ImportButtonescuelas is clicked, do an automatick click on uploadformstudents_file
 $( "#ImportButtonescuelas" ).click(function() {
   var fileinput = document.getElementById("uploadformescuelas_file")
   fileinput.click();
 });
 
-
+//js for the accordion
 $(document).ready(function() {
     function close_accordion_section() {
         $('.accordion .accordion-section-title').removeClass('active');
@@ -157,6 +161,7 @@ $(document).ready(function() {
     });
 });
 
+//clear all children of a datalist
 function clearChildren( parent_id ) {
     var childArray = document.getElementById( parent_id ).children;
     if ( childArray.length > 0 ) {
@@ -165,6 +170,7 @@ function clearChildren( parent_id ) {
     }
 }
 
+//fill in the hidden form with the correct data
 function FillInForm(originalitem, newitem, showitem){
   element = document.getElementsByClassName(originalitem);
   if(element[0].value != ''){
@@ -172,6 +178,7 @@ function FillInForm(originalitem, newitem, showitem){
   }
 }
 
+//change the form with the entered data
 function changeForm(classname, value, showitem) {
 	elements = document.getElementsByClassName(classname);
     for (var i = 0; i < elements.length; i++) {
@@ -182,6 +189,7 @@ function changeForm(classname, value, showitem) {
     $('.'+showitem).css('display', 'inherit');
 }
 
+//set the data in the correct datalist with an ajax request
 function SetData(input, datalist){
   var value = input.toLowerCase();
 

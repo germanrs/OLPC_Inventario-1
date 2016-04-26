@@ -91,6 +91,7 @@ function changeHref(datainput, formname){
     var grado = document.getElementById('grado').value;
     var Seccion = document.getElementById('Seccion').value;
 
+    //set the correct href in the button DownloadBarcodes
     document.getElementById("DownloadBarcodes").href='barcodes?Departamento='+Departamento+
                                                                 '&Ciudad='+Ciudad+
                                                                 '&Escuela='+Escuela+
@@ -129,6 +130,8 @@ function GetData(datainput, formname){
     columns = [];
     rows = [];
     var boxlist = '';
+
+    //get the selected boxes
     var total = $("#"+formname+" input:checkbox:checked").length;
     $("#"+formname+" input:checkbox:checked").each(function(index) {
         if (index === total - 1) {
@@ -139,6 +142,8 @@ function GetData(datainput, formname){
         }
         
     });
+
+    //get the data from the fields
     $("#exportTable tr").remove();
     var OrderByTerm = $(datainput).closest("form")   
                        .find("#orderByTerm")
@@ -159,6 +164,7 @@ function GetData(datainput, formname){
     var grado = document.getElementById('grado').value;
     var Seccion = document.getElementById('Seccion').value;
    
+    //get the correct place
     var places='Nicaragua';
     if(Departamento != ''){
         places += ' : '+Departamento;
@@ -179,9 +185,13 @@ function GetData(datainput, formname){
         }
     }
     
+    //set the name of the place in the field 'place'
     document.getElementById("place").innerHTML= "" + places;
 
+    //if no boxes are selected do nothing, else go wild
     if(0<boxlist.length){
+
+        //set the postdata with all the data from the form
         var postData = 
                     {
                         "formname": formname,
@@ -197,10 +207,15 @@ function GetData(datainput, formname){
                         "Seccion":Seccion,
                         "Departamento":Departamento
                     }
-        var dataString = JSON.stringify(postData);
-        if(formname == 'laptopsForm'){
-            $.ajax({
 
+        //stringify that shit
+        var dataString = JSON.stringify(postData);
+
+        //if the formname is laptopsform execute the following code
+        if(formname == 'laptopsForm'){
+
+            //make the ajaxrequest to get the list according to the request
+            $.ajax({
                     method: "POST",
                     data: {action:dataString},
                     url: "../Ajax/getList/",
@@ -210,6 +225,8 @@ function GetData(datainput, formname){
                         // Loop over the JSON array.
                         var row = table.insertRow(0);
                         var i = 0;
+
+                        //set the headers of the table
                         for (var k in jsonOptions[0]['data'][0]){
                             if (jsonOptions[0]['data'][0].hasOwnProperty(k)) {
                                  var cell1 = row.insertCell(i);
@@ -218,14 +235,19 @@ function GetData(datainput, formname){
                                  columns.push({title: k, dataKey:k});
                             }
                         }
-                        console.log(jsonOptions);
+
+                        //get the total number of items
                         for (var i = 0; i < jsonOptions.length; i++) {
                             total = total + jsonOptions[i]['data'].length;
                         }
+
+                        //set the total number of laptops
                         document.getElementById("total").innerHTML = "total laptops :"+total; 
                         rows = jsonOptions; 
                         $width = [0,0,0,0,0,0,0,0];
                         var j = 1;
+
+                        //set some example data in the window
                         for(var i = 0; i < jsonOptions[0]['data'].length; ++i) {
                             var l=0;
                             var row = table.insertRow();
@@ -239,6 +261,8 @@ function GetData(datainput, formname){
                                 break;
                             }
                         };
+
+                        //show the data
                         document.getElementById("pdfcontent").style.display = "inherit";
 
                     },
@@ -247,6 +271,8 @@ function GetData(datainput, formname){
                     }
             });
         }
+
+        //if its not a laptopform get the other list
         else{
             $.ajax({
                     method: "POST",
@@ -258,6 +284,8 @@ function GetData(datainput, formname){
                         // Loop over the JSON array.
                         var row = table.insertRow(0);
                         var i = 0;
+
+                        //set the table headers
                         for (var k in jsonOptions[0]){
                             if (jsonOptions[0].hasOwnProperty(k)) {
                                  var cell1 = row.insertCell(i);
@@ -271,6 +299,8 @@ function GetData(datainput, formname){
                         rows = jsonOptions; 
                         $width = [0,0,0,0,0,0,0,0];
                         var j = 1;
+
+                        //set some example data
                         for(var i = 0; i < jsonOptions.length; ++i) {
                             var l=0;
                             var row = table.insertRow();
@@ -296,7 +326,10 @@ function GetData(datainput, formname){
     }
 }
 
+//when the downloadfile is selected, download a pdf file with all the data that has been gatherd.
 $('#DownloadFile').click(function () {
+
+    //get the data from the place
     var Departamento = document.getElementById('Departamento').value;
     var Ciudad = document.getElementById('Ciudad').value;
     var Escuela = document.getElementById('Escuela').value;
@@ -322,17 +355,35 @@ $('#DownloadFile').click(function () {
             }
         }
     }
+
+    //get the total number of items
     total = 0;
     for (var i = 0; i < rows.length; i++) {
         total = total + rows[i]['data'].length;
     }
+
+    //create a new pdf file 
     var doc = new jsPDF('l', 'pt');
+
+    //set the font siez
     doc.setFontSize(14);
+
+    //set a piece of text in the pdf file
     doc.text("place name: "+places + ' -- Total laptops:'+total , 40, 30);
+
+    //loop over the data, these rows all present a class
     for (var i = 0; i < rows.length; i++) {
+
+        //if its the first item, the design is a bit different
         if(i == 0){
+
+            //set the name of the class in the pdf
             doc.text(''+rows[i]['name'], 40, 50);
+
+            //set the data from the coloms and the rows in the pdf file
             doc.autoTable(columns, rows[i]['data'], {
+
+            //this is all some beautiful design
             styles: {
                 fillStyle: 'DF',
                 overflow: 'linebreak',
@@ -355,15 +406,20 @@ $('#DownloadFile').click(function () {
                     fontStyle: 'bold'
                 }
             },
-            margin: {top: 80}/*,
-            beforePageContent: function(data) {
-                doc.text("place name: "+places , 40, 30);
-            }*/
+            margin: {top: 80}
             });
         }
+
+        //not the first class
         else{
+
+            //set the name of the class in the pdf
             doc.text(''+rows[i]['name'], 40, doc.autoTableEndPosY() + 30);
+
+            //set the data from the coloms and the rows in the pdf file
             doc.autoTable(columns, rows[i]['data'], {
+
+            //this is all some beautiful design
             startY: doc.autoTableEndPosY() + 40,
             styles: {
                 fillStyle: 'DF',
@@ -387,30 +443,27 @@ $('#DownloadFile').click(function () {
                     fontStyle: 'bold'
                 }
             },
-            margin: {top: 80}/*,
-            beforePageContent: function(data) {
-                doc.text("place name: "+places , 40, 30);
-            }*/
+            margin: {top: 80}
             });
         }
         
     }
     
-    
+    //safe the file as table.pdf to the pc
     doc.save('table.pdf');
 });
 
+//if the country changes, change the data in the following fields
 $('#Pais').on('input', function(){
     var options = document.getElementById("json-datalistPais").options
-    console.log(options);
     for (var i=0;i<options.length;i++){
        if (options[i].value == $(this).val()) 
          FillDataInDropdowon('json-datalistDepartamento', 'Departamento', 'Departamentohidden', "../Ajax/placesstates/", this,  'Departamento');
     }
     showdropdowns(1);
-   
 });
 
+//if the Departamento changes, change the data in the following fields
 $('#Departamento').on('input', function(){
     var options = document.getElementById("json-datalistDepartamento").options
     for (var i=0;i<options.length;i++){
@@ -420,6 +473,7 @@ $('#Departamento').on('input', function(){
     showdropdowns(2);
 });
 
+//if the Ciudad changes, change the data in the following fields
 $('#Ciudad').on('input', function(){
     var options = document.getElementById("json-datalistCiudad").options
     for (var i=0;i<options.length;i++){
@@ -429,6 +483,7 @@ $('#Ciudad').on('input', function(){
     showdropdowns(3);
 });
 
+//if the Escuela changes, change the data in the following fields
 $('#Escuela').on('input', function(){
     var options = document.getElementById("json-datalistEscuela").options
     for (var i=0;i<options.length;i++){
@@ -438,6 +493,7 @@ $('#Escuela').on('input', function(){
     showdropdowns(4);
 });
 
+//if the Turno changes, change the data in the following fields
 $('#Turno').on('input', function(){
     var options = document.getElementById("json-datalistTurno").options
     for (var i=0;i<options.length;i++){
@@ -447,6 +503,7 @@ $('#Turno').on('input', function(){
     showdropdowns(5);
 });
 
+//if the grado changes, change the data in the following fields
 $('#grado').on('input', function(){
     var options = document.getElementById("json-datalistgrado").options
     for (var i=0;i<options.length;i++){
@@ -485,9 +542,10 @@ function showdropdowns(placetype){
     document.getElementById("pdfcontent").style.display = "none";  
 }
 
-
+//set the data in the country list
 SetData('Pais','json-datalistPais');
 
+//show the country hide all the rest and clear the fields
 function ShowCountry(){
     if($('.Paishidden').css('display')=='none'){
         $('.Paishidden').css('display', 'inherit');
@@ -519,6 +577,7 @@ function ShowCountry(){
     }    
 }
 
+//set the correct data in the correct datalist, this with an ajax request
 function SetData(input, datalist){
   var value = input.toLowerCase();
 
@@ -569,7 +628,7 @@ function SetData(input, datalist){
   request.send();
 }
 
-
+//clear a datalist
 function clearChildren( parent_id ) {
     var childArray = document.getElementById( parent_id ).children;
     if ( childArray.length > 0 ) {
@@ -578,6 +637,7 @@ function clearChildren( parent_id ) {
     }
 }
 
+//fill the data in the dropdown
 function FillDataInDropdowon(datalist, item2, displayitem, ajax, element, item3){
     $value = element.value;
     var Departamento = document.getElementById('Departamento').value;
@@ -586,10 +646,12 @@ function FillDataInDropdowon(datalist, item2, displayitem, ajax, element, item3)
     var Turno = document.getElementById('Turno').value;
     var grado = document.getElementById('grado').value;
 
-    
+    //delete all the data in selected datalist
     clearChildren(datalist);
     $('.'+item2).val('');
     $('.'+displayitem).css('display', 'inherit');
+
+    //get the correct data for the ajax request
     var postData = 
         {
             "name": $value,
@@ -599,7 +661,11 @@ function FillDataInDropdowon(datalist, item2, displayitem, ajax, element, item3)
             "grado":grado,
             "Departamento":Departamento
         }
+
+    //stringify woop woop woop!!
     var dataString = JSON.stringify(postData);
+
+    //do the request to the correct function
     $.ajax({
         method: "POST",
         data: {action:dataString},

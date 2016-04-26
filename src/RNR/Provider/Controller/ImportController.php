@@ -37,7 +37,7 @@ class ImportController implements ControllerProviderInterface {
 	}
 
 	/**
-	 * home page
+	 * import page
 	 * @param Application $app An Application instance
 	 * @return string A blob of HTML
 	 */
@@ -231,6 +231,8 @@ class ImportController implements ControllerProviderInterface {
 
 						
 						try {
+
+							//if the place not exists, create it and add also the dependency's
 							$place= $app['db.places']->getSchool($value['D'],$Ciudad);
 							if(empty($place)){
 								$school = array('created_at' => date("Y-m-d"),'name' => $value['D'],'place_id' => $Ciudad,'place_type_id' => 4);
@@ -245,6 +247,8 @@ class ImportController implements ControllerProviderInterface {
 								$app['db.places_dependencies']->insert($dependency);
 								$place= $app['db.places']->getSchool($value['D'],$Ciudad);
 							}
+
+							//if the place not exists, create it and add also the dependency's
 							$schoolid = $place;
 							if(!empty($value['F'])){
 								$name = ($value['F'] == 'm')? 'Turno Mañana': (($value['F'] == 't')? 'Turno Tarde': 'Turno Completo');
@@ -265,9 +269,12 @@ class ImportController implements ControllerProviderInterface {
 								$turnoid = $place;
 							}
 							
+							//Get the laptop id
 							if(!empty($value['H'])){
 								$laptopid = $app['db.laptops']->GetLaptopId($value['H']);
 							}
+
+							//get the place type id
 							if(!empty($value['E'])){
 								$place_type_id='';
 								switch ($value['E']) {
@@ -316,6 +323,8 @@ class ImportController implements ControllerProviderInterface {
 								        $place_type_id=13;
 								        break;
 								}
+
+								//if the place not exists, create it and add also the dependency's
 								$place= $app['db.places']->getgradeOfPlace($turnoid, $name);
 								if(empty($place)){
 									$grado = array('created_at' => date("Y-m-d"),'name' => $name,'place_id' => $turnoid,'place_type_id' => $place_type_id);
@@ -332,6 +341,8 @@ class ImportController implements ControllerProviderInterface {
 								}
 								$gradoid = $place;
 							}
+
+							//get the seccion of the place
 							if(!empty($value['G'])){
 								switch ($value['G']) {
 								    case 'a':	
@@ -347,6 +358,8 @@ class ImportController implements ControllerProviderInterface {
 								        $name = 'Seccion D';
 								        break;
 								}
+
+								//if the place not exists, create it and add also the dependency's
 								$place= $app['db.places']->getSeccionOfPlace($gradoid, $name);
 								if(empty($place)){
 									$seccion = array('created_at' => date("Y-m-d"),'name' => $name,'place_id' => $gradoid,'place_type_id' => 11);
@@ -365,7 +378,10 @@ class ImportController implements ControllerProviderInterface {
 						} catch (Exception $e) {
 							var_dump($e);
 						}
+
+						//if place exists
 						if(ctype_digit($place)){
+
 							//generate a barcode for the user
 							$barcode = 0;
 							do {
@@ -373,41 +389,70 @@ class ImportController implements ControllerProviderInterface {
 							    $controlbarcode = $app['db.people']->findbarcode($barcode);
 							} while (!empty($controlbarcode));
 							
-
+							//add the user to the database
 							$object = array('created_at' => date("Y/m/d"), 'name' => $value['A'],'lastname' => $value['B'], 'school_name'=> $value['D'], 'barcode'=>$barcode);
 							try {
+
+								//add the person to the db
 								$app['db.people']->insert($object);
+
+								//get the last added person
 								$person_id = $app['db.people']->Lastadded();
+
+								//if laptop id is not nukk
 								if(!empty($laptopid)){
+
+									//if laptopid is a number
 									if(ctype_digit($laptopid)){
+
+										//change the latop owner id
 										$app['db.laptops']->updatelaptopbyID($laptopid, $person_id);
 									}
 								}
+
+								//create a new perform object
 								$perform = array('person_id' => $person_id, 'place_id' => $place, 'profile_id' => 7);
+
+								//add the perform to the database
 								$app['db.performs']->insert($perform);
+
+								//set the text, studentes added
 								$error = "estudiantes agregan";
 							} catch (Exception $e) {
+
+								//set the text, server down...
 								$error =  "Servidor colapsado, intente más tarde.";
 							}	
 						}
 						else{
 							var_dump($place);
 							var_dump($value);
+
+							//big error, there is an error in the code, fix this if this happens!
 							$error ='The grade doesnt fit the school.';
 						}	
 					}
+
+					//set the value to 1, this means wich table the twig will use
 					$value = 1;
 
 					
 				}
 		    }
 		    else{
+
+		    	//the ulploaded file was not xlsx
 		        $error = 'Archivo no válido, ingrese un archivo XLSX';
 		    }
 		}
 
+		//if the uploadform is the teacher form
 		if ($uploadformteachers->isValid()) {
+
+			//get the data
 			$data= $uploadformteachers->getData();
+
+			//get the location details
 			$CiudadID =$data['CiudadID'];
 			$DepartamentoID=$data['DepartamentoID'];
 			$PaisID=$data['PaisID'];
@@ -416,19 +461,33 @@ class ImportController implements ControllerProviderInterface {
 			$Departamento = $app['db.places']->getPlace($DepartamentoID, 2);
 			$Pais = $app['db.places']->getPlace($PaisID, 1);
 			$laptopid ='';
+
+			//get the details of the file
 			$filename=$_FILES["uploadformteachers"]["tmp_name"]["file"];
 			$extension=$_FILES["uploadformteachers"]["name"]["file"];
+
+			//if the file is xlsx, go wild
 			if(strpos(substr($extension,-4),'lsx') || strpos(substr($extension,-4),'xlsx'))
 		    {
+		    	//if the file exists
 		    	if ( $_FILES["uploadformteachers"]["tmp_name"]['file'] )
 				{
+					//load the file
 					$objPHPExcel = \PHPExcel_IOFactory::load($filename);
+
+					//get the active sheet
 					$sheetData = $objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
+
+					//set the sheetdata into data
 					$data = $sheetData;
+
+					//loop over the data
 					foreach ($sheetData as $value) {
 						$place="";
 						$profile="";
 						$grade="";
+
+						//get the school, if its not exists, create it and also create the necessary dependency's
 						try {
 							$place= $app['db.places']->getSchool($value['D'],$Ciudad);
 							$schoolid = $place;
@@ -451,6 +510,8 @@ class ImportController implements ControllerProviderInterface {
 						} catch (Exception $e) {
 							var_dump($e);
 						}
+
+						//if the place exists and its an int go and create all the teachers
 						if(ctype_digit(intval($place))){
 
 							//generate a barcode for the user
@@ -460,61 +521,117 @@ class ImportController implements ControllerProviderInterface {
 							    $barcodecontroll = $app['db.people']->findbarcode($barcode);
 							} while (!empty($barcodecontroll));
 							
-
+							//create the person object
 							$object = array('created_at' => date("Y/m/d"), 'name' => $value['A'],'lastname' => $value['B'], 'school_name'=> $value['D'], 'barcode' => $barcode);
 							try {
+
+								//insert the person into the databse
 								$app['db.people']->insert($object);
+
+								//get the last added person
 								$person_id = $app['db.people']->Lastadded();
+
+								//if the laptopid is not null, assign the laptop to the user
 								if(!empty($laptopid)){
 									if(ctype_digit($laptopid)){
+
+										//assign the laptop to the correct user
 										$app['db.laptops']->updatelaptopbyID($laptopid, $person_id);
 									}
 								}
+
+								//create the correct perform
 								$perform = array('person_id' => $person_id, 'place_id' => $place, 'profile_id' => 5);
+
+								//add the perform to the database
 								$app['db.performs']->insert($perform);
+
+								//set the text, teachers added
 								$error = "Profesor agregan";
 							} catch (Exception $e) {
+
+								//server down
 								$error =  "Servidor colapsado, intente más tarde.";
 							}	
 						}
 						else{
+
+							//if this error show, there is an error in the code, fix this bug.
 							$error ='The grade doesnt fit the school.';
 						}	
 					}
 				}
+
+				//set the value to 2, this means twig nows that he has to use the teacher form.
 				$value = 2;
 		    }
 		    else{
+
+		    	//the used file is not an xlsx file plz change
 		        $error = 'Archivo no válido, ingrese un archivo XLSX';
 		    }
 		}
 
+		//if the used form is the laptopform, go wild on the next code
 		if ($uploadformlaptops->isValid()) {
+
+			//get the correct data
 			$data= $uploadformlaptops->getData();
+
+			//get the details from the uploaded file
 			$filename=$_FILES["uploadformlaptops"]["tmp_name"]["file"];
-			$extension=$_FILES["uploadformlaptops"]["name"]["file"];	
+			$extension=$_FILES["uploadformlaptops"]["name"]["file"];
+
+			//if the extensions are correct go on	
 			if(strpos(substr($extension,-4),'lsx') || strpos(substr($extension,-4),'xlsx'))
 		    {
+		    	//if the file exists, go further
 		    	if ( $_FILES["uploadformlaptops"]["tmp_name"]['file'] )
 				{
+
+					//load the excel file into an object
 					$objPHPExcel = \PHPExcel_IOFactory::load($filename);
+
+					//get the data from the active sheet
 					$sheetData = $objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
 					$data = array();
+
+					//loop over the data
 					foreach ($sheetData as $value) {
 						$place="";
 						$profile="";
 						$grade="";
 						try {
+
+							//check if the laptop already exists
 							$controle = $app['db.laptops']->checkIfLaptopAlreadyExists($value['A'], $value['B']);
+
+							//get the model
 							$model = $app['db.models']->getModel($value['C']);
+
+							//check if the data is valid, if so add the laptop to the database
 							if($controle == 0 && !empty($model) && strlen($value['A']) == 11 && strlen($value['B']) == 36){
+
+								//create the laptop object
 								$laptop = array('serial_number' => $value['A'], 'uuid' => $value['B'], 'model_id' => $model, 'owner_id' => 5);
+
+								//insert the laptop into the datbase
 								$app['db.laptops']->insert($laptop);
+
+								//get the id of the laptop
 								$laptopID = $app['db.laptops']->FindnewestId();
+
+								//create the movement
 								$movement = array('created_at' => date("Y-m-d"),'source_person_id' => 5, 'destination_person_id' => 5,'comment' => 'created by uploading excel file', 'movement_type_id'=> 11 ,'laptop_id'=>$laptopID);
+								
+								//insert the movement into the datbase
 								$app['db.movements']->insert($movement);
+
+								//set the error to laptop added
 								$error ="Laptop agregan";
 							}
+
+							//errors if something is wrong
 							else if($controle != 0) {
 								$error ="Laptop ya existe";
 							}
@@ -532,6 +649,8 @@ class ImportController implements ControllerProviderInterface {
 							}
 							$value['D'] = $error;
 							$error ='';
+
+							//push the data to the array $data
 							array_push($data, $value);
 						}
 						catch (Exception $e) {
@@ -542,27 +661,49 @@ class ImportController implements ControllerProviderInterface {
 				$value = 3;
 	    	}
 		    else{
+
+		    	//the file is not an excel file
 		        $error = 'Archivo no válido, ingrese un archivo XLSX';
 		    }
 		}
 
+		//if the form is a form for schools 
 		if ($uploadformescuelas->isValid()) {
+
+			//get the data from the form
 			$data= $uploadformescuelas->getData();
+
+			//get the data from the uploaded file
 			$filename=$_FILES["uploadformescuelas"]["tmp_name"]["file"];
 			$extension=$_FILES["uploadformescuelas"]["name"]["file"];	
+
+			//if the file is an excel file go further
 			if(strpos(substr($extension,-4),'lsx') || strpos(substr($extension,-4),'xlsx'))
 		    {
+		    	//if the file exists, go on
 		    	if ( $_FILES["uploadformescuelas"]["tmp_name"]['file'] )
 				{
+
+					//load the excel file
 					$objPHPExcel = \PHPExcel_IOFactory::load($filename);
 					$placeID=0;
 					$schoolID='';	
 					$data = array();
+
+					//get the number of sheets
 					for($i=0;$i<($objPHPExcel->getSheetCount());$i++){
+
+						//set the active sheet
 						$objPHPExcel->setActiveSheetIndex($i);
+
+						//get the data from the sheet
 						$sheetData = $objPHPExcel->getActiveSheet()->rangeToArray('A1:R100');
+
+						//get the title of the sheet
 						$sheetName = $objPHPExcel->getActiveSheet()->getTitle();
 						$schoolname='';
+
+						//get the global data
 						if($sheetName == 'Cierre Global'){
 							$places = explode(" : ", $sheetData[1][1]);
 							$departmentid = $app['db.places']->getDepartmentByName($places[0]);
@@ -570,6 +711,8 @@ class ImportController implements ControllerProviderInterface {
 							$schoolID = $app['db.places']->getitemByNameandAncestorID($places[2], $cityID);
 							$schoolname = $places[2];
 							$placeID=$schoolID;
+
+							//if the school not exists, create it and add it to the database + dependencies
 							if(empty($schoolID)){
 								$school = array('created_at' => date("Y-m-d"),'name' => $places[2],'place_id' => $cityID,'place_type_id' => 4);
 								$app['db.places']->insert($school);
@@ -585,13 +728,21 @@ class ImportController implements ControllerProviderInterface {
 							}
 						}
 
+						//if the sheet is the teachers page, add the teachers to the database 
 						else if($sheetName == 'Docente'){
+
+							//loop over the sheetdata
 							foreach ($sheetData as $value) {
 								$remark='';
+
+								//if the values are not empty go on and check the teacher if there are changes
 								if(is_numeric($value[0]) && !empty($value[6])){
 									if(empty($value[3])){
+
+										//get the person from the databse
 										$person = $app['db.people']->getPerson($value[6]);
 										if(empty($person)){
+
 											//generate a barcode for the user
 											$barcode = 0;
 											do {
@@ -599,6 +750,7 @@ class ImportController implements ControllerProviderInterface {
 											    $testcontrole =$app['db.people']->findbarcode($barcode); 
 											} while (!empty($testcontrole));
 											
+											//get the name of the teacher
 											$names = explode(" ", $value[6]);
 											$firstname = '';
 											$lastname ='';
@@ -621,27 +773,55 @@ class ImportController implements ControllerProviderInterface {
 											        break;
 											}
 											
+											//create the teacher object
 											$object = array('created_at' => date("Y/m/d"), 'name' => $firstname,'lastname' => $lastname, 'school_name'=>$schoolname, 'barcode' => $barcode);
+											
+											//insert the teacher to the db
 											$app['db.people']->insert($object);
+
+											//get the id off the last add person
 											$person = $app['db.people']->Lastadded();
+
+											//create the perform
 											$perform = array('person_id' => $person, 'place_id' => $placeID, 'profile_id' => 5);
+
+											//insert the perform
 											$app['db.performs']->insert($perform);
+
+											//set the remark person added
 											$remark =";persona agregada";
 										}
+
+										//has the teacher a laptop in the excel file
 										if(!empty($value['7'])){
+
+											//get the laptop id from the person if its already assigned
 											$laptopid = $app['db.laptops']->FindLaptopbySerialandOwner($value['7'], $person);
 											if(empty($laptopid)){
+
+												//get the laptop id
 												$laptopid = $app['db.laptops']->GetLaptopId($value['7']);
 												if(!empty($laptopid)){
 													if(ctype_digit($laptopid)){
+
+														//get the old owner
 														$owner = $app['db.laptops']->GetownerbyId($value['7']);
+
+														//change the laptop owner
 														$app['db.laptops']->updatelaptopbyID($laptopid, $person);
+
+														//create the movement
 														$movement = array('created_at' => date("Y-m-d"),'source_person_id' => $owner, 'destination_person_id' => $person,'comment' => 'excel_movement by:'.$username, 'movement_type_id'=> 11 ,'laptop_id'=>$laptopid);
+														
+														//insert the movement into the db
 														$app['db.movements']->insert($movement);
+
+														//add the remart
 														$remark .=";Laptop seral no existe";
 													}
 												}
 												else{
+													//add the remark, the laptop does noet exists
 													$remark .=";Laptop seral no existe";
 												}
 											}
@@ -657,39 +837,71 @@ class ImportController implements ControllerProviderInterface {
 
 												//add movement
 												$movement = array('created_at' => date("Y-m-d"),'source_person_id' => $person, 'destination_person_id' => 5,'comment' => 'excel_movement by:'.$username, 'movement_type_id'=> 11 ,'laptop_id'=>$laptopid);
+												
+												//insert the movement
 												$app['db.movements']->insert($movement);
+
+												//add remark
 												$remark .= ';laptop eliminar' ;
 											}
 										}
+
+										//if the remark is empty, set it to 'no changes'
 										if($remark==''){
 											$remark= 'sin cambios';
 										}
+
+										//create a field with all the data
 										$value = array('A' => $value[6],'B' => $value['7'],'C' => 'Teacher','D' => '','E' => '','F' => '', 'G'=>$remark);
+
+										//add the data to the array data
 										array_push($data, $value);
 									}
+
+									//delete the teacher
 									else{
+
+										//get the person from the database
 										$person = $app['db.people']->getPerson($value[6]);
 										if(!empty($person)){
+
+											//change the owner of the laptop to FZT
 											$app['db.laptops']->changeOwnerToFZT($person);
+
+											//delete all his movements
 											$app['db.movements']->deleteperson($person);
+
+											//delete the person from performs
 											$app['db.performs']->deleteperson($person);
+
+											//delete the person from the table people
 											$app['db.people']->deleteperson($person);
+
+											//set the remark, person deleted
 											$remark= 'person eliminar';
 										}
 										else{
+
+											//person alread deleted
 											$remark= "person not found";
 										}
+
+										//add the data to the arrayy
 										$value = array('A' => $value[6],'B' => $value['7'],'C' => 'Student','D' => $places[0],'E' => $places[1],'F' => $places[2], 'G'=>$remark);
 										array_push($data, $value);
 									}
 								}
 							}
 						}
+
+						//if the sheetname has a length of 5, this means the sheet is a class
 						else if(strlen($sheetName)==5){
 							$places = explode(" ", $sheetName);
 							$name = ($places[0] == 'M')? 'Turno Mañana': (($places[0] == 'T')? 'Turno Tarde': 'Turno Completo');
 							$place= $app['db.places']->getitemByNameandAncestorID($name, $placeID);
 							$turnoid = $place;
+
+							//if the place does not exists, add it to the db and also the dependencies
 							if(empty($place)){
 								$turno = array('created_at' => date("Y-m-d"),'name' => $name,'place_id' => $placeID,'place_type_id' => 12);
 								$app['db.places']->insert($turno);
@@ -753,6 +965,8 @@ class ImportController implements ControllerProviderInterface {
 							}
 							$place= $app['db.places']->getgradeOfPlace($place, $name);
 							$gradoid = $place;
+
+							//if the place does not exists, add it to the db and also the dependencies
 							if(empty($place)){
 								$grado = array('created_at' => date("Y-m-d"),'name' => $name,'place_id' => $turnoid,'place_type_id' => $place_type_id);
 								$app['db.places']->insert($grado);
@@ -781,6 +995,8 @@ class ImportController implements ControllerProviderInterface {
 							        break;
 							}
 							$place= $app['db.places']->getSeccionOfPlace($place, $name);
+
+							//if the place does not exists, add it to the db and also the dependencies
 							if(empty($place)){
 								$seccion = array('created_at' => date("Y-m-d"),'name' => $name,'place_id' => $gradoid,'place_type_id' => 11);
 								$app['db.places']->insert($seccion);
@@ -794,12 +1010,19 @@ class ImportController implements ControllerProviderInterface {
 								$app['db.places_dependencies']->insert($dependency);
 								$place= $app['db.places']->getSeccionOfPlace($place, $name);
 							}
+
+							//loop over the students
 							foreach ($sheetData as $value) {
 								$remark ="";
 								if(is_numeric($value[0]) && !empty($value[6])){
+
+									//if value 3 is empty it means he is not getting deleted
 									if(empty($value[3])){
+
+										//get the person
 										$person = $app['db.people']->getPerson($value[6]);
 										if(empty($person)){
+
 											//generate a barcode for the user
 											$barcode = 0;
 											do {
@@ -810,6 +1033,8 @@ class ImportController implements ControllerProviderInterface {
 											$names = explode(" ", $value[6]);
 											$firstname = '';
 											$lastname ='';
+
+											//set the name of the student
 											switch(count($names)){
 												case 2:
 											        $firstname = $names[0];
@@ -833,6 +1058,7 @@ class ImportController implements ControllerProviderInterface {
 											        break;
 											}
 											
+											//add the user to the db
 											$object = array('created_at' => date("Y/m/d"), 'name' => $firstname,'lastname' => $lastname, 'school_name'=>$schoolname, 'barcode' => $barcode);
 											$app['db.people']->insert($object);
 											$person = $app['db.people']->Lastadded();
@@ -887,11 +1113,15 @@ class ImportController implements ControllerProviderInterface {
 												$remark .= ';laptop eleminar' ;
 											}
 										}
+
+										//change the class of the use
 										if(!empty($value[4])){
 											$places = explode(" ", $value[4]);
 											$name = ($places[0] == 'M')? 'Turno Mañana': (($places[0] == 'T')? 'Turno Tarde': 'Turno Completo');
 											$place= $app['db.places']->getitemByNameandAncestorID($name, $schoolID);
 											$turnoid = $place;
+
+											//if the place does not exists, add it to the db and also the dependencies
 											if(empty($place)){
 												$turno = array('created_at' => date("Y-m-d"),'name' => $name,'place_id' => $schoolID,'place_type_id' => 12);
 												$app['db.places']->insert($turno);
@@ -955,6 +1185,8 @@ class ImportController implements ControllerProviderInterface {
 											}
 											$place= $app['db.places']->getgradeOfPlace($place, $name);
 											$gradoid = $place;
+
+											//if the place does not exists, add it to the db and also the dependencies
 											if(empty($place)){
 												$grado = array('created_at' => date("Y-m-d"),'name' => $name,'place_id' => $turnoid,'place_type_id' => $place_type_id);
 												$app['db.places']->insert($grado);
@@ -983,6 +1215,8 @@ class ImportController implements ControllerProviderInterface {
 											        break;
 											}
 											$place= $app['db.places']->getSeccionOfPlace($place, $name);
+
+											//if the place does not exists, add it to the db and also the dependencies
 											if(empty($place)){
 												$seccion = array('created_at' => date("Y-m-d"),'name' => $name,'place_id' => $gradoid,'place_type_id' => 11);
 												$app['db.places']->insert($seccion);
@@ -1005,9 +1239,13 @@ class ImportController implements ControllerProviderInterface {
 										if($remark==''){
 											$remark= 'no cambio';
 										}
+
+										//add the data to the database
 										$value = array('A' => $value[6],'B' => $value['7'],'C' => 'Student','D' => $places[0],'E' => $places[1],'F' => $places[2], 'G'=>$remark);
 										array_push($data, $value);
 									}
+
+									//delete the person
 									else{
 										$person = $app['db.people']->getPerson($value[6]);
 										if(!empty($person)){

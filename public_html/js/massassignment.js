@@ -1,12 +1,15 @@
-
+//if there is an value entered in .barcode, call the function Fbarcode
 $( ".barcode" ).last().keyup(function() {
 	Fbarcode();
 });
 
+//if there is an value entered in .serial, call the function Fbarcode
 $( ".serial" ).last().keyup(function() {
 	Fserial();
 });
 
+//if the length of the last barcode is 10 add a new row with a new box serial and barcode
+//after this swap to the next field
 function Fbarcode(){
 	if($( ".barcode" ).last().val().length==10){
 		console.log($( ".barcode" ).last().val());
@@ -18,6 +21,7 @@ function Fbarcode(){
 	}
 }
 
+//swap to the next field if the length of .serial is 10
 function Fserial(){
 	if($( ".serial" ).last().val().length==11){
 		console.log($( ".serial" ).last().val());
@@ -25,12 +29,19 @@ function Fserial(){
 	}
 }
 
+//when assignall is clicked, send all the data to the server and do the assignments
 $( "#assignall" ).click(function() {
-  console.log("fff");
+
+  //get the barcodes
   var Allbarcode = document.getElementsByName("barcode");
+  
+  //get the serials
   var Allserials = document.getElementsByName("serial");
+
+
   var serials ='';
-  console.log(Allserials);
+
+  //set the serials in the field serials
   for (serial in Allserials) {
   	if(Allserials[serial].value!=null){
   		serials = serials +  Allserials[serial].value + ', ' ;
@@ -38,21 +49,27 @@ $( "#assignall" ).click(function() {
   }
 
   var barcodes ='';
+
+  //set the barcodes in the field barcode
   for (barcode in Allbarcode) {
   	if(Allbarcode[barcode].value!=null){
   		barcodes = barcodes +  Allbarcode[barcode].value + ', ' ;
   	}
     
   }
+
+  //gather the data in a field
   var postData = 
 		{
 			"serials":serials,
 			"barcodes":barcodes
 		}
 
-      var dataString = JSON.stringify(postData);
+  // and again we are making a beauty of a stringify 
+  var dataString = JSON.stringify(postData);
 
-   $.ajax({
+  //do the ajax request to the server to assign all the laptops to the correct people. Power to the people wooop woop 
+  $.ajax({
           method: "POST",
           data: {action:dataString},
           url: "../../Ajax/massassignment/",
