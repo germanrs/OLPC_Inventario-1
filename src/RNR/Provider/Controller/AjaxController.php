@@ -221,6 +221,11 @@ class AjaxController implements ControllerProviderInterface {
 			->method('GET|POST')
 			->bind('Ajax.editUser');
 
+		$controllers
+			->get('/validateUser/', array($this, 'validateUser'))
+			->method('GET|POST')
+			->bind('Ajax.validateUser');
+
 		// Return ControllerCollection
 		return $controllers;
 	}
@@ -1337,10 +1342,45 @@ class AjaxController implements ControllerProviderInterface {
 	public function getusersinfo(Application $app) {
 		if(isset($_POST['action'])){
 			$obj = json_decode($_POST['action'], true);
-			$data = $app['db.users']->getUsersInfo($obj['name']);
-			echo json_encode($data);
+			$data = false;
+			if ($obj['name'] != $obj['actualName']) {
+				$data = $app['db.users']->getUsersByName($obj['name']);
+			}
+			if ($data != false) {
+				$data = true;
+			}
+			$pass = false;
+			$data2 = $app['db.users']->getUsersInfo($obj['actualName']);
+			if ($data2['clave'] == sha1($obj['password']) ) {
+				$pass = true;
+			}
+			//
+			$upd = false;
+			if (!$data && $pass) {
+				$user = array('usuario' => $obj['name'], 
+					'clave' => sha1($obj['newPassword']), 
+					'id' => $data2['id']);
+				$app['db.users']->updateUser($user);
+				$upd = true;
+			}
+			echo json_encode(array('exist' => $data, 'pass' => $pass, 'upd' => $upd) );
 		}
 		return $app['twig']->render('Ajax/Dump.twig');	
+	}
+
+	public function validateUser(Application $app){
+		if(isset($_POST['action'])) {
+			$obj = json_decode($_POST['action'], true);
+			$data = false;
+			if ($obj['name'] != $obj['actualName']) {
+				$data = $app['db.users']->getUsersByName($obj['name']);
+			}
+			if ($data != false) {
+				$data = true;
+			}
+			echo json_encode(array('resp' => $data) );
+		}
+		return $app['twig']->render('Ajax/Dump.twig');
 	}
 
 	public function deleteUser(Application $app) {

@@ -15,12 +15,12 @@
 	<div class="clear"></div>
 	<div class="label">Nombre de Usuario</div>
 	<div class="input">
-		<input type="text" id="userName" value="{{ usuario }}">
+		<input type="text" id="userName" value="{{ usuario }}" data="{{ usuario }}">
 	</div>
 	<div class="clear"></div>
-	<div class="label">Contraseña</div>
+	<div class="label">Contraseña Actual</div>
 	<div class="input">
-		<input type="password" id="password" value="{{ usuario }}" disabled="true">
+		<input type="password" id="password" >
 	</div>
 	<div class="clear"></div>
 	<div class="label">Nueva Contraseña</div>
@@ -34,6 +34,7 @@
 	</div>
 	<div class="clear"></div>
 	<div  id="error" class="errorPass hidden">Contraseñas no coinciden</div>
+	<div  id="success" class="success hidden">Cambios realizados con exito!</div>
 	<div class="clear"></div>
 	<a class="button" id="save" role="button">Guardar Cambios</a>
 </div>

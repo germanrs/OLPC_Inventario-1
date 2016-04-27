@@ -49,7 +49,11 @@ class UsersRepository extends \Knp\Repository {
 	}
 
 	public function getUsersInfo($user){
-		return $this->db->fetchAssoc('SELECT users.id, users.usuario FROM '. $this->getTableName() . ' WHERE usuario = ?', array($user));
+		return $this->db->fetchAssoc('SELECT users.id, users.usuario, users.clave FROM '. $this->getTableName() . ' WHERE usuario = ?', array($user));
+	}
+
+	public function getUsersByName($user){
+		return $this->db->fetchAssoc('SELECT users.id FROM '. $this->getTableName() . ' WHERE usuario = ?', array($user));
 	}
 
 	public function getUserPerson($user){

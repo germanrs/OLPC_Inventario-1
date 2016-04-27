@@ -46,3 +46,9 @@
   margin: 1rem;
   margin-left: 50%;
 }
+.success{
+  color: green;
+  font-weight: bold;
+  margin: 1rem;
+  margin-left: 50%;
+}

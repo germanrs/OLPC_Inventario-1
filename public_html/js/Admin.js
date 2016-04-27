@@ -8,6 +8,9 @@ $(document).ready(function() {
 $('#newPassword1').on('input', function(){
 	enabledPass();
 });
+$('#password').on('input', function(){
+	enabledPass();
+});
 
 function enabledPass(){
 	if ($('#newPassword1').val().length > 0 ){
@@ -15,19 +18,86 @@ function enabledPass(){
 	}else{
 		$('#newPassword2').attr('disabled', true);
 	}
+	if ($('#password').val().length > 0 ){
+		$('#newPassword1').removeAttr('disabled');
+	}else{
+		$('#newPassword1').attr('disabled', true);
+	}
 }
 
 $('#save').on('click', function(){
-	if (($('#newPassword1').val() === $('#newPassword2').val()) && 
-		$('#newPassword1').val().length != 0 &&
-		$('#newPassword2').val().length != 0) {
-		window.alert("bueno");
-		getUserInfo();
-	}else{
+	var userName = document.getElementById('userName').value;
+	var password = document.getElementById('password').value;
+	var newPassword1 = document.getElementById('newPassword1').value;
+	var newPassword2 = document.getElementById('newPassword2').value;
+
+	if (!userName || 0 === userName.length) {
+		$('#error').html('Campo nombre de usuario es obligatorio!');
 		$("#error").fadeToggle(1500);
 		$("#error").fadeToggle(1500);
 	}
+	else if(!password || 0 === password.length){
+	    $('#error').html('Campo contraseña es obligatorio!');
+		$("#error").fadeToggle(1500);
+		$("#error").fadeToggle(1500);
+	}
+	else if (!newPassword1 || 0 === newPassword1.length) {
+		$('#error').html('Campo nueva contraseña es obligatorio!');
+		$("#error").fadeToggle(1500);
+		$("#error").fadeToggle(1500);
+	}
+	else if(newPassword1.length < 6){
+	    $('#error').html('contraseña muy corta!');
+		$("#error").fadeToggle(1500);
+		$("#error").fadeToggle(1500);
+	}
+	else if ($('#newPassword1').val() != $('#newPassword2').val()) {
+		$('#error').html('Contraseñas no coinciden!');
+		$("#error").fadeToggle(1500);
+		$("#error").fadeToggle(1500);
+	}
+	else{
+		var postData = {
+			"actualName":$('#userName').attr('data'),
+			"name": $('#userName').val(),
+			"password":password,
+			"newPassword":newPassword1
+		}
+		var dataString = JSON.stringify(postData);
+		$.ajax({
+			method: "POST",
+			data: {action:dataString},
+			url: "../Ajax/getusersinfo/",
+			success: function(data){
+				var jsonOptions = JSON.parse(data);
+				console.log(jsonOptions);
+				if (jsonOptions['exist'] != false) {
+					$('#error').html('Nombre de usuario existente!');
+					$("#error").fadeToggle(1500);
+					$("#error").fadeToggle(1500);
+				}
+				else if (jsonOptions['pass'] != true) {
+					$('#error').html('Contraseña actual incorrecta!');
+					$("#error").fadeToggle(1500);
+					$("#error").fadeToggle(1500);
+				}
+				else if (jsonOptions['upd']){
+					//$('#userName').val('');
+					$('#password').val('');
+					$('#newPassword1').val('');
+					$('#newPassword2').val('');
+					$("#success").fadeToggle(1500);
+					$("#success").fadeToggle(1500);
+				}
+			},
+			error: function(e){
+				console.log(e);
+			}
+		});
+	}
+
 });
+
 
 function SetData(input, datalist){
 	var value = input.toLowerCase();
@@ -188,6 +258,7 @@ function Edituser(datainput){
 
 	document.getElementById("EditPerson").setAttribute("data", $ID);
 	document.getElementById("EditPerson").setAttribute("index", index);
+	document.getElementById("EditPerson").setAttribute("name", $Name);
 	document.getElementById("Name").value = $Name;
 	document.getElementById("Profiles").value = $Profile;
 
@@ -222,29 +293,48 @@ $("#EditPerson").on("click", function(){
 	    $("#alert").html("Contraseñas no coinciden!");
 	}
 	else{
-		var id = $("#EditPerson").attr("data");
-		var profile_id = $('[value="'+perfil+'"]').attr('data');
-		var postData = {
-			"id":id,
-			"usuario":usuario,
-			"clave":clave,
-			"profile_id":profile_id
-		}
+		var postData = {'name':usuario, 'actualName':$("#EditPerson").attr("name")}
 		var dataString = JSON.stringify(postData);
 		$.ajax({
 			method: "POST",
 			data: {action:dataString},
-			url: "../Ajax/editUser/",
+			url: "../Ajax/validateUser/",
 			success: function(data){
-				console.log(data);
-				
-				var index = $("#EditPerson").attr("index");
-				var table = document.getElementById("table");
-				table.rows[index].cells[0].innerHTML = usuario;
-				table.rows[index].cells[1].innerHTML = perfil;
-				
-				$("#openModal").css("opacity", "0");
-                $("#openModal").css("pointer-events", "none");
+				var jsonOptions = JSON.parse(data);
+				resp = jsonOptions['resp'];
+				if (jsonOptions['resp']) {
+					$("#alert").css("display", "initial");
+	    			$("#alert").html("Nombre de usuario existente!");
+				}else{
+					var id = $("#EditPerson").attr("data");
+					var profile_id = $('[value="'+perfil+'"]').attr('data');
+					var postData = {
+						"id":id,
+						"usuario":usuario,
+						"clave":clave,
+						"profile_id":profile_id
+					}
+					var dataString = JSON.stringify(postData);
+					$.ajax({
+						method: "POST",
+						data: {action:dataString},
+						url: "../Ajax/editUser/",
+						success: function(data){
+							console.log(data);
+							
+							var index = $("#EditPerson").attr("index");
+							var table = document.getElementById("table");
+							table.rows[index].cells[0].innerHTML = usuario;
+							table.rows[index].cells[1].innerHTML = perfil;
+							
+							$("#openModal").css("opacity", "0");
+			                $("#openModal").css("pointer-events", "none");
+						},
+						error: function(e){
+							console.log(e);
+						}
+					});
+				}
 			},
 			error: function(e){
 				console.log(e);
@@ -304,39 +394,56 @@ $("#AddPerson").on("click", function(){
 	    $("#alert").html("Contraseñas no coinciden!");
 	}
 	else{
-		var person_id = $('[value="'+person+'"]').attr('data');
-		var postData = {
-			"usuario":usuario,
-			"clave":clave,
-			"person_id":person_id
-		}
+		var postData = {'name':usuario, 'actualName':''}
 		var dataString = JSON.stringify(postData);
 		$.ajax({
 			method: "POST",
 			data: {action:dataString},
-			url: "../Ajax/addUser/",
+			url: "../Ajax/validateUser/",
 			success: function(data){
 				var jsonOptions = JSON.parse(data);
-				console.log(data);
-				var table = document.getElementById("table");
-                var row = table.insertRow(1);
-				var cell0 = row.insertCell(0);
-				var cell1 = row.insertCell(1);
-				var cell2 = row.insertCell(2);
-				var cell3 = row.insertCell(3);
-				cell0.innerHTML = jsonOptions[0]['usuario'];
-				cell1.innerHTML = jsonOptions[0]['description'];
-				cell2.innerHTML = '<a class="button EditUser" onclick="Edituser(this)"  id="EditUser" data="'+jsonOptions[0]['id']+'"  role="button">Editar</a>';
-				cell3.innerHTML = '<a class="button DeleteUser" onclick="Deleteuser(this)" id="DeleteUser" data="'+jsonOptions[0]['id']+'" role="button">Eliminar</a>'; 
+				resp = jsonOptions['resp'];
+				if (jsonOptions['resp']) {
+					$("#alert").css("display", "initial");
+	    			$("#alert").html("Nombre de usuario existente!");
+				}else{
+					var person_id = $('[value="'+person+'"]').attr('data');
+					var postData = {
+						"usuario":usuario,
+						"clave":clave,
+						"person_id":person_id
+					}
+					var dataString = JSON.stringify(postData);
+					$.ajax({
+						method: "POST",
+						data: {action:dataString},
+						url: "../Ajax/addUser/",
+						success: function(data){
+							var jsonOptions = JSON.parse(data);
+							console.log(data);
+							var table = document.getElementById("table");
+			                var row = table.insertRow(1);
+							var cell0 = row.insertCell(0);
+							var cell1 = row.insertCell(1);
+							var cell2 = row.insertCell(2);
+							var cell3 = row.insertCell(3);
+							cell0.innerHTML = jsonOptions[0]['usuario'];
+							cell1.innerHTML = jsonOptions[0]['description'];
+							cell2.innerHTML = '<a class="button EditUser" onclick="Edituser(this)"  id="EditUser" data="'+jsonOptions[0]['id']+'"  role="button">Editar</a>';
+							cell3.innerHTML = '<a class="button DeleteUser" onclick="Deleteuser(this)" id="DeleteUser" data="'+jsonOptions[0]['id']+'" role="button">Eliminar</a>'; 
 
-				$("#openModal").css("opacity", "0");
-                $("#openModal").css("pointer-events", "none");
+							$("#openModal").css("opacity", "0");
+			                $("#openModal").css("pointer-events", "none");
+						},
+						error: function(e){
+							console.log(e);
+						}
+					});
+				}
 			},
 			error: function(e){
 				console.log(e);
 			}
 		});
-	}
-
-	
+	}	
 });
