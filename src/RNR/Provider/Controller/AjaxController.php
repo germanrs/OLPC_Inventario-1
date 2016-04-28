@@ -1424,10 +1424,16 @@ class AjaxController implements ControllerProviderInterface {
 		if(isset($_POST['action'])){
 			$obj = json_decode($_POST['action'], true);
 			try {
-				$user = array('usuario' => $obj['usuario'], 
-					'clave' => sha1($obj['clave']), 
-					'id' => $obj['id']);
-				$app['db.users']->updateUser($user);
+				if (strlen($obj['clave']) == 0) {
+					$user = array('usuario' => $obj['usuario'],  
+						'id' => $obj['id']);
+					$app['db.users']->updateUserWithoutPass($user);
+				}else{
+					$user = array('usuario' => $obj['usuario'], 
+						'clave' => sha1($obj['clave']), 
+						'id' => $obj['id']);
+					$app['db.users']->updateUser($user);
+				}
 				$data = $app['db.users']->getUserPerson($obj['id']);
 				//
 				$perform = array('profile_id' => $obj['profile_id'], 'person_id' => $data[0]['person_id']);

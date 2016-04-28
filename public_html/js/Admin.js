@@ -41,62 +41,74 @@ $('#save').on('click', function(){
 		$("#error").fadeToggle(1500);
 		$("#error").fadeToggle(1500);
 	}
-	else if (!newPassword1 || 0 === newPassword1.length) {
+	/*else if (!newPassword1 || 0 === newPassword1.length) {
 		$('#error').html('Campo nueva contraseña es obligatorio!');
 		$("#error").fadeToggle(1500);
 		$("#error").fadeToggle(1500);
-	}
-	else if(newPassword1.length < 6){
-	    $('#error').html('contraseña muy corta!');
-		$("#error").fadeToggle(1500);
-		$("#error").fadeToggle(1500);
-	}
-	else if ($('#newPassword1').val() != $('#newPassword2').val()) {
-		$('#error').html('Contraseñas no coinciden!');
-		$("#error").fadeToggle(1500);
-		$("#error").fadeToggle(1500);
+	}*/
+	else if(newPassword1 || newPassword1.length > 0){
+		if(newPassword1.length < 6){
+		    $('#error').html('contraseña muy corta! (6 caracteres minimo)');
+			$("#error").fadeToggle(1500);
+			$("#error").fadeToggle(1500);
+		}
+		else if ($('#newPassword1').val() != $('#newPassword2').val()) {
+			$('#error').html('Contraseñas no coinciden!');
+			$("#error").fadeToggle(1500);
+			$("#error").fadeToggle(1500);
+		}
+		else{
+			save(password, newPassword1);
+		}
 	}
 	else{
-		var postData = {
-			"actualName":$('#userName').attr('data'),
-			"name": $('#userName').val(),
-			"password":password,
-			"newPassword":newPassword1
-		}
-		var dataString = JSON.stringify(postData);
-		$.ajax({
-			method: "POST",
-			data: {action:dataString},
-			url: "../Ajax/getusersinfo/",
-			success: function(data){
-				var jsonOptions = JSON.parse(data);
-				console.log(jsonOptions);
-				if (jsonOptions['exist'] != false) {
-					$('#error').html('Nombre de usuario existente!');
-					$("#error").fadeToggle(1500);
-					$("#error").fadeToggle(1500);
-				}
-				else if (jsonOptions['pass'] != true) {
-					$('#error').html('Contraseña actual incorrecta!');
-					$("#error").fadeToggle(1500);
-					$("#error").fadeToggle(1500);
-				}
-				else if (jsonOptions['upd']){
-					//$('#userName').val('');
-					$('#password').val('');
-					$('#newPassword1').val('');
-					$('#newPassword2').val('');
-					$("#success").fadeToggle(1500);
-					$("#success").fadeToggle(1500);
-				}
-			},
-			error: function(e){
-				console.log(e);
-			}
-		});
+		save(password, newPassword1);
 	}
 
 });
+
+function save(password, newPassword1){
+	if (!newPassword1 || 0 === newPassword1.length) {
+		newPassword1 = password;
+	}
+	var postData = {
+		"actualName":$('#userName').attr('data'),
+		"name": $('#userName').val(),
+		"password":password,
+		"newPassword":newPassword1
+	}
+	var dataString = JSON.stringify(postData);
+	$.ajax({
+		method: "POST",
+		data: {action:dataString},
+		url: "../Ajax/getusersinfo/",
+		success: function(data){
+			var jsonOptions = JSON.parse(data);
+			console.log(jsonOptions);
+			if (jsonOptions['exist'] != false) {
+				$('#error').html('Nombre de usuario existente!');
+				$("#error").fadeToggle(1500);
+				$("#error").fadeToggle(1500);
+			}
+			else if (jsonOptions['pass'] != true) {
+				$('#error').html('Contraseña actual incorrecta!');
+				$("#error").fadeToggle(1500);
+				$("#error").fadeToggle(1500);
+			}
+			else if (jsonOptions['upd']){
+				//$('#userName').val('');
+				$('#password').val('');
+				$('#newPassword1').val('');
+				$('#newPassword2').val('');
+				$("#success").fadeToggle(1500);
+				$("#success").fadeToggle(1500);
+			}
+		},
+		error: function(e){
+			console.log(e);
+		}
+	});
+}
 
 
 function SetData(input, datalist){
@@ -276,73 +288,86 @@ $("#EditPerson").on("click", function(){
 		$("#alert").css("display", "initial");
 	    $("#alert").html("Fill in a usuario!");
 	}
-	else if(!clave || 0 === clave.length){
+	else if(!perfil || 0 === perfil.length){
+	    $("#alert").css("display", "initial");
+	    $("#alert").html("Fill in a perfil!");
+	}
+	/*else if(!clave || 0 === clave.length){
 	    $("#alert").css("display", "initial");
 	    $("#alert").html("Fill in a clave!");
-	}
-	else if(clave.length < 6){
-	    $("#alert").css("display", "initial");
-	    $("#alert").html("clave muy corta!");
-	}
-	else if(!clave2 || 0 === clave2.length){
-	    $("#alert").css("display", "initial");
-	    $("#alert").html("Fill in a clave2!");
-	}
-	else if(clave !== clave2){
-	    $("#alert").css("display", "initial");
-	    $("#alert").html("Contraseñas no coinciden!");
+	}*/
+	else if (clave || clave.length > 0) {
+		if(clave.length < 6){
+		    $("#alert").css("display", "initial");
+		    $("#alert").html("clave muy corta!");
+		}
+		else if(!clave2 || 0 === clave2.length){
+		    $("#alert").css("display", "initial");
+		    $("#alert").html("Fill in a clave2!");
+		}
+		else if(clave !== clave2){
+		    $("#alert").css("display", "initial");
+		    $("#alert").html("Contraseñas no coinciden!");
+		}
+		else{
+			editPerson(usuario, perfil, clave);
+		}
 	}
 	else{
-		var postData = {'name':usuario, 'actualName':$("#EditPerson").attr("name")}
-		var dataString = JSON.stringify(postData);
-		$.ajax({
-			method: "POST",
-			data: {action:dataString},
-			url: "../Ajax/validateUser/",
-			success: function(data){
-				var jsonOptions = JSON.parse(data);
-				resp = jsonOptions['resp'];
-				if (jsonOptions['resp']) {
-					$("#alert").css("display", "initial");
-	    			$("#alert").html("Nombre de usuario existente!");
-				}else{
-					var id = $("#EditPerson").attr("data");
-					var profile_id = $('[value="'+perfil+'"]').attr('data');
-					var postData = {
-						"id":id,
-						"usuario":usuario,
-						"clave":clave,
-						"profile_id":profile_id
-					}
-					var dataString = JSON.stringify(postData);
-					$.ajax({
-						method: "POST",
-						data: {action:dataString},
-						url: "../Ajax/editUser/",
-						success: function(data){
-							console.log(data);
-							
-							var index = $("#EditPerson").attr("index");
-							var table = document.getElementById("table");
-							table.rows[index].cells[0].innerHTML = usuario;
-							table.rows[index].cells[1].innerHTML = perfil;
-							
-							$("#openModal").css("opacity", "0");
-			                $("#openModal").css("pointer-events", "none");
-						},
-						error: function(e){
-							console.log(e);
-						}
-					});
-				}
-			},
-			error: function(e){
-				console.log(e);
-			}
-		});
+		editPerson(usuario, perfil, clave);
 	}
 
 });
+
+function editPerson(usuario, perfil, clave){
+	var postData = {'name':usuario, 'actualName':$("#EditPerson").attr("name")}
+	var dataString = JSON.stringify(postData);
+	$.ajax({
+		method: "POST",
+		data: {action:dataString},
+		url: "../Ajax/validateUser/",
+		success: function(data){
+			var jsonOptions = JSON.parse(data);
+			resp = jsonOptions['resp'];
+			if (jsonOptions['resp']) {
+				$("#alert").css("display", "initial");
+    			$("#alert").html("Nombre de usuario existente!");
+			}else{
+				var id = $("#EditPerson").attr("data");
+				var profile_id = $('[value="'+perfil+'"]').attr('data');
+				var postData = {
+					"id":id,
+					"usuario":usuario,
+					"clave":clave,
+					"profile_id":profile_id
+				}
+				var dataString = JSON.stringify(postData);
+				$.ajax({
+					method: "POST",
+					data: {action:dataString},
+					url: "../Ajax/editUser/",
+					success: function(data){
+						console.log(data);
+						
+						var index = $("#EditPerson").attr("index");
+						var table = document.getElementById("table");
+						table.rows[index].cells[0].innerHTML = usuario;
+						table.rows[index].cells[1].innerHTML = perfil;
+						
+						$("#openModal").css("opacity", "0");
+		                $("#openModal").css("pointer-events", "none");
+					},
+					error: function(e){
+						console.log(e);
+					}
+				});
+			}
+		},
+		error: function(e){
+			console.log(e);
+		}
+	});
+}
 
 function Adduser(){
 	$("#alert").css("display", "none");

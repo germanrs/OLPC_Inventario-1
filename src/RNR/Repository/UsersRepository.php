@@ -65,10 +65,16 @@ class UsersRepository extends \Knp\Repository {
 	}
 
 	public function updateUser($user) {
-		
 		$result = 'UPDATE users SET '.
 		'usuario = '.$this->db->quote($user['usuario'], \PDO::PARAM_STR).','.
 		'clave = '.$this->db->quote($user['clave'], \PDO::PARAM_STR).' '.
+		'WHERE id = '.$this->db->quote($user['id'], \PDO::PARAM_INT);
+		return $this->db->executeUpdate($result);
+	}
+
+	public function updateUserWithoutPass($user) {
+		$result = 'UPDATE users SET '.
+		'usuario = '.$this->db->quote($user['usuario'], \PDO::PARAM_STR).' '.
 		'WHERE id = '.$this->db->quote($user['id'], \PDO::PARAM_INT);
 		return $this->db->executeUpdate($result);
 	}

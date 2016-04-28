@@ -43,12 +43,25 @@
 .errorPass{
   color: red;
   font-weight: bold;
-  margin: 1rem;
-  margin-left: 50%;
+  margin-left: 1rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  width: 40rem;
+
+  float: left;
+  padding-top: 0.7rem;
+  text-align: right;
 }
 .success{
   color: green;
   font-weight: bold;
-  margin: 1rem;
-  margin-left: 50%;
+  margin-left: 1rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  /*width: 23.5rem;*/
+  width: 40rem;
+
+  float: left;
+  padding-top: 0.7rem;
+  text-align: right;
 }
