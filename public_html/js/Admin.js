@@ -1,7 +1,7 @@
 $(document).ready(function() {
     setDataUsers();
     enabledPass();
-    SetData('Persons','json-datalistpersons');
+    //SetData('Persons','json-datalistpersons');
     SetData('Profiles','json-datalistprofiles');
 });
 
@@ -149,6 +149,49 @@ function SetData(input, datalist){
   // Set up and make the request.
   request.open('GET', '../Ajax/'+value+'/', true);
   request.send();
+}
+
+$('#Persons').keyup( function(){
+	clearChildren('json-datalistpersons');
+	if($('#Persons').val().length>0){
+		GetUsersdata($('#Persons').val(),'json-datalistpersons');
+	}
+});
+function clearChildren(parent_id){
+	var childArray = document.getElementById( parent_id ).children;
+    if ( childArray.length > 0 ) {
+        document.getElementById( parent_id ).removeChild( childArray[ 0 ] );
+        clearChildren(parent_id);
+    }
+}
+function GetUsersdata(input, datalist) {
+  var postData = 
+    {
+      "name": input
+    }
+  var dataString = JSON.stringify(postData);
+  $.ajax({
+    method: "POST",
+    data: {action:dataString},
+    url: "../Ajax/getusersdata/",
+    success: function(data){
+      console.log(data);
+      var dataList = document.getElementById(datalist);
+      var input = document.getElementById(input);
+      var jsonOptions = JSON.parse(data);
+      
+      jsonOptions.forEach(function(item) {
+	      var option = document.createElement('option');
+	      option.text = item.id;
+	      option.value = item.name;
+	      dataList.appendChild(option);
+      }); 
+    },
+    error: function(e){
+      console.log(e);
+      $("#alert").html(e);
+    }
+  });
 }
 
 function setDataUsers(){
