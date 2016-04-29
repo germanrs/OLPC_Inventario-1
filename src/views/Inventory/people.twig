@@ -16,6 +16,9 @@
 	<div class="top-menu">
 	<h1><a href="{{ path('Inventory.people') }}">Propietario</a></h1>
 	<a class="button" id="openAddModal"  role="button">agregar</a>
+	<p class="text-muted">
+        <em>{{ numItems }} registros</em>
+    </p>
 			<div class="h_search">
 			<form action="{{ app.request.baseUrl }}" method="GET" {{ form_enctype(filterform) }}  novalidate="novalidate" role="form">
 				<h2 class="text-danger">{{ form_errors(filterform.genres)|striptags }}</h2>	

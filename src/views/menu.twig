@@ -3,7 +3,8 @@
 		<ul>
 			<li><a href="{{ path('Inventory.laptops') }}" class="{% if 'Inventory.laptops' ==  app.request.attributes.get('_route') %}active{% endif %}"><span>Laptops</span></a></li>
 			<li><a href="{{ path('Inventory.people') }}" class="{% if 'people' in app.request.attributes.get('_route') %}active{% endif %}"><span>Propietarios</span></a></li>
-			<li><a href="{{ path('Inventory.places') }}" class="{% if 'places' in app.request.attributes.get('_route') %}active{% endif %}"><span>Localidades</span></a></li>
+			{% if access_level > 499 %}<li><a href="{{ path('Inventory.places') }}" class="{% if 'places' in app.request.attributes.get('_route') %}active{% endif %}"><span>Localidades</span></a></li>
+			{% endif %}
 			<li><a href="{{ path('Inventory.MassAssignment') }}" class="{% if 'MassAssignment' in app.request.attributes.get('_route') %}active{% endif %}"><span>Asignaciones por lote</span></a></li>
 			{#
 			<li class='active has-sub'><a href='#'><span>Asignaciones</span></a>

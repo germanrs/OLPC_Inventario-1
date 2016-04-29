@@ -15,6 +15,9 @@
 	<div class="top-menu">
 	<h1><a href="{{ path('Inventory.laptops') }}">Laptops</a></h1>
 	<a class="button" id="openAddModal"  role="button">Agregar</a>
+	<p class="text-muted">
+        <em>{{ numItems }} registros</em>
+    </p>
 		<div class="h_search">
 			<form action="{{ app.request.baseUrl }}" method="GET" {{ form_enctype(filterform) }}  novalidate="novalidate" role="form">
 				<h2 class="text-danger">{{ form_errors(filterform.genres)|striptags }}</h2>	
@@ -72,7 +75,7 @@
 				<td class="serial">{{ laptop.serial_number }}</td>
 				<td class="name">{{ laptop.firstname }} {{ laptop.lastname }}</td>
 				<td class="place">{{ laptop.region }}</td>
-				<td class="place">{{ laptop.placename }}</td>
+				<td class="place">{{ laptop.Schoolname }}</td>
 				<td class ="model">{{ laptop.modelName }}</td>
 				<td class="status">{{ laptop.description }}</td>
 				<td class="uuid">{{ laptop.uuid }}</td>

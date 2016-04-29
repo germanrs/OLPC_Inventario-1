@@ -1110,7 +1110,7 @@ class ImportController implements ControllerProviderInterface {
 												//add movement
 												$movement = array('created_at' => date("Y-m-d"),'source_person_id' => $person, 'destination_person_id' => 5,'comment' => 'excel_movement by:'.$username, 'movement_type_id'=> 11 ,'laptop_id'=>$laptopid);
 												$app['db.movements']->insert($movement);
-												$remark .= ';laptop eleminar' ;
+												$remark .= ';laptop eliminar' ;
 											}
 										}
 

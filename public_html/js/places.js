@@ -752,7 +752,7 @@ function setDataInTable(){
         cell1.innerHTML = jsonOptions[$index]['name'];
         cell2.innerHTML = jsonOptions[$index]['server_hostname'];
         cell3.innerHTML = '<a class="button EditLaptop" onclick="Editplace(this)"  id="EditLaptop" data="'+jsonOptions[$index]['id']+'"  role="button">Editar</a>';
-        cell4.innerHTML = '<a class="button DeleteLaptop" onclick="Deleteplace(this)" id="Deleteperson" data="'+jsonOptions[$index]['id']+'" role="button">Eleminar</a>'; 
+        cell4.innerHTML = '<a class="button DeleteLaptop" onclick="Deleteplace(this)" id="Deleteperson" data="'+jsonOptions[$index]['id']+'" role="button">Eliminar</a>'; 
       }
 
       if(document.getElementById("Ciudad").value!='' && document.getElementById("Escuela").value==''){

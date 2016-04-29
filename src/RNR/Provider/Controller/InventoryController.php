@@ -149,28 +149,57 @@ class InventoryController implements ControllerProviderInterface {
 
 		$laptoparray = array();
 		foreach ($laptops as $laptop) {
-			$datadump= $app['db.performs']->fetchAllByPersonId($laptop['peopleID']);	
+			$datadump= $app['db.performs']->fetchAllByPersonId($laptop['peopleID']);
 			$datadump = $app['db.places_dependencies']->fetchAllAncestorsFromSchool($datadump[0]['place_id']);
+			$laptop['Seccion'] = '';
+			$laptop['Turno'] = '';
+			$laptop['grade'] = '';
+			$laptop['region'] ='';
+			$laptop['city'] ='';
+			$laptop['Schoolname'] ='';
+
 			if(!empty($datadump)){
 				foreach ($datadump as $data) {
 					$place_type_id=0;
 					if(!empty($data)){
-						$laptop['region'] ='';
 						if(2==$data['place_type_id']){
 							$laptop['region'] = $data['name'];
 						}
+						else if(3==$data['place_type_id']){
+							$laptop['city'] = $data['name'];
+						}
 						else if(4==$data['place_type_id']){
-							$laptop['placename'] = $data['name'];
+							$laptop['Schoolname'] = $data['name'];
+						}
+						else if(12==$data['place_type_id']){
+							$laptop['Turno'] = $data['name'];
+						}
+						else if(11==$data['place_type_id']){
+							$laptop['Seccion'] = $data['name'];
+						}
+						else if(5==$data['place_type_id'] ||
+							6==$data['place_type_id'] ||
+							7==$data['place_type_id'] ||
+							8==$data['place_type_id'] ||
+							9==$data['place_type_id'] ||
+							10==$data['place_type_id'] ||
+							13==$data['place_type_id'] ||
+							14==$data['place_type_id'] ||
+							16==$data['place_type_id'] ||
+							17==$data['place_type_id'] ||
+							18==$data['place_type_id']){
+							$laptop['grade'] = $data['name'];
 						}
 					}
 				}
 			}
 			else{
-				$laptop['region'] =$laptop['placename'];
-				$laptop['placename'] ='';
+				$laptop['region'] =$laptop['Schoolname'];
+				$laptop['Schoolname'] ='';
 			}
 			array_push($laptoparray,$laptop);
 		}
+
 
 
 		// Create Form
@@ -425,6 +454,12 @@ class InventoryController implements ControllerProviderInterface {
 			//redirect to login page if user is not logged id
 			return $app->redirect($app['url_generator']->generate('Auth.Login')); 
 		}
+
+		if($access_level<499){
+
+			//redirect to login page if user is not logged id
+			return $app->redirect($app['url_generator']->generate('Auth.Login')); 
+		}
 		
 		//return the rendered twig with parameters
 		return $app['twig']->render('Inventory/places.twig', array(
@@ -471,7 +506,7 @@ class InventoryController implements ControllerProviderInterface {
 	}
 }
 
-function generatePaginationSequence($curPage, $numPages, $numberOfPagesAtEdges = 2, $numberOfPagesAroundCurrent = 2, $glue = '..', $indicateActive = false) {
+function generatePaginationSequence($curPage, $numPages, $numberOfPagesAtEdges = 1, $numberOfPagesAroundCurrent = 2, $glue = '..', $indicateActive = false) {
 	
 		// Define the number of items we would generate in a normal scenario
 		// (viz. lots of pages, current page in the middle):

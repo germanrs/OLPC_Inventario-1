@@ -265,7 +265,7 @@ class PlacesRepository extends \Knp\Repository {
 				'SELECT places.id, places.name from places
 				inner join place_dependencies on descendant_id = places.id
 				where places.place_type_id = 2
-				and ancestor_id ='.$idcountry.' order by name');
+				and ancestor_id ='.$idcountry.' order by name DESC');
 	}
 
 	public function fetchCity($idstate) {
@@ -273,7 +273,7 @@ class PlacesRepository extends \Knp\Repository {
 				'SELECT places.id, places.name from places
 				inner join place_dependencies on descendant_id = places.id
 				where places.place_type_id = 3
-				and ancestor_id ='.$idstate.' order by name');
+				and ancestor_id ='.$idstate.' order by name DESC');
 	}
 
 	public function fetchSchool($idcity) {
@@ -281,7 +281,7 @@ class PlacesRepository extends \Knp\Repository {
 				'SELECT places.id, places.name from places
 				inner join place_dependencies on descendant_id = places.id
 				where places.place_type_id = 4
-				and ancestor_id ='.$idcity.' order by name');
+				and ancestor_id ='.$idcity.' order by name DESC');
 	}
 
 	public function fetchSchoolwithservername($idcity) {
@@ -290,7 +290,7 @@ class PlacesRepository extends \Knp\Repository {
 				inner join place_dependencies on descendant_id = places.id
 				LEFT join school_infos on school_infos.place_id = places.id
 				where places.place_type_id = 4
-				and ancestor_id ='.$idcity.' order by name');
+				and ancestor_id ='.$idcity.' order by name DESC');
 	}
 	
 
@@ -299,18 +299,18 @@ class PlacesRepository extends \Knp\Repository {
 				'SELECT places.id, places.name from places
 				inner join place_dependencies on descendant_id = places.id
 				where places.place_type_id = 12
-				and ancestor_id ='.$idschool.' order by name');
+				and ancestor_id ='.$idschool.' order by name DESC');
 	}
 
 	public function fetchGrade($idTurno) {
 		return $this->db->fetchAll(
 				'SELECT places.id, places.name from places
-				where place_id ='.$idTurno.' order by place_type_id');
+				where place_id ='.$idTurno.' order by place_type_id DESC');
 	}
 
 	public function fetchSeccion($idSeccion) {
 		return $this->db->fetchAll(
 				'SELECT places.id, places.name from places
-				where place_id ='.$idSeccion.' order by name');
+				where place_id ='.$idSeccion.' order by name DESC');
 	}
 }
