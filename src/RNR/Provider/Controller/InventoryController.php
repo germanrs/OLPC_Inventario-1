@@ -83,7 +83,7 @@ class InventoryController implements ControllerProviderInterface {
 		else{
 
 			//redirect to login page if user is not logged id
-			return $app->redirect($app['url_generator']->generate('auth.login')); 
+			return $app->redirect($app['url_generator']->generate('Auth.Login')); 
 		}
 
 		//set the number of items per pages to 20
@@ -248,7 +248,7 @@ class InventoryController implements ControllerProviderInterface {
 		else{
 
 			//redirect to login page if user is not logged id
-			return $app->redirect($app['url_generator']->generate('auth.login')); 
+			return $app->redirect($app['url_generator']->generate('Auth.Login')); 
 		}
 
 		//set the number of items per pages to 20
@@ -423,7 +423,7 @@ class InventoryController implements ControllerProviderInterface {
 		else{
 
 			//redirect to login page if user is not logged id
-			return $app->redirect($app['url_generator']->generate('auth.login')); 
+			return $app->redirect($app['url_generator']->generate('Auth.Login')); 
 		}
 		
 		//return the rendered twig with parameters
@@ -459,7 +459,7 @@ class InventoryController implements ControllerProviderInterface {
 		else{
 
 			//redirect to login page if user is not logged id
-			return $app->redirect($app['url_generator']->generate('auth.login')); 
+			return $app->redirect($app['url_generator']->generate('Auth.Login')); 
 		}
 		
 		//return the rendered twig with parameters

@@ -475,11 +475,10 @@ $("#AddPerson").on("click", function(){
 					$("#alert").css("display", "initial");
 	    			$("#alert").html("Nombre de usuario existente!");
 				}else{
-					var person_id = $('[value="'+person+'"]').attr('data');
 					var postData = {
 						"usuario":usuario,
 						"clave":clave,
-						"person_id":person_id
+						"person":person
 					}
 					var dataString = JSON.stringify(postData);
 					$.ajax({

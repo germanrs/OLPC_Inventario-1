@@ -76,7 +76,7 @@ class ImportController implements ControllerProviderInterface {
 		else{
 
 			//redirect to login page if user is not logged id
-			return $app->redirect($app['url_generator']->generate('auth.login')); 
+			return $app->redirect($app['url_generator']->generate('Auth.Login')); 
 		}
 		
 		//city id

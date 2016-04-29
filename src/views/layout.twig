@@ -27,10 +27,12 @@
 					{% endif %}
 				</ul>
 			{% endif %}
+			{% if access_level != -1 %}
 				<div class="side-menu">
 					<div id="holaUsername">Hola {{username}}</div>
 					<a class="auth-link" href="{{ app.request.baseUrl }}/Auth/logout">Cerrar sesión</a>
 				</div>
+			{% endif %}
 		</header>
 		<div class="clear"></div>
 		<div class="wrapper">

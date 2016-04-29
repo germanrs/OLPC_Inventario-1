@@ -74,7 +74,7 @@ class ExportController implements ControllerProviderInterface {
 		else{
 
 			//redirect to login page if user is not logged id
-			return $app->redirect($app['url_generator']->generate('auth.login')); 
+			return $app->redirect($app['url_generator']->generate('Auth.Login')); 
 		}
 		
 
@@ -101,7 +101,7 @@ class ExportController implements ControllerProviderInterface {
 		else{
 
 			//redirect to login page if user is not logged in
-			return $app->redirect($app['url_generator']->generate('auth.login')); 
+			return $app->redirect($app['url_generator']->generate('Auth.Login')); 
 		}
 		
 		//get all the data from the url and put them in an array
@@ -382,7 +382,7 @@ class ExportController implements ControllerProviderInterface {
 		else{
 
 			//redirect to login page if user is not logged in
-			return $app->redirect($app['url_generator']->generate('auth.login')); 
+			return $app->redirect($app['url_generator']->generate('Auth.Login')); 
 		}
 		
 		//get all the data from the url and put them in an array

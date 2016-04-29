@@ -1405,10 +1405,11 @@ class AjaxController implements ControllerProviderInterface {
 	public function addUser(Application $app) {
 		if (isset($_POST['action'])) {
 			$obj = json_decode($_POST['action'], true);
+			$userid = $app['db.people']->getPerson($obj['person']);	
 			try {
 				$user = array('usuario' => $obj['usuario'], 
 					'clave' => sha1($obj['clave']), 
-					'person_id' => $obj['person_id']);
+					'person_id' => $userid);
 				$app['db.users']->insert($user);
 				$id = $app['db.users']->Lastadded();
 				$data = $app["db.users"]->getUser($id['id']);

@@ -51,7 +51,7 @@ class AuthController implements ControllerProviderInterface {
 		
 		//check if the user is logged in
 		//set acces level and username to default
-		$access_level = 0;
+		$access_level = -1;
 		$username = '';
 
 		// check if user is already logged in
