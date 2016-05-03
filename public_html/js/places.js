@@ -567,9 +567,40 @@ $( "#AddPlace" ).click(function() {
                                 cell4.innerHTML = '<a class="button EditLaptop" onclick="Editplace(this)"  id="EditLaptop" data="'+data2+'"  role="button">Editar</a>';
                               }
                               else{
-                                cell3.innerHTML = '<a class="button DeleteLaptop" onclick="Deleteplace(this)" id="Deleteperson" data="'+data2+'" role="button">Eliminar</a>';
-                                cell4.innerHTML = '<a class="button EditLaptop" onclick="Editplace(this)"  id="EditLaptop" data="'+data2+'"  role="button">Editar</a>';
+                                cell4.innerHTML = '<a class="button DeleteLaptop" onclick="Deleteplace(this)" id="Deleteperson" data="'+data2+'" role="button">Eliminar</a>';
+                                cell3.innerHTML = '<a class="button EditLaptop" onclick="Editplace(this)"  id="EditLaptop" data="'+data2+'"  role="button">Editar</a>';
                               }
+                              $datalist = '';
+
+                              if(Departamento == ''){
+                                $datalist = 'json-datalistDepartamento';
+                              }
+                              else if(Ciudad != ''){
+                                $datalist = 'json-datalistCiudad'; 
+                              }
+                              else if(Escuela != ''){
+                                $datalist = 'json-datalistEscuela';  
+                              }
+                              else if(Turno != ''){
+                                $datalist = 'json-datalistTurno'; 
+                              }
+                              else if(grado != ''){
+                                $datalist = 'json-datalistgrade';  
+                              }
+                              else if(Seccion != ''){
+                                $datalist = 'json-datalistSeccion';
+                              }
+
+                              var dataList = document.getElementById($datalist);
+                              // Create a new <option> element.
+                              var option = document.createElement('option');
+
+                              // Set the value using the item in the JSON array.
+                              option.text = data2;
+                              option.value = name;
+
+                              // Add the <option> element to the <datalist>.
+                              dataList.appendChild(option);
                               
                           },
                           error: function(e){

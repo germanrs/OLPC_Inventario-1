@@ -205,6 +205,9 @@ $('#Departamento').on('input', function(){
           $('#Ciudad').val('');
           clearChildren('json-datalistEscuela');
           $('#Escuela').val('');
+          $('#Turno').val('');
+          $('#grade').val('');
+          $('#Seccion').val('');
           $("#Departamento").val($value);
 
           //set the data for an ajax request to obtain the correct data for the city list
@@ -256,6 +259,9 @@ $('#Ciudad').on('input', function(){
           $value = this.value;
           clearChildren('json-datalistEscuela');
           $('#Escuela').val('');
+          $('#Turno').val('');
+          $('#grade').val('');
+          $('#Seccion').val('');
           $("#Ciudad").val($value);
 
           //set the data for an ajax request to obtain the correct data for the school list
@@ -302,6 +308,9 @@ $('#Escuela').on('input', function(){
     for (var i=0;i<options.length;i++){
       if (options[i].value == $(this).val()){
         AllowSchoolDetails();
+        $('#Turno').val('');
+        $('#grade').val('');
+        $('#Seccion').val('');
       }
     }
 });
@@ -760,6 +769,11 @@ function editperson(datainput){
   var $position = table.rows[index].cells[14].innerHTML;
   var $notes = table.rows[index].cells[16].innerHTML;
   var $typedescription = table.rows[index].cells[17].innerHTML;
+  if($profdescription !='Estudiante'){
+    document.getElementById("grade").disabled=true;
+    document.getElementById("Turno").disabled=true;
+    document.getElementById("Seccion").disabled=true;
+  }
   
   document.getElementById("AddPerson").setAttribute("data", $ID);
   document.getElementById("AddPerson").setAttribute("index", index);
