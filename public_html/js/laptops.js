@@ -271,10 +271,8 @@ $( "#AddLaptop" ).click(function() {
     $("#alert").html("Formato de UUID incorrecto!");
     $("#alert").css("display", "initial");
   }
-
   //add laptop
   else{
-
     //create the variable date and set it
     var today = new Date();
     var dd = today.getDate();
@@ -318,6 +316,7 @@ $( "#AddLaptop" ).click(function() {
               data: {action:dataString},
               url: "../../Ajax/addlaptop/",
               success: function(data){
+                if(data=='laptop agregan'){
                   $("#alert").html(data);
                   var table = document.getElementById("table");
                   var row = table.insertRow(1);
@@ -353,12 +352,13 @@ $( "#AddLaptop" ).click(function() {
                             cell1.innerHTML = '<input type="checkbox" id="'+data2+'" name="checkbox"> '
                             cell14.innerHTML = '<a class="button EditLaptop" onclick="editlaptop(this)"  id="EditLaptop" data="'+data2+'"  role="button">Editar</a>';
                             //hide the form
-                             $("#openModal").css("opacity", "0");
-                             $("#openModal").css("pointer-events", "none");
+                            $("#openModal").css("opacity", "0");
+                            $("#openModal").css("pointer-events", "none");
                         },
                         error: function(e){
                         }
                   });
+                }
               },
               error: function(e){
                   $("#alert").html(e);
