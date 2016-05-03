@@ -494,7 +494,7 @@ $( "#AddPerson" ).click(function() {
               success: function(data){
                   $("#alert").html(data);
                   console.log(data);
-                    if(data == 'Estudiante agregan' || data == 'Persona agregada!'){
+                    if(data == 'Estudiante agregan' || data == 'Persona agregada'){
                     var table = document.getElementById("table");
                     var row = table.insertRow(1);
                     var cell1 = row.insertCell(0);
