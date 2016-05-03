@@ -131,7 +131,7 @@ class InventoryController implements ControllerProviderInterface {
     	else{
 
     		//set the genre to null
-    		$genre = '';
+    		$genre = 'laptops.serial_number';
 
     		//set the searchstring to null
 			$searchstring = '';
