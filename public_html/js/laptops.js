@@ -317,8 +317,9 @@ $( "#AddLaptop" ).click(function() {
               url: "../../Ajax/addlaptop/",
               success: function(data){
                 console.log(data);
+                $("#alert").html(data);
                 if(data=='laptop agregan'){
-                  $("#alert").html(data);
+                  
                   var table = document.getElementById("table");
                   var row = table.insertRow(1);
                   var cell1 = row.insertCell(0);

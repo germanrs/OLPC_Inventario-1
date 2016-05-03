@@ -507,13 +507,25 @@ $( "#AddPerson" ).click(function() {
                     var cell8 = row.insertCell(7);
                     var cell9 = row.insertCell(8);
                     var cell10 = row.insertCell(9);
+                    var cell11 = row.insertCell(10);
+                    var cell12 = row.insertCell(11);
+                    var cell13 = row.insertCell(12);
+                    var cell14 = row.insertCell(13);
                     cell2.innerHTML = name;
                     cell3.innerHTML = lastname;
                     cell4.innerHTML = phone;
                     cell5.innerHTML = email;
                     cell6.innerHTML = Departamento;
-                    cell7.innerHTML = Escuela;
-                    cell8.innerHTML = profiles;
+                    cell7.innerHTML = Ciudad;
+                    cell8.innerHTML = Escuela;
+                    cell9.innerHTML = Turno;
+                    cell10.innerHTML = grade;
+                    cell11.innerHTML = Seccion;
+                    cell12.innerHTML = profiles;
+                    cell4.setAttribute("class", 'displaynone');
+                    cell5.setAttribute("class", 'displaynone');
+
+                    
 
                     //if succes get the id of the newest added person to make the buttons work
                     $.ajax({
@@ -524,8 +536,8 @@ $( "#AddPerson" ).click(function() {
                               console.log(data);
                               var data2 = data
                               cell1.innerHTML = '<input type="checkbox" id="'+data2+'" name="checkbox"> '
-                              cell9.innerHTML = '<a class="button EditLaptop" onclick="editperson(this)"  id="EditLaptop" data="'+data2+'"  role="button">Editar</a>';
-                              cell10.innerHTML = '<a class="button DeleteLaptop" onclick="deleteperson(this)" id="Deleteperson" data="'+data2+'" role="button">Eliminar</a>';
+                              cell13.innerHTML = '<a class="button EditLaptop" onclick="editperson(this)"  id="EditLaptop" data="'+data2+'"  role="button">Editar</a>';
+                              cell14.innerHTML = '<a class="button DeleteLaptop" onclick="deleteperson(this)" id="Deleteperson" data="'+data2+'" role="button">Eliminar</a>';
                               //hide the form
                              $("#openModal").css("opacity", "0");
                              $("#openModal").css("pointer-events", "none");
@@ -590,8 +602,8 @@ $( "#AddPerson" ).click(function() {
                       var index = $("#"+res[teller]).closest("tr").index();
                       var table = document.getElementById("table");
                       table.rows[index].cells[5].innerHTML = Departamento;
-                      table.rows[index].cells[6].innerHTML = Escuela;
-                      table.rows[index].cells[7].innerHTML = profiles;
+                      table.rows[index].cells[7].innerHTML = Escuela;
+                      table.rows[index].cells[11].innerHTML = profiles;
                       teller++;
                       console.log(data);
 
@@ -653,9 +665,15 @@ $( "#AddPerson" ).click(function() {
                     table.rows[index].cells[2].innerHTML = lastname;
                     table.rows[index].cells[3].innerHTML = phone;
                     table.rows[index].cells[4].innerHTML = email;
+                    table.rows[index].cells[3].setAttribute("class", 'displaynone');
+                    table.rows[index].cells[4].setAttribute("class", 'displaynone');
                     table.rows[index].cells[5].innerHTML = Departamento;
-                    table.rows[index].cells[6].innerHTML = Escuela;
-                    table.rows[index].cells[7].innerHTML = profiles;
+                    table.rows[index].cells[6].innerHTML = Ciudad;
+                    table.rows[index].cells[7].innerHTML = Escuela;
+                    table.rows[index].cells[8].innerHTML = Turno;
+                    table.rows[index].cells[9].innerHTML = grade;
+                    table.rows[index].cells[10].innerHTML = Seccion;
+                    table.rows[index].cells[11].innerHTML = profiles;
                     console.log(data);
 
                     //hide the form
@@ -731,18 +749,18 @@ function editperson(datainput){
   var $phone = table.rows[index].cells[3].innerHTML;
   var $email = table.rows[index].cells[4].innerHTML;
   var $region = table.rows[index].cells[5].innerHTML;
-  var $Schoolname = table.rows[index].cells[6].innerHTML;
-  var $profdescription = table.rows[index].cells[7].innerHTML;
-  var $DocumentID = table.rows[index].cells[8].innerHTML;
-  var $birth_date = table.rows[index].cells[9].innerHTML;
-  var $position = table.rows[index].cells[10].innerHTML;
+  var $Ciudad = table.rows[index].cells[6].innerHTML;
+  var $Schoolname = table.rows[index].cells[7].innerHTML;
+  var $Turno = table.rows[index].cells[8].innerHTML;
+  var $Seccion = table.rows[index].cells[9].innerHTML;
+  var $grade = table.rows[index].cells[10].innerHTML;
+  var $profdescription = table.rows[index].cells[11].innerHTML;
+  var $DocumentID = table.rows[index].cells[12].innerHTML;
+  var $birth_date = table.rows[index].cells[13].innerHTML;
+  var $position = table.rows[index].cells[14].innerHTML;
+  var $notes = table.rows[index].cells[16].innerHTML;
+  var $typedescription = table.rows[index].cells[17].innerHTML;
   
-  var $notes = table.rows[index].cells[12].innerHTML;
-  var $typedescription = table.rows[index].cells[14].innerHTML;
-  var $Turno = table.rows[index].cells[14].innerHTML;
-  var $Seccion = table.rows[index].cells[15].innerHTML;
-  var $grade = table.rows[index].cells[16].innerHTML;
-  var $Ciudad = table.rows[index].cells[17].innerHTML;
   document.getElementById("AddPerson").setAttribute("data", $ID);
   document.getElementById("AddPerson").setAttribute("index", index);
   document.getElementById("Name").value = $Name;
