@@ -213,10 +213,12 @@ function setDataUsers(){
 				var cell1 = row.insertCell(1);
 				var cell2 = row.insertCell(2);
 				var cell3 = row.insertCell(3);
-				cell0.innerHTML = jsonOptions[$index]['usuario'];
-				cell1.innerHTML = jsonOptions[$index]['description'];
-				cell2.innerHTML = '<a class="button EditUser" onclick="Edituser(this)"  id="EditUser" data="'+jsonOptions[$index]['id']+'"  role="button">Editar</a>';
-				cell3.innerHTML = '<a class="button DeleteUser" onclick="Deleteuser(this)" id="DeleteUser" data="'+jsonOptions[$index]['id']+'" role="button">Eliminar</a>'; 
+				var cell4 = row.insertCell(4);
+				cell0.innerHTML = '<input type="checkbox" id="'+jsonOptions[$index]['id']+'" name="checkbox"> '
+				cell1.innerHTML = jsonOptions[$index]['usuario'];
+				cell2.innerHTML = jsonOptions[$index]['description'];
+				cell3.innerHTML = '<a class="button EditUser" onclick="Edituser(this)"  id="EditUser" data="'+jsonOptions[$index]['id']+'"  role="button" >Editar</a>';
+				//cell4.innerHTML = '<a class="button DeleteUser" onclick="Deleteuser(this)" id="DeleteUser" data="'+jsonOptions[$index]['id']+'" role="button">Eliminar</a>'; 
 			}
 		},
 		error: function(e){
@@ -244,38 +246,43 @@ function getUserInfo(){
 		}
 	}); 
 }
-
 function Deleteuser(datainput){
-	var resp = confirm("Esta seguro de eliminar este registro?");
-    if (resp == true) {
-        var id = $(datainput).closest("tr").find(".EditUser").attr("data");
-		var index = $(datainput).closest("tr").index();
+	var id = $(datainput).closest("tr").find(".EditUser").attr("data");
+	document.getElementById(id).checked = true;
 
-		console.log(id);
-		console.log(index);
+	$("#openModal2").css("opacity", "1");
+	$("#openModal2").css("pointer-events", "auto");
+}
 
-		var postData = {
-			"id":id
+
+function DeleteUser(datainput){
+    var id = $(datainput).closest("tr").find(".EditUser").attr("data");
+	var index = $(datainput).closest("tr").index();
+
+	console.log(id);
+	console.log(index);
+
+	var postData = {
+		"id":id
+	}
+	var dataString = JSON.stringify(postData);
+
+	//make a json request to delete 1 person.
+	$.ajax({
+		method: "POST",
+		data: {action:dataString},
+		url: "../Ajax/deleteUser/",
+		success: function(data){
+			$("#alert").html(data);
+			console.log(data);
+			var index = $(datainput).closest("tr").index();
+			document.getElementById("table").deleteRow(index); 
+		},
+		error: function(e){
+			$("#alert").html(e);
+			console.log(e);
 		}
-		var dataString = JSON.stringify(postData);
-
-		//make a json request to delete 1 person.
-		$.ajax({
-			method: "POST",
-			data: {action:dataString},
-			url: "../Ajax/deleteUser/",
-			success: function(data){
-				$("#alert").html(data);
-				console.log(data);
-				var index = $(datainput).closest("tr").index();
-				document.getElementById("table").deleteRow(index); 
-			},
-			error: function(e){
-				$("#alert").html(e);
-				console.log(e);
-			}
-		});
-    }
+	});
 }
 
 $('#addUser').on('click', function(){
@@ -287,6 +294,14 @@ $( ".EditUser" ).click(function() {
 $( "#CloseAddModal" ).click(function() {
    $("#openModal").css("opacity", "0");
    $("#openModal").css("pointer-events", "none");
+});
+$( "#CloseAddModal2" ).click(function() {
+   $("#openModal2").css("opacity", "0");
+   $("#openModal2").css("pointer-events", "none");
+});
+$( "#cancelDelete" ).click(function() {
+   $("#openModal2").css("opacity", "0");
+   $("#openModal2").css("pointer-events", "none");
 });
 
 function Edituser(datainput){
@@ -308,8 +323,8 @@ function Edituser(datainput){
 	console.log($ID);
 
 	var table = document.getElementById("table");
-	var $Name = table.rows[index].cells[0].innerHTML;
-	var $Profile = table.rows[index].cells[1].innerHTML;
+	var $Name = table.rows[index].cells[1].innerHTML;
+	var $Profile = table.rows[index].cells[2].innerHTML;
 
 	document.getElementById("EditPerson").setAttribute("data", $ID);
 	document.getElementById("EditPerson").setAttribute("index", index);
@@ -514,3 +529,56 @@ $("#AddPerson").on("click", function(){
 		});
 	}	
 });
+
+$("#checkallboxes").click(function(){
+	//get all the cechboxes.
+	checkboxes = document.getElementsByName('checkbox');
+	//check all the chexboxes
+	if (document.getElementById("checkallboxes").checked) {
+		//loop over all the checkboxes and check the checkboxes
+		for (var i = 0; i < checkboxes.length; i++) {
+			if (checkboxes[i].type == 'checkbox') {
+				checkboxes[i].checked = true;
+			}
+		}
+	} else {
+		//loop over all the checkboxes and uncheck the checkboxes
+		for (var i = 0; i < checkboxes.length; i++) {
+			if (checkboxes[i].type == 'checkbox') {
+				checkboxes[i].checked = false;
+			}
+		}
+	}
+});
+
+//get all the selected items and delete them
+$( "#deleteSelected" ).on('click', function(){
+	$("#openModal2").css("opacity", "1");
+	$("#openModal2").css("pointer-events", "auto");
+});
+
+$("#confirmDelete").on("click", function(){
+	//get all the selected items
+	var checkedBoxes = getCheckedBoxes("checkbox");
+	//loop over the selected items and delete them
+	for (box in checkedBoxes) {
+		DeleteUser(checkedBoxes[box]);
+	}
+	$("#openModal2").css("opacity", "0");
+	$("#openModal2").css("pointer-events", "none");
+});
+
+// Pass the checkbox name to the function
+function getCheckedBoxes(chkboxName) {
+	var checkboxes = document.getElementsByName(chkboxName);
+	var checkboxesChecked = [];
+	// loop over them all
+	for (var i=0; i<checkboxes.length; i++) {
+		// And stick the checked ones onto an array...
+		if (checkboxes[i].checked) {
+			checkboxesChecked.push(checkboxes[i]);
+		}
+	}
+	// Return the array if it is non-empty, or null
+	return checkboxesChecked.length > 0 ? checkboxesChecked : null;
+}
