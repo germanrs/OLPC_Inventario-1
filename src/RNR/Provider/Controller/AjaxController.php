@@ -825,7 +825,7 @@ class AjaxController implements ControllerProviderInterface {
 					$person_id = $app['db.people']->FindPeopleId($obj);
 					$perform = array('person_id' => $person_id, 'place_id' => $Seccionid, 'profile_id' => 7);
 					$app['db.performs']->insert($perform);
-					echo "estudiante agregan";
+					echo "Estudiante agregan";
 				}
 				else{
 					echo 'del perfil o lugar no existe.';
