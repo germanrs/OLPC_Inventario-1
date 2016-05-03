@@ -340,7 +340,7 @@ $( "#AddLaptop" ).click(function() {
                   cell10.innerHTML = Model;
                   cell11.innerHTML = Status;
                   cell12.innerHTML = Uuid;
-                  cell12.class == 'uuid displaynone';
+                  cell12.addClass('uuid displaynone');
                   cell13.innerHTML = ((assignee == People)?'yes':'no');
 
                   //if succes get the id of the newest added laptop to make the buttons work
