@@ -334,7 +334,7 @@ $( "#AddLaptop" ).click(function() {
                   var cell11 = row.insertCell(10);
                   var cell12 = row.insertCell(11);
                   var cell13 = row.insertCell(12);
-                  var cell14 = row.insertCell(12);
+                  var cell14 = row.insertCell(13);
                   cell2.innerHTML = Serial;
                   cell3.innerHTML = People;
                   cell10.innerHTML = Model;
