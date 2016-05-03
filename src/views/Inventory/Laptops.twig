@@ -82,7 +82,7 @@
 				<td class="uuid" data={{ laptop.assignee_id }} >{{ laptop.InHands }}</td>
 
 				<td class="text-right">
-					<a class="button GuardarLaptop" id="EditLaptop" data="{{ laptop.laptopID }}"  role="button">Editar</a>
+					<a class="button EditLaptop" id="EditLaptop" data="{{ laptop.laptopID }}"  role="button">Editar</a>
 				</td>{# 
 				<td class="text-right">
 					<a class="button DeleteLaptop" id="DeleteLaptop" data="{{ laptop.laptopID }}" role="button">delete</a>
@@ -166,5 +166,4 @@
 {% block pageScripts %}
 <script src="{{ app.request.baseUrl }}/js/general.js"></script>
 <script src="{{ app.request.baseUrl }}/js/laptops.js"></script>
-
 {% endblock %}
