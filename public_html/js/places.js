@@ -571,23 +571,23 @@ $( "#AddPlace" ).click(function() {
                                 cell3.innerHTML = '<a class="button EditLaptop" onclick="Editplace(this)"  id="EditLaptop" data="'+data2+'"  role="button">Editar</a>';
                               }
                               $datalist = '';
-
-                              if(Departamento == ''){
+                              if(document.getElementById("Departamento").value == ''){
                                 $datalist = 'json-datalistDepartamento';
+
                               }
-                              else if(Ciudad != ''){
+                              else if(document.getElementById("Ciudad").value == ''){
                                 $datalist = 'json-datalistCiudad'; 
                               }
-                              else if(Escuela != ''){
-                                $datalist = 'json-datalistEscuela';  
+                              else if(document.getElementById("Escuela").value == ''){
+                                $datalist = 'json-datalistEscuela'; 
                               }
-                              else if(Turno != ''){
+                              else if(document.getElementById("Turno").value == ''){
                                 $datalist = 'json-datalistTurno'; 
                               }
-                              else if(grado != ''){
-                                $datalist = 'json-datalistgrade';  
+                              else if(document.getElementById("grade").value == ''){
+                                $datalist = 'json-datalistgrade'; 
                               }
-                              else if(Seccion != ''){
+                              else{
                                 $datalist = 'json-datalistSeccion';
                               }
 
