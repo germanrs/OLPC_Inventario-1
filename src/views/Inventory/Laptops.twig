@@ -61,7 +61,7 @@
 				En Manos
 			</th>
 			<th>
-				Guardarar
+				Editar
 			</th>{# 
 			<th>
 				delete
@@ -82,7 +82,7 @@
 				<td class="uuid" data={{ laptop.assignee_id }} >{{ laptop.InHands }}</td>
 
 				<td class="text-right">
-					<a class="button GuardarLaptop" id="GuardarLaptop" data="{{ laptop.laptopID }}"  role="button">Guardarar</a>
+					<a class="button GuardarLaptop" id="GuardarLaptop" data="{{ laptop.laptopID }}"  role="button">Editar</a>
 				</td>{# 
 				<td class="text-right">
 					<a class="button DeleteLaptop" id="DeleteLaptop" data="{{ laptop.laptopID }}" role="button">delete</a>
@@ -90,7 +90,7 @@
 			</tr>
 		{% endfor %}
 	</table>
-	<a class="button" id="GuardarSelectedLaptops" role="button">Guardarar seleccionados</a>
+	<a class="button" id="GuardarSelectedLaptops" role="button">Editar seleccionados</a>
 	{# <a class="button" id="DeleteSelectedLaptops" role="button">delete selected</a> #}
 	<div class="center">
 		<div class="pages">
@@ -153,7 +153,7 @@
 								<datalist id="json-datalistassignee"></datalist>
 								<div class="clear"></div>
 							</div>
-							<a class="button" id="AddLaptop" data="" role="button">agregar</a>
+							<a class="button" id="AddLaptop" data="" role="button">Agregar</a>
 							<p id="alert">Rellene todos los campos!</p>
 						</fieldset>
 					</form>
