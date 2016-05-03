@@ -39,7 +39,7 @@ class LaptopsRepository extends \Knp\Repository {
 	    	$extraWhere .= ' WHERE CONCAT(people.name," ",people.lastname) LIKE ' . $this->db->quote('%'.$filter['searchstring'].'%', \PDO::PARAM_STR);
 	    }
 	    else if($filter['searchstring'] != '' && $filter['genres']=='models.name'){
-	    	$extraWhere .= ' WHERE '.$filter['genres'].' = ' . $this->db->quote('%'.$filter['searchstring'].'%', \PDO::PARAM_STR);
+	    	$extraWhere = ' WHERE '.$filter['genres'].' = ' . $this->db->quote($filter['searchstring'], \PDO::PARAM_STR);
 	    }
 
 	    return $this->db->fetchColumn(
@@ -63,14 +63,14 @@ class LaptopsRepository extends \Knp\Repository {
 
 	    // Title set via Filter
 	    if ($filter['searchstring'] != '' && $filter['genres']!='people.lastname' && $filter['genres']!='models.name') {
-	        $extraWhere .= ' WHERE '.$filter['genres'].' LIKE ' . $this->db->quote('%'.$filter['searchstring'].'%', \PDO::PARAM_STR);
+	        $extraWhere = ' WHERE '.$filter['genres'].' LIKE ' . $this->db->quote('%'.$filter['searchstring'].'%', \PDO::PARAM_STR);
 
 	    }
 	    else if ($filter['searchstring'] != '' && $filter['genres']=='people.lastname'){
-	    	$extraWhere .= ' WHERE CONCAT(people.name," ",people.lastname) LIKE ' . $this->db->quote('%'.$filter['searchstring'].'%', \PDO::PARAM_STR);
+	    	$extraWhere = ' WHERE CONCAT(people.name," ",people.lastname) LIKE ' . $this->db->quote('%'.$filter['searchstring'].'%', \PDO::PARAM_STR);
 	    }
 	    else if($filter['searchstring'] != '' && $filter['genres']=='models.name'){
-	    	$extraWhere .= ' WHERE '.$filter['genres'].' = ' . $this->db->quote('%'.$filter['searchstring'].'%', \PDO::PARAM_STR);
+	    	$extraWhere = ' WHERE '.$filter['genres'].' = ' . $this->db->quote($filter['searchstring'], \PDO::PARAM_STR);
 	    }
 
 	    return $this->db->fetchAll(

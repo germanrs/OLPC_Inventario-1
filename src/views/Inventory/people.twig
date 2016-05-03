@@ -44,16 +44,22 @@
 				Apellido
 			</th>
 			<th>
-				Teléfono
-			</th>
-			<th>
-				Email
-			</th>
-			<th>
 				Región
 			</th>
 			<th>
+				city
+			</th>
+			<th>
 				Escuela
+			</th>
+			<th>
+				Turno
+			</th>
+			<th>
+				Grade
+			</th>
+			<th>
+				Seccion
 			</th>
 			<th>
 				Perfil
@@ -72,10 +78,14 @@
 	        	</td>
 				<td class="name">{{ person.name }}</td>
 				<td class="lastname">{{ person.lastname }} </td>
-				<td class="phone">{{ person.phone }}</td>
-				<td class ="email">{{ person.email }}</td>
+				<td class="phone displaynone">{{ person.phone }}</td>
+				<td class ="email displaynone">{{ person.email }}</td>
 				<td class="place">{{ person.region }}</td>
+				<td class="city ">{{ person.city }}</td>
 				<td class="Schoolname">{{ person.Schoolname }}</td>
+				<td class="Turno ">{{ person.Turno }}</td>
+				<td class="Grade ">{{ person.grade }}</td>
+				<td class="Seccion ">{{ person.Seccion }}</td>
 				<td class="profdescription">{{ person.profdescription }}</td>
 				<td class="id_document displaynone">{{ person.id_document }}</td>
 				<td class="birth_date displaynone">{{ person.birth_date }}</td>
@@ -83,10 +93,7 @@
 				<td class="id_document_created_at displaynone">{{ person.id_document_created_at }}</td>
 				<td class="notes displaynone">{{ person.notes }}</td>
 				<td class="typedescription displaynone">{{ person.typedescription }}</td>
-				<td class="Turno displaynone">{{ person.Turno }}</td>
-				<td class="Seccion displaynone">{{ person.Seccion }}</td>
-				<td class="Grade displaynone">{{ person.grade }}</td>
-				<td class="city displaynone">{{ person.city }}</td>
+				
 				<td class="text-right">
 					<a class="button Editperson" id="Editperson" data="{{ person.id }}"  role="button">Editar</a>
 				</td>

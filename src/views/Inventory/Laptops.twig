@@ -46,7 +46,19 @@
 				Región
 			</th>
 			<th>
+				city
+			</th>
+			<th>
 				Escuela
+			</th>
+			<th>
+				Turno
+			</th>
+			<th>
+				Grade
+			</th>
+			<th>
+				Seccion
 			</th>
 			<th>
 				Versión
@@ -54,7 +66,7 @@
 			<th>
 				Estado
 			</th>
-			<th>
+			<th class="displaynone">
 				uuid
 			</th>
 			<th>
@@ -75,10 +87,14 @@
 				<td class="serial">{{ laptop.serial_number }}</td>
 				<td class="name">{{ laptop.firstname }} {{ laptop.lastname }}</td>
 				<td class="place">{{ laptop.region }}</td>
+				<td class="place">{{ laptop.city }}</td>
 				<td class="place">{{ laptop.Schoolname }}</td>
+				<td class="place">{{ laptop.Turno }}</td>
+				<td class="place">{{ laptop.grade }}</td>
+				<td class="place">{{ laptop.Seccion }}</td>
 				<td class ="model">{{ laptop.modelName }}</td>
 				<td class="status">{{ laptop.description }}</td>
-				<td class="uuid">{{ laptop.uuid }}</td>
+				<td class="uuid displaynone">{{ laptop.uuid }}</td>
 				<td class="uuid" data={{ laptop.assignee_id }} >{{ laptop.InHands }}</td>
 
 				<td class="text-right">

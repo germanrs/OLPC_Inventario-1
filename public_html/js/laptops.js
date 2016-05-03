@@ -332,12 +332,15 @@ $( "#AddLaptop" ).click(function() {
                   var cell9 = row.insertCell(8);
                   var cell10 = row.insertCell(9);
                   var cell11 = row.insertCell(10);
+                  var cell12 = row.insertCell(11);
+                  var cell13 = row.insertCell(12);
+                  var cell14 = row.insertCell(12);
                   cell2.innerHTML = Serial;
                   cell3.innerHTML = People;
-                  cell6.innerHTML = Model;
-                  cell7.innerHTML = Status;
-                  cell8.innerHTML = Uuid;
-                  cell9.innerHTML = ((assignee == People)?'yes':'no');
+                  cell10.innerHTML = Model;
+                  cell11.innerHTML = Status;
+                  cell12.innerHTML = Uuid;
+                  cell13.innerHTML = ((assignee == People)?'yes':'no');
 
                   //if succes get the id of the newest added laptop to make the buttons work
                   $.ajax({
@@ -347,7 +350,7 @@ $( "#AddLaptop" ).click(function() {
                         success: function(data){
                             var data2 = data
                             cell1.innerHTML = '<input type="checkbox" id="'+data2+'" name="checkbox"> '
-                            cell10.innerHTML = '<a class="button EditLaptop" onclick="editlaptop(this)"  id="EditLaptop" data="'+data2+'"  role="button">Editar</a>';
+                            cell14.innerHTML = '<a class="button EditLaptop" onclick="editlaptop(this)"  id="EditLaptop" data="'+data2+'"  role="button">Editar</a>';
                             //hide the form
                              $("#openModal").css("opacity", "0");
                              $("#openModal").css("pointer-events", "none");
@@ -407,9 +410,9 @@ $( "#AddLaptop" ).click(function() {
                       console.log('res3'+res[teller]);
                       var table = document.getElementById("table");
                       table.rows[index].cells[2].innerHTML = People;
-                      table.rows[index].cells[4].innerHTML = Model;
-                      table.rows[index].cells[5].innerHTML = Status;
-                      table.rows[index].cells[8].innerHTML = ((assignee==People)?'Si':'No');
+                      table.rows[index].cells[9].innerHTML = Model;
+                      table.rows[index].cells[10].innerHTML = Status;
+                      table.rows[index].cells[12].innerHTML = ((assignee==People)?'Si':'No');
                       teller++;
 
                       //hide the form
@@ -459,10 +462,10 @@ $( "#AddLaptop" ).click(function() {
                     var table = document.getElementById("table");
                     table.rows[index].cells[1].innerHTML = Serial;
                     table.rows[index].cells[2].innerHTML = People;
-                    table.rows[index].cells[5].innerHTML = Model;
-                    table.rows[index].cells[6].innerHTML = Status;
-                    table.rows[index].cells[7].innerHTML = Uuid;
-                    table.rows[index].cells[8].innerHTML = ((assignee==People)?'yes':'no');
+                    table.rows[index].cells[9].innerHTML = Model;
+                    table.rows[index].cells[10].innerHTML = Status;
+                    table.rows[index].cells[11].innerHTML = Uuid;
+                    table.rows[index].cells[12].innerHTML = ((assignee==People)?'yes':'no');
                     //hide the form
                     $("#openModal").css("opacity", "0");
                     $("#openModal").css("pointer-events", "none");
@@ -529,9 +532,9 @@ function editlaptop(datainput){
   var $ID = $(datainput).attr("data");
   var $serial = table.rows[index].cells[1].innerHTML;
   var $name = table.rows[index].cells[2].innerHTML;
-  var $model = table.rows[index].cells[5].innerHTML;
-  var $status = table.rows[index].cells[6].innerHTML;
-  var $uuid = table.rows[index].cells[7].innerHTML;
+  var $model = table.rows[index].cells[9].innerHTML;
+  var $status = table.rows[index].cells[10].innerHTML;
+  var $uuid = table.rows[index].cells[11].innerHTML;
   document.getElementById("AddLaptop").setAttribute("data", $ID);
   document.getElementById("AddLaptop").setAttribute("index", index);
   document.getElementById("Serial").value = $serial;
@@ -539,7 +542,7 @@ function editlaptop(datainput){
   document.getElementById("People").value = $name;
   document.getElementById("Status").value = $status;
   document.getElementById("Uuid").value = $uuid;
-  var assignee_id = table.rows[index].cells[8].getAttribute("data");
+  var assignee_id = table.rows[index].cells[12].getAttribute("data");
   var postData = 
           {
               "assignee_id":assignee_id
