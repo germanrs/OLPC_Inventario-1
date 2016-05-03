@@ -7,6 +7,8 @@ SetDepartments();
 SetStaticDataTurno('Turno','json-datalistTurno');
 SetStaticDataSeccion('Seccion','json-datalistSeccion');
 
+
+
 //set the data from the department list
 function SetDepartments(){
   var postData = 

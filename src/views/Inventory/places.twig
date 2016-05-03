@@ -82,7 +82,7 @@
 					nombre de host del servidor
 				</th>
 				<th>
-					Editar
+					Guardarar
 				</th>
 				<th>
 					Eliminar
@@ -144,5 +144,6 @@
 </div>
 {% endblock %}
 {% block pageScripts %}
+	<script src="{{ app.request.baseUrl }}/js/general.js"></script>
 <script src="{{ app.request.baseUrl }}/js/places.js"></script>
 {% endblock %}

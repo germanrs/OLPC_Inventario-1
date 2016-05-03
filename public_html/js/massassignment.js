@@ -29,6 +29,8 @@ function Fserial(){
 	}
 }
 
+
+
 //when assignall is clicked, send all the data to the server and do the assignments
 $( "#assignall" ).click(function() {
 

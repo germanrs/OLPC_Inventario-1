@@ -59,7 +59,7 @@
 				Perfil
 			</th>
 			<th>
-				Editar
+				Guardarar
 			</th> 
 			<th>
 				Eliminar
@@ -88,7 +88,7 @@
 				<td class="Grade displaynone">{{ person.grade }}</td>
 				<td class="city displaynone">{{ person.city }}</td>
 				<td class="text-right">
-					<a class="button Editperson" id="Editperson" data="{{ person.id }}"  role="button">Editar</a>
+					<a class="button Guardarperson" id="Guardarperson" data="{{ person.id }}"  role="button">Guardarar</a>
 				</td>
 				<td class="text-right">
 					<a class="button DeletePerson" id="DeletePerson" data="{{ person.id }}" role="button">Eliminar</a>
@@ -96,7 +96,7 @@
 			</tr>
 		{% endfor %}
 	</table>
-	<a class="button" id="EditSelectedPeople" role="button">Editar seleccionados</a>
+	<a class="button" id="GuardarSelectedPeople" role="button">Guardarar seleccionados</a>
 	<a class="button" id="DeleteSelectedPeople" role="button">Eliminar Seleccionados</a>
 	<div class="center">
 		<div class="pages">
@@ -228,5 +228,6 @@
 </div>
 {% endblock %}
 {% block pageScripts %}
+	<script src="{{ app.request.baseUrl }}/js/general.js"></script>
 <script src="{{ app.request.baseUrl }}/js/people.js"></script>
 {% endblock %}

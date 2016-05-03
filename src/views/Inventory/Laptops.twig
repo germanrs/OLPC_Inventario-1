@@ -61,7 +61,7 @@
 				En Manos
 			</th>
 			<th>
-				Editar
+				Guardarar
 			</th>{# 
 			<th>
 				delete
@@ -82,7 +82,7 @@
 				<td class="uuid" data={{ laptop.assignee_id }} >{{ laptop.InHands }}</td>
 
 				<td class="text-right">
-					<a class="button EditLaptop" id="EditLaptop" data="{{ laptop.laptopID }}"  role="button">Editar</a>
+					<a class="button GuardarLaptop" id="GuardarLaptop" data="{{ laptop.laptopID }}"  role="button">Guardarar</a>
 				</td>{# 
 				<td class="text-right">
 					<a class="button DeleteLaptop" id="DeleteLaptop" data="{{ laptop.laptopID }}" role="button">delete</a>
@@ -90,7 +90,7 @@
 			</tr>
 		{% endfor %}
 	</table>
-	<a class="button" id="EditSelectedLaptops" role="button">Editar seleccionados</a>
+	<a class="button" id="GuardarSelectedLaptops" role="button">Guardarar seleccionados</a>
 	{# <a class="button" id="DeleteSelectedLaptops" role="button">delete selected</a> #}
 	<div class="center">
 		<div class="pages">
@@ -164,7 +164,7 @@
 </div>
 {% endblock %}
 {% block pageScripts %}
-
+<script src="{{ app.request.baseUrl }}/js/general.js"></script>
 <script src="{{ app.request.baseUrl }}/js/laptops.js"></script>
 
 {% endblock %}

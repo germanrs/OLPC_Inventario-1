@@ -47,7 +47,7 @@
 		<tr>
 			<th>Nombre de Usuario</th>
 			<th>Perfil</th>
-			<th>Editar</tH>
+			<th>Guardarar</tH>
 			<tH>Eliminar</tH>
 		</tr>
 	</table>
@@ -58,7 +58,7 @@
 <div id="openModal" class="modalDialog">
 	<div>
 		<a id="CloseAddModal"  class="close">X</a>
-		<h3 id="change">Editar Usuario</h3>
+		<h3 id="change">Guardarar Usuario</h3>
 		<div class="clear"></div>
 		<div class="well clearfix" id="addUserForm">
 			<form novalidate="novalidate" role="form">
@@ -106,7 +106,7 @@
 						</div>
 					</div>
 					<a class="button hidden" id="AddPerson" data="" role="button">Agregar</a>
-					<a class="button" id="EditPerson" data="" role="button">Agregar</a>
+					<a class="button" id="GuardarPerson" data="" role="button">Agregar</a>
 					<p id="alert">Rellene todos los campos!</p>
 				</fieldset>
 			</form>
@@ -116,5 +116,6 @@
 
 {% endblock %}
 {% block pageScripts %}
+	<script src="{{ app.request.baseUrl }}/js/general.js"></script>
 	<script src="{{ app.request.baseUrl }}/js/Admin.js"></script>
 {% endblock %}

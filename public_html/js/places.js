@@ -47,6 +47,8 @@ function SetDepartments(){
   });
 } 
 
+
+
 //set the data of a datalist
 //input = ID of textbox
 //dataliist = id of datalist
