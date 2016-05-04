@@ -45,12 +45,13 @@
 	</div>
 	<table class="responstable" id="table">
 		<tr>
+			<th><input type="checkbox" id="checkallboxes" name="checkbox"> </th>
 			<th>Nombre de Usuario</th>
 			<th>Perfil</th>
-			<th>Guardarar</tH>
-			<tH>Eliminar</tH>
+			<th>Editar</th>
 		</tr>
 	</table>
+	<a class="button" id="deleteSelected" role="button">Eliminar Seleccionados</a>
 	<a class="button" id="addUser" role="button">Agregar Usuario</a>
 </div>
 {% endif %}
@@ -108,6 +109,28 @@
 					<a class="button hidden" id="AddPerson" data="" role="button">Agregar</a>
 					<a class="button" id="EditPerson" data="" role="button">Agregar</a>
 					<p id="alert">Rellene todos los campos!</p>
+				</fieldset>
+			</form>
+		</div>
+	</div>
+</div>
+
+<div id="openModal2" class="modalDialog">
+	<div>
+		<a id="CloseAddModal2"  class="close">X</a>
+		<h3 id="change">Eliminar Usuario</h3>
+		<div class="clear"></div>
+		<div class="well clearfix" id="addUserForm">
+			<form novalidate="novalidate" role="form">
+				<fieldset>
+					<div class="form-group">
+						<div id="labelDelete" style="text-align:center">
+							Esta seguro de eliminar los registros seleccionados?
+						</div>
+						<hr>
+						<a style="margin-left: 10rem" class="button" id="confirmDelete" role="button">Si</a>
+						<a class="button" id="cancelDelete" role="button">Cancelar</a>
+					</div>
 				</fieldset>
 			</form>
 		</div>
