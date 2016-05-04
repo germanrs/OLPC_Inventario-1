@@ -409,8 +409,8 @@ function editPerson(usuario, perfil, clave){
 						
 						var index = $("#EditPerson").attr("index");
 						var table = document.getElementById("table");
-						table.rows[index].cells[0].innerHTML = usuario;
-						table.rows[index].cells[1].innerHTML = perfil;
+						table.rows[index].cells[1].innerHTML = usuario;
+						table.rows[index].cells[2].innerHTML = perfil;
 						
 						$("#openModal").css("opacity", "0");
 		                $("#openModal").css("pointer-events", "none");
@@ -509,10 +509,11 @@ $("#AddPerson").on("click", function(){
 							var cell1 = row.insertCell(1);
 							var cell2 = row.insertCell(2);
 							var cell3 = row.insertCell(3);
-							cell0.innerHTML = jsonOptions[0]['usuario'];
-							cell1.innerHTML = jsonOptions[0]['description'];
-							cell2.innerHTML = '<a class="button EditUser" onclick="Edituser(this)"  id="EditUser" data="'+jsonOptions[0]['id']+'"  role="button">Editar</a>';
-							cell3.innerHTML = '<a class="button DeleteUser" onclick="Deleteuser(this)" id="DeleteUser" data="'+jsonOptions[0]['id']+'" role="button">Eliminar</a>'; 
+							cell0.innerHTML = '<input type="checkbox" id="'+jsonOptions[0]['id']+'" name="checkbox"> '
+							cell1.innerHTML = jsonOptions[0]['usuario'];
+							cell2.innerHTML = jsonOptions[0]['description'];
+							cell3.innerHTML = '<a class="button EditUser" onclick="Edituser(this)"  id="EditUser" data="'+jsonOptions[0]['id']+'"  role="button">Editar</a>';
+							//cell4.innerHTML = '<a class="button DeleteUser" onclick="Deleteuser(this)" id="DeleteUser" data="'+jsonOptions[0]['id']+'" role="button">Eliminar</a>'; 
 
 							$("#openModal").css("opacity", "0");
 			                $("#openModal").css("pointer-events", "none");
