@@ -409,8 +409,8 @@ function editPerson(usuario, perfil, clave){
 						
 						var index = $("#EditPerson").attr("index");
 						var table = document.getElementById("table");
-						table.rows[index].cells[1].innerHTML = usuario;
-						table.rows[index].cells[2].innerHTML = perfil;
+						table.rows[index].cells[2].innerHTML = usuario;
+						table.rows[index].cells[3].innerHTML = perfil;
 						
 						$("#openModal").css("opacity", "0");
 		                $("#openModal").css("pointer-events", "none");
