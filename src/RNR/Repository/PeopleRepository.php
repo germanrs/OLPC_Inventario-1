@@ -57,12 +57,15 @@ class PeopleRepository extends \Knp\Repository {
 				INNER JOIN profiles on performs.profile_id = profiles.id
 				INNER JOIN places on performs.place_id = places.id
 				INNER JOIN place_types on place_types.id = places.place_type_id
+				LEFT JOIN users on users.person_id = people.id
+				where users.id is null
 				ORDER BY people.id DESC
         		LIMIT ' . (int) (($curPage - 1) * $numItemsPerPage) . ',' . (int) ($numItemsPerPage));
 	}
 
 	public function fetchTotalpeople() {
-		return $this->db->fetchColumn('SELECT COUNT(*) FROM people');
+		return $this->db->fetchColumn('SELECT COUNT(*) FROM people LEFT JOIN users on users.person_id = people.id
+				where users.id is null');
 	}
 
 	public function fetchTotalFilterpeople($filter) {
@@ -80,6 +83,8 @@ class PeopleRepository extends \Knp\Repository {
 				INNER JOIN profiles on performs.profile_id = profiles.id
 				INNER JOIN places on performs.place_id = places.id
 				INNER JOIN place_types on place_types.id = places.place_type_id
+				LEFT JOIN users on users.person_id = people.id
+				where users.id is null
 				'. $extraWhere .'
 				ORDER BY '.$filter['genres'].' DESC
 
@@ -104,6 +109,8 @@ class PeopleRepository extends \Knp\Repository {
 				INNER JOIN profiles on performs.profile_id = profiles.id
 				INNER JOIN places on performs.place_id = places.id
 				INNER JOIN place_types on place_types.id = places.place_type_id
+				LEFT JOIN users on users.person_id = people.id
+				where users.id is null
 				'. $extraWhere .'
 				ORDER BY '.$filter['genres'].' DESC
 
