@@ -6,15 +6,15 @@ fieldset{
 
 .labels h2{
 	float: left;
-	margin-left: 5rem;
+	margin-left: 1rem;
 }
 
 .labels h2:first-child{
-	margin-right: 6.4rem;
+	margin-right: 3.4rem;
 }
 
 input[type="text"]:first-child{
-	margin-right: 5rem;
+	margin-right: 4.6rem;
 }
 
 input[type="text"]{

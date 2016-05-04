@@ -140,6 +140,8 @@ function SetData(input, datalist){
   request.send();
 }
 
+
+
 //if the "all checkboxes box" is selected, select all the textboxes
 $( "#chechallboxes" ).click(function() {
 
@@ -398,13 +400,29 @@ $( "#EditSelectedPeople" ).click(function() {
   }
 });
 
-//delete multiple people from the database
-$( "#DeleteSelectedPeople" ).click(function() {
+//get all the selected items and delete them
+$( "#DeleteSelectedPeople" ).on('click', function(){
+  $("#openModal2").css("opacity", "1");
+  $("#openModal2").css("pointer-events", "auto");
+});
+
+$("#confirmDelete").on("click", function(){
+  //get all the selected items
   var checkedBoxes = getCheckedBoxes("checkbox");
-  console.log(checkedBoxes);
+  //loop over the selected items and delete them
   for (box in checkedBoxes) {
     deleteperson(checkedBoxes[box]);
   }
+  $("#openModal2").css("opacity", "0");
+  $("#openModal2").css("pointer-events", "none");
+});
+$( "#CloseAddModal2" ).click(function() {
+   $("#openModal2").css("opacity", "0");
+   $("#openModal2").css("pointer-events", "none");
+});
+$( "#cancelDelete" ).click(function() {
+   $("#openModal2").css("opacity", "0");
+   $("#openModal2").css("pointer-events", "none");
 });
 
 //do an ajax request to add an person

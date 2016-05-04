@@ -463,17 +463,26 @@ $( ".Editplace" ).click(function() {
   Editplace(this);
 });
 
-//call the function to delete the place
-$( ".Deleteplace" ).click(function() {
-    Deleteplace(this);
+//get all the selected items and delete them
+$( "#DeleteSelectedplaces" ).on('click', function(){
+  $("#openModal2").css("opacity", "1");
+  $("#openModal2").css("pointer-events", "auto");
 });
 
-//delete all the selected places
-$( "#DeleteSelectedplaces" ).click(function() {
+$("#confirmDelete").on("click", function(){
+  //get all the selected items
   var checkedBoxes = getCheckedBoxes("checkbox");
+  //loop over the selected items and delete them
   for (box in checkedBoxes) {
     Deleteplace(checkedBoxes[box]);
   }
+  $("#openModal2").css("opacity", "0");
+  $("#openModal2").css("pointer-events", "none");
+});
+
+//call the function to delete the place
+$( ".Deleteplace" ).click(function() {
+    Deleteplace(this);
 });
 
 //add a place
@@ -664,38 +673,50 @@ $( "#AddPlace" ).click(function() {
 
 //delete a place
 function Deleteplace(datainput){
-  var r = confirm("Estas seguro que deseas eliminar este lugar");
-  if (r == true) {
-    var ID = $(datainput).attr("data");
-    //get the index of the deleted row
-    var index = $(datainput).closest("tr").index();
+  console.log(datainput);
 
-    //set the data for an ajax request
-    var postData = 
-            {
-                "id":ID
-            }
+  var ID = $(datainput).attr("data");
+  if(ID == null){
+    ID = $(datainput).attr("id");
+  };
+  //get the index of the deleted row
+  var index = $(datainput).closest("tr").index();
 
-    //Make a json from the data 
-    var dataString = JSON.stringify(postData);
+  //set the data for an ajax request
+  var postData = 
+          {
+              "id":ID
+          }
 
-    //make an ajax request to the php server to delete a place to the database
-    $.ajax({
-            method: "POST",
-            data: {action:dataString},
-            url: "../../Ajax/deleteplace/",
-            success: function(data){
-                $("#alert").html(data);
-                var index = $(datainput).closest("tr").index();
-                console.log(data);
-                document.getElementById("table").deleteRow(index); 
-            },
-            error: function(e){
-                $("#alert").html(e);
-            }
-    });
-  }
+  //Make a json from the data 
+  var dataString = JSON.stringify(postData);
+
+  //make an ajax request to the php server to delete a place to the database
+  $.ajax({
+          method: "POST",
+          data: {action:dataString},
+          url: "../../Ajax/deleteplace/",
+          success: function(data){
+              $("#alert").html(data);
+              var index = $(datainput).closest("tr").index();
+              console.log(data);
+              document.getElementById("table").deleteRow(index); 
+          },
+          error: function(e){
+              $("#alert").html(e);
+          }
+  });
 }
+
+
+$( "#CloseAddModal2" ).click(function() {
+   $("#openModal2").css("opacity", "0");
+   $("#openModal2").css("pointer-events", "none");
+});
+$( "#cancelDelete" ).click(function() {
+   $("#openModal2").css("opacity", "0");
+   $("#openModal2").css("pointer-events", "none");
+});
   
 // when the function edotplace is been called, set the form with the proper data to edit.
 function Editplace(datainput){
@@ -722,6 +743,8 @@ function Editplace(datainput){
   $("#openModal").css("opacity", "1");
   $("#openModal").css("pointer-events", "auto");
 }
+
+
 
 // Pass the checkbox name to the function
 function getCheckedBoxes(chkboxName) {
@@ -801,3 +824,4 @@ function setDataInTable(){
     }
   }); 
 }
+

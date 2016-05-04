@@ -12,20 +12,21 @@ $( ".serial" ).last().keyup(function() {
 //after this swap to the next field
 function Fbarcode(){
 	if($( ".barcode" ).last().val().length==10){
-		console.log($( ".barcode" ).last().val());
-		var div = document.createElement('div');
-		div.innerHTML = '<input type="text" class="serial" id="serial" name="serial"  onkeyup="Fserial()" value="" placeholder="Serial..."><input type="text" onkeyup="Fbarcode()"  class="barcode" name="barcode"  id="barcode" value="" placeholder="Código de bar..."><p id="alert" name="error"></p><div class="clear rows"></div>';	
-		div.setAttribute('class', 'input'); 
-		$( ".form-group" ).last().append(div);
-		$( ".serial" ).last().focus();
+		console.log($( ".serial" ).last().val());
+    $( ".serial" ).last().focus();
 	}
 }
 
 //swap to the next field if the length of .serial is 10
 function Fserial(){
 	if($( ".serial" ).last().val().length==11){
-		console.log($( ".serial" ).last().val());
-		$( ".barcode" ).last().focus();
+    console.log($( ".barcode" ).last().val());
+    var div = document.createElement('div');
+    div.innerHTML = 
+    '<input type="text" onkeyup="Fbarcode()"  class="barcode" name="barcode"  id="barcode" value="" placeholder="Código de bar..."><input type="text" class="serial" id="serial" name="serial"  onkeyup="Fserial()" value="" placeholder="Serial..."><p id="alert" name="error"></p><div class="clear rows"></div>';  
+    div.setAttribute('class', 'input'); 
+    $( ".form-group" ).last().append(div);
+    $( ".barcode" ).last().focus();
 	}
 }
 
