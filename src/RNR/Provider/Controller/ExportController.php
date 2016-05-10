@@ -182,6 +182,7 @@ class ExportController implements ControllerProviderInterface {
 	            }
 	        }
 	    }
+	    
 		// create new PDF document
 		$pdf = new \TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, false, 'ISO-8859-1', false);
 
@@ -305,8 +306,22 @@ class ExportController implements ControllerProviderInterface {
 					else{
 						$namesPerSchoolClass .= '<tr><td width="320"  border="1" height="35" style="font-size: x-large;" cellpadding="12">'.((strlen($child['fullname'])>20)?substr($child['fullname'],0,20).'...':$child['fullname']).' '.$place_type_id.$secciond_id.'</td>';
 					}
-					$params = $pdf->serializeTCPDFtagParameters(array($child['barcode'], 'C128A', '', '', 55, 15, 0.4, array('position'=>'C', 'border'=>false, 'padding'=>1, 'fgcolor'=>array(0,0,0), 'bgcolor'=>array(255,255,255), 'text'=>true, 'font'=>'helvetica', 'fontsize'=>5, 'stretchtext'=>4), 'N'));
-					$barcodesoffallchildren.= '<td width="214"><div><small>'.((strlen($child['fullname'])>22)?substr($child['fullname'],0,22).'...':$child['fullname'])."<br>". $class['name'].'</small></div><tcpdf method="write1DBarcode" params="'.$params.'" /></td>';
+
+					//generate barcodes in HTML
+					$params = $pdf->serializeTCPDFtagParameters(array(
+																	$child['barcode'],
+																	'C128A', '', '', 55, 15, 0.4, 
+																	array('position'=>'C', 'border'=>false, 'padding'=>1, 
+																		'fgcolor'=>array(0,0,0), 
+																		'bgcolor'=>array(255,255,255), 
+																		'text'=>true, 
+																		'font'=>'helvetica', 'fontsize'=>5, 'stretchtext'=>4)
+																	, 'N'));
+
+					//Implement the barcodes into a table
+					$barcodesoffallchildren.= '<td width="214"><div><small>'.
+												((strlen($child['fullname'])>22)?substr($child['fullname'],0,22).'...':$child['fullname']).
+												"<br>". $class['name'].'</small></div><tcpdf method="write1DBarcode" params="'.$params.'" /></td>';
 					
 					if($teller % 24 == 0 && $total != $teller){
 						$barcodesoffallchildren.= '</tr></table><table cellspacing="0" cellpadding="1" border="1"  style="text-align: center; page-break-before: always;" ><tr>';		

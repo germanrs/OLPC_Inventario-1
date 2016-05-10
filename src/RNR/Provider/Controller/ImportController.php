@@ -678,7 +678,7 @@ class ImportController implements ControllerProviderInterface {
 			$extension=$_FILES["uploadformescuelas"]["name"]["file"];	
 
 			//if the file is an excel file go further
-			if(strpos(substr($extension,-4),'lsx') || strpos(substr($extension,-4),'xlsx'))
+			if(strpos(substr($extension,-4),'xlsx'))
 		    {
 		    	//if the file exists, go on
 		    	if ( $_FILES["uploadformescuelas"]["tmp_name"]['file'] )
@@ -705,25 +705,57 @@ class ImportController implements ControllerProviderInterface {
 
 						//get the global data
 						if($sheetName == 'Cierre Global'){
+
+							//get all the details of the places
 							$places = explode(" : ", $sheetData[1][1]);
+
+							//get the department id
 							$departmentid = $app['db.places']->getDepartmentByName($places[0]);
+
+							//get the department id
 							$cityID = $app['db.places']->getitemByNameandAncestorID($places[1], $departmentid);
+
+							//get the department id
 							$schoolID = $app['db.places']->getitemByNameandAncestorID($places[2], $cityID);
+
+							//get the schoolname
 							$schoolname = $places[2];
+
+							//set the schoolid in placeID
 							$placeID=$schoolID;
 
 							//if the school not exists, create it and add it to the database + dependencies
 							if(empty($schoolID)){
+
+								//create the school
 								$school = array('created_at' => date("Y-m-d"),'name' => $places[2],'place_id' => $cityID,'place_type_id' => 4);
+
+								//add the school
 								$app['db.places']->insert($school);
+
+								//get the id of the school
 								$schoolid = $app['db.places']->Lastadded();
+
+								//get all the ancesters of the city
 								$Ancestors=$app['db.places_dependencies']->fetchAllAncestors($cityID);
+
+								//add all the dependency's to the school
 								foreach ($Ancestors as $waarde) {
+
+									//create the dependency
 								 	$dependency = array('descendant_id' => $schoolid, 'ancestor_id' => $waarde['ancestor_id']);
+
+								 	//add the dependency
 									$app['db.places_dependencies']->insert($dependency);
 								}
+
+								//create the dependency that points to itself
 								$dependency = array('descendant_id' => $schoolid, 'ancestor_id' => $schoolid);
+
+								//add the dependency
 								$app['db.places_dependencies']->insert($dependency);
+
+								//set the schoolid in the variable placeID
 								$placeID= $app['db.places']->getSchool($places[2],$cityID);
 							}
 						}

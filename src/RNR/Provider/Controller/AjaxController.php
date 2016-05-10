@@ -231,14 +231,21 @@ class AjaxController implements ControllerProviderInterface {
 	}
 
 	/**
-	 * home page
+	 * model page
 	 * @param Application $app An Application instance
-	 * @return string A blob of HTML
+	 * @return All posible laptop models
 	 */
 	public function model(Application $app) {
+		var_dump($_POST);
 		
+
+		//fetch all models from the db
 		$data = $app['db.models']->fetchAll();
+
+		//dump the models in the twig file
 		echo json_encode($data);
+
+		//render the twig file
 		return $app['twig']->render('Ajax/Dump.twig');	
 	}
 
@@ -557,51 +564,95 @@ class AjaxController implements ControllerProviderInterface {
 	}
 
 	/**
-	 * home page
-	 * @param Application $app An Application instance
-	 * @return string A blob of HTML
+	 * ajax php file to add a laptop
+	 * @param all the params to create a laptop
+	 * @return return a statement of the proces
 	 */
 	public function addlaptop(Application $app) {
+
+		// check if user is already logged in
+		if (!$app['session']->get('user') || !($app['db.people']->fetchAdminPerson($app['session']->get('user')))) {
+
+			//redirect to login page if user is not logged id
+			return $app->redirect($app['url_generator']->generate('Auth.Login')); 
+		}
+
+
 		if(isset($_POST['action'])){
+
+			//decode the json object
 			$obj = json_decode($_POST['action'], true);
 			try {
+
+				//get the id of the model
 				$obj['model_id'] = $app['db.models']->getModel($obj['model_id']);
+
+				//get the id of the owner
 				$obj['owner_id'] = $app['db.people']->getPerson($obj['owner_id']);
+
+				//get the id of the status
 				$obj['status_id'] = $app['db.statuses']->getStatus($obj['status_id']);
+
+				//get the id of the assignd user
 				$obj['assignee_id'] = $app['db.people']->getPerson($obj['assignee_id']);
 			} catch (Exception $e) {
 			}
 			
+			//if the id's does not exist, throw error
 			if(ctype_digit($obj['model_id']) && ctype_digit($obj['owner_id']) && ctype_digit($obj['status_id']) && ctype_digit($obj['assignee_id'])){
+				
+				//check if the laptop already exist.
 				$value = $app['db.laptops']->checkIfLaptopAlreadyExists($obj['serial_number'],$obj['uuid']);
+				
+				//if laptop not exist
 				if($value==0){
+
+					//set a parameter to null, it is not used in the db
 					$obj['last_activation_date'] = null;
 					try {
+
+						//insert the laptop into the db
 						$app['db.laptops']->insert($obj);
+
+						//get the id of the newest added laptop
 						$laptopID = $app['db.laptops']->FindnewestId();
+
+						//create a movement
 						$movement = array('created_at' => date("Y-m-d"),'source_person_id' => $obj['assignee_id'], 'destination_person_id' => $obj['assignee_id'],'comment' => 'Manual created', 'movement_type_id'=> 11 ,'laptop_id'=>$laptopID);
+						
+						//add the movement to the database
 						$app['db.movements']->insert($movement);
 						echo "laptop agregan";
 					} catch (Exception $e) {
 						echo "Servidor colapsado, intente más tarde.";
 					}
 				}
+
+				//if laptop id and uuid already exists
 				else if($value==1){
 					echo "uuid de serie y ya está en uso";
 				}
+
+				//if uuid already exist
 				else if($value==2){
 					echo "uuid ya en uso";
 				}
+
+				//if laptop id already exist
 				else{
 					echo "serial ya en uso";
 				}		
 				
 			}
+
+			//the user did not select a laptop/user/state out of the list
 			else{
 				echo 'Seleccione un laptop/usuario/estado de la lista.';
 			}
 			
 		}
+
+		//render the twig file
 		return $app['twig']->render('Ajax/Dump.twig');	
 	}
 

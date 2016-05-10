@@ -293,7 +293,7 @@ $( "#AddLaptop" ).click(function() {
     //add 1 laptop
     if(document.getElementById("AddLaptop").text == 'Add'){
 
-      //set all the data into an array named postdata
+      //Set all the data into an array named postdata
       var postData = 
                   {
                       "serial_number":Serial,
@@ -307,19 +307,21 @@ $( "#AddLaptop" ).click(function() {
                       "last_activation_date":'NULL'
                   }
 
-      //make a json of the postdata
+      //Make a json of the postdata
       var dataString = JSON.stringify(postData);
 
-      //make an ajax request to the php server where you add a laptop to the database
+      //Make an ajax request to the php server where you add a laptop to the database
       $.ajax({
               method: "POST",
               data: {action:dataString},
               url: "../../Ajax/addlaptop/",
               success: function(data){
-                console.log(data);
+
+                //Set the response into the label alert
                 $("#alert").html(data);
+
+                //If the response is 'laptop agregan', add the data to the list
                 if(data=='laptop agregan'){
-                  
                   var table = document.getElementById("table");
                   var row = table.insertRow(1);
                   var cell1 = row.insertCell(0);
