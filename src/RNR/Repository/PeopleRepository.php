@@ -22,8 +22,7 @@ class PeopleRepository extends \Knp\Repository {
 
 	public function fetchAllusersbyfirstletter($name) {
 		return $this->db->fetchAll(
-				'SELECT people.id as id, CONCAT(people.name," ",people.lastname) as name FROM people
-				where people.name LIKE "'.$name.'%" LIMIT 5');
+				'SELECT * FROM (SELECT people.id as id, CONCAT(people.name," ",people.lastname) as name FROM people) as consulta where consulta.name LIKE "'.$name.'%" LIMIT 5');
 	}
 
 
