@@ -4,6 +4,19 @@ var columns = [];
 var rows = [];
 var total=0;
 
+
+
+
+$( ".button" ).click(function() {
+   $("#openModal").css("opacity", "0");
+   $("#openModal").css("pointer-events", "none");
+});
+
+$( "#DownloadBarcodes" ).click(function() {
+   $("#openModal").css("opacity", "1");
+    $("#openModal").css("pointer-events", "auto");
+});
+
 //the function to let the accordion work
 $(document).ready(function() {
     function close_accordion_section() {
@@ -28,6 +41,9 @@ $(document).ready(function() {
  
         e.preventDefault();
     });
+
+    FillDataInDropdowon('json-datalistDepartamento', 'Departamento', 'Departamentohidden', "../Ajax/placesstates/", "Nicaragua",  'Departamento');
+    showdropdowns(1);
 });
 
 
@@ -92,12 +108,31 @@ function changeHref(datainput, formname){
     var Seccion = document.getElementById('Seccion').value;
 
     //set the correct href in the button DownloadBarcodes
-    document.getElementById("DownloadBarcodes").href='barcodes?Departamento='+Departamento+
+    
+    document.getElementById("etiquetas").setAttribute('data','barcodes?Departamento='+Departamento+
                                                                 '&Ciudad='+Ciudad+
                                                                 '&Escuela='+Escuela+
                                                                 '&Turno='+Turno+
                                                                 '&grado='+grado+
-                                                                '&Seccion='+Seccion;
+                                                                '&Seccion='+Seccion+
+                                                                '&selection=etiquetas');
+
+
+    document.getElementById("barras").setAttribute('data','barcodes?Departamento='+Departamento+
+                                                                '&Ciudad='+Ciudad+
+                                                                '&Escuela='+Escuela+
+                                                                '&Turno='+Turno+
+                                                                '&grado='+grado+
+                                                                '&Seccion='+Seccion+
+                                                                '&selection=barras');
+
+    document.getElementById("ambos").setAttribute('data','barcodes?Departamento='+Departamento+
+                                                                '&Ciudad='+Ciudad+
+                                                                '&Escuela='+Escuela+
+                                                                '&Turno='+Turno+
+                                                                '&grado='+grado+
+                                                                '&Seccion='+Seccion+
+                                                                '&selection=ambos');
 
     //set the data in the excel file
     document.getElementById("DownloadFileasExcel").href='excel?coloms='+boxlist+
@@ -242,7 +277,7 @@ function GetData(datainput, formname){
                         }
 
                         //set the total number of laptops
-                        document.getElementById("total").innerHTML = "total laptops :"+total; 
+                        document.getElementById("total").innerHTML = "computadoras totales :"+total; 
                         rows = jsonOptions; 
                         $width = [0,0,0,0,0,0,0,0];
                         var j = 1;
@@ -363,7 +398,7 @@ $('#DownloadFile').click(function () {
     }
 
     //create a new pdf file 
-    var doc = new jsPDF('l', 'pt');
+    var doc = new jsPDF('p', 'pt');
 
     //set the font siez
     doc.setFontSize(14);
@@ -384,9 +419,11 @@ $('#DownloadFile').click(function () {
             doc.autoTable(columns, rows[i]['data'], {
 
             //this is all some beautiful design
+            startY: 60,
             styles: {
                 fillStyle: 'DF',
                 overflow: 'linebreak',
+                halign: "center"
             },
             headerStyles: {
                 fillColor: [22,127,146],
@@ -408,28 +445,31 @@ $('#DownloadFile').click(function () {
             },
             margin: {top: 80}
             });
+
+            doc.addPage();
         }
 
         //not the first class
         else{
 
             //set the name of the class in the pdf
-            doc.text(''+rows[i]['name'], 40, doc.autoTableEndPosY() + 30);
+            doc.text(''+rows[i]['name'], 40, 30);
 
             //set the data from the coloms and the rows in the pdf file
             doc.autoTable(columns, rows[i]['data'], {
 
             //this is all some beautiful design
-            startY: doc.autoTableEndPosY() + 40,
+            startY: 40,
             styles: {
                 fillStyle: 'DF',
                 overflow: 'linebreak',
+                halign: "center"
             },
             headerStyles: {
                 fillColor: [22,127,146],
                 textColor: 255,
                 fontSize: 15,
-                rowHeight: 30
+                rowHeight: 30   
             },
             bodyStyles: {
                 fillColor: [255, 255, 255],
@@ -445,6 +485,9 @@ $('#DownloadFile').click(function () {
             },
             margin: {top: 80}
             });
+
+            doc.addPage();
+            y = 0 ;
         }
         
     }
@@ -453,15 +496,8 @@ $('#DownloadFile').click(function () {
     doc.save('table.pdf');
 });
 
-//if the country changes, change the data in the following fields
-$('#Pais').on('input', function(){
-    var options = document.getElementById("json-datalistPais").options
-    for (var i=0;i<options.length;i++){
-       if (options[i].value == $(this).val()) 
-         FillDataInDropdowon('json-datalistDepartamento', 'Departamento', 'Departamentohidden', "../Ajax/placesstates/", this,  'Departamento');
-    }
-    showdropdowns(1);
-});
+
+
 
 //if the Departamento changes, change the data in the following fields
 $('#Departamento').on('input', function(){
@@ -640,6 +676,9 @@ function clearChildren( parent_id ) {
 //fill the data in the dropdown
 function FillDataInDropdowon(datalist, item2, displayitem, ajax, element, item3){
     $value = element.value;
+    if(element.value==null){
+        $value = element;
+    }
     var Departamento = document.getElementById('Departamento').value;
     var Ciudad = document.getElementById('Ciudad').value;
     var Escuela = document.getElementById('Escuela').value;

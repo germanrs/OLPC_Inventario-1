@@ -220,12 +220,13 @@ class LaptopsRepository extends \Knp\Repository {
 	    //return 'SELECT '.$obj['coloms'].' FROM laptops INNER JOIN statuses ON statuses.id = laptops.status_Id INNER JOIN models on models.id = laptops.model_id INNER JOIN people on people.id = laptops.owner_id INNER JOIN performs on performs.person_id = laptops.owner_id INNER JOIN places on performs.place_id = places.id' . $extraWhere .' ' . $orderby;
 	
 	    return $this->db->fetchAll(
-				'SELECT '.$obj['coloms'].' FROM  people
+				'SELECT @rownum := @rownum + 1 as Nr,'.$obj['coloms'].' FROM  people
 				LEFT JOIN laptops on people.id = laptops.owner_id 
 				LEFT JOIN statuses ON statuses.id = laptops.status_Id 
 				LEFT JOIN models on models.id = laptops.model_id 
 				INNER JOIN performs on performs.person_id = people.id 
 				INNER JOIN places on performs.place_id = places.id
+				cross join (select @rownum := 0) r
 				where performs.place_id = '.$placeID.' ' . $extraWhere . ' ' . $orderby);
 	}
 

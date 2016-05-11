@@ -19,17 +19,17 @@
 						<h3>Incluir</h3>
 						<form action="includelaptops" id="laptopsForm" >
 							<div class="checkboxes">
-								<input type="checkbox" name="laptops" value="CONCAT(people.name,' ',people.lastname) as name"><div class="boxlabel">Propietario</div>
-								<input type="checkbox" name="laptops" value="laptops.serial_number"><div class="boxlabel">Número serial</div>
-								<input type="checkbox" name="laptops" value="models.name as model"><div class="boxlabel">Versión</div>
+								<input id="1" type="checkbox" name="laptops" value="CONCAT(people.name,' ',people.lastname) as name"><label for="1" class="boxlabel">Propietario</label>
+								<input id="2" type="checkbox" name="laptops" value="laptops.serial_number"><label for="2" class="boxlabel">Número serial</label>
+								<input id="3" type="checkbox" name="laptops" value="models.name as model"><label for="3" class="boxlabel">Versión</label>
 								<div class="clear"></div>
-								<input type="checkbox" name="laptops" value="statuses.description as status"><div class="boxlabel">Estado</div>
-								<input type="checkbox" name="laptops" value="laptops.uuid"><div class="boxlabel">uuid</div>
-								<input type="checkbox" onclick="ShowCountry()" name="laptops" value="places.name as place"><div class="boxlabel">Localidad</div>
+								<input id="4" type="checkbox" name="laptops" value="statuses.description as status"><label for="4" class="boxlabel">Estado</label>
+								<input id="5" type="checkbox" name="laptops" value="laptops.uuid"><label for="5" class="boxlabel">uuid</label>
+								
 								<div class="clear"></div>
-								<input type="checkbox" name="laptops" value="people.id_document"><div class="boxlabel">Id del documento</div>
-								<input type="checkbox" name="laptops" value="people.barcode"><div class="boxlabel">Código de bar</div>
-								<input type="checkbox" name="laptops" value="IF (laptops.assignee_id = laptops.owner_id, 'yes' ,'No') AS InHands"><div class="boxlabel">En manos</div>
+								<input id="6" type="checkbox" name="laptops" value="people.id_document"><label for="6" class="boxlabel">Id del documento</label>
+								<input id="7" type="checkbox" name="laptops" value="people.barcode"><label for="7" class="boxlabel">Código de bar</label>
+								<input id="8" type="checkbox" name="laptops" value="IF (laptops.assignee_id = laptops.owner_id, 'yes' ,'No') AS InHands"><label for="8" class="boxlabel">En manos</label>
 							</div>
 							<div class="clear"></div>
 							<div class="label Paishidden">
@@ -181,13 +181,33 @@
 			</table>
 			<a class="button" id="DownloadFile" role="button">Descargar PDF</a>
 			<a class="button" id="DownloadFileasExcel" href="excel?data=AZE&test=123" role="button">Descargar Excel</a>
-			<a class="button" id="DownloadBarcodes" href="excel?data=AZE&test=123" role="button">Descargar barcodes</a>
+			<a class="button" id="DownloadBarcodes" role="button">Descargar barcodes</a>
 		</div>
 	</div>
+
+	<div id="openModal" class="modalDialog">
+			<div>
+				<a id="CloseAddModal"  class="close">X</a>
+				<h3 id="change">Descarga etiquetas y códigos de barras</h3>
+				<div class="clear"></div>
+				<div class="well clearfix" id="addUserForm">
+					<form novalidate="novalidate" role="form">
+						<fieldset>
+							<div class="form-group">
+								<a class="button" id="etiquetas" onclick="window.open(this.getAttribute('data'))"  role="button">descarga etiquetas</a>
+								<a class="button" id="barras" onclick="window.open(this.getAttribute('data'))"  role="button">descarga códigos de barras</a>
+								<a class="button" id="ambos" onclick="window.open(this.getAttribute('data'))"  role="button">descarga ambos</a>
+							</div>
+						</fieldset>
+					</form>
+				</div>
+			</div>
+		</div>
 	
 
 {% endblock %}
 {% block pageScripts %}
+	<script src="{{ app.request.baseUrl }}/js/general.js"></script>
 	<script src="{{ app.request.baseUrl }}/js/JsBarcode.all.min.js"></script>
 	<script src="{{ app.request.baseUrl }}/js/jspdf.min.js"></script>
 	<script src="{{ app.request.baseUrl }}/js/jspdf.debug.js"></script>

@@ -299,18 +299,18 @@ class PlacesRepository extends \Knp\Repository {
 				'SELECT places.id, places.name from places
 				inner join place_dependencies on descendant_id = places.id
 				where places.place_type_id = 12
-				and ancestor_id ='.$idschool.' order by name DESC');
+				and ancestor_id ='.$idschool.' order by name ASC');
 	}
 
 	public function fetchGrade($idTurno) {
 		return $this->db->fetchAll(
 				'SELECT places.id, places.name from places
-				where place_id ='.$idTurno.' order by place_type_id DESC');
+				where place_id ='.$idTurno.' order by place_type_id ASC');
 	}
 
 	public function fetchSeccion($idSeccion) {
 		return $this->db->fetchAll(
 				'SELECT places.id, places.name from places
-				where place_id ='.$idSeccion.' order by name DESC');
+				where place_id ='.$idSeccion.' order by name ASC');
 	}
 }

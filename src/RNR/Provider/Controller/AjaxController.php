@@ -304,6 +304,7 @@ class AjaxController implements ControllerProviderInterface {
 	 */
 	public function placesstates(Application $app) {
 		if(isset($_POST['action'])){
+			
 			$obj = json_decode($_POST['action'], true);
 			$id = $app['db.places']->getPlaceByName($obj['name']);
 			$data = $app['db.places']->fetchstate($id);
@@ -476,7 +477,7 @@ class AjaxController implements ControllerProviderInterface {
 				else if(!empty($schoolid)){
 					$placeid = $schoolid;
 					$teachers = $app['db.laptops']->fetchList($obj,$schoolid);
-					array_push($data, array('name' => $obj['Departamento'].' : '. $obj['Ciudad'].' : '. $obj['Escuela'], 'data' => $teachers));
+					array_push($data, array('name' => $obj['Departamento'].' : '. $obj['Ciudad'].' : '. $obj['Escuela'].' : teachers', 'data' => $teachers));
 					$turnos =  $app['db.places']->fetchTurno($schoolid);
 					foreach ($turnos as $turno) {
 						$grades =  $app['db.places']->fetchGrade($turno['id']);
@@ -493,7 +494,7 @@ class AjaxController implements ControllerProviderInterface {
 					$schools =  $app['db.places']->fetchSchool($cityid);
 					foreach ($schools as $school) {
 						$teachers = $app['db.laptops']->fetchList($obj,$school['id']);
-						array_push($data, array('name' =>  $obj['Departamento'].' : '. $obj['Ciudad'].' : '. $school['name'], 'data' => $teachers));
+						array_push($data, array('name' =>  $obj['Departamento'].' : '. $obj['Ciudad'].' : '. $school['name'].' : teachers', 'data' => $teachers));
 						$turnos =  $app['db.places']->fetchTurno($school['id']);
 						foreach ($turnos as $turno) {
 							$grades =  $app['db.places']->fetchGrade($turno['id']);
@@ -513,7 +514,7 @@ class AjaxController implements ControllerProviderInterface {
 						$schools =  $app['db.places']->fetchSchool($city['id']);
 						foreach ($schools as $school) {
 							$teachers = $app['db.laptops']->fetchList($obj,$school['id']);
-							array_push($data, array('name' => $obj['Departamento'].' : '. $city['name'].' : '. $school['name'], 'data' => $teachers));
+							array_push($data, array('name' => $obj['Departamento'].' : '. $city['name'].' : '. $school['name'].' : teachers', 'data' => $teachers));
 							$turnos =  $app['db.places']->fetchTurno($school['id']);
 							foreach ($turnos as $turno) {
 								$grades =  $app['db.places']->fetchGrade($turno['id']);

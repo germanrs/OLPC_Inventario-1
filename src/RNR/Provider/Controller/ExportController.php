@@ -184,7 +184,7 @@ class ExportController implements ControllerProviderInterface {
 	    }
 	    
 		// create new PDF document
-		$pdf = new \TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, false, 'ISO-8859-1', false);
+		$pdf = new \TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'ISO-8859-1', false);
 
 		// set document information
 		$pdf->SetCreator(PDF_CREATOR);
@@ -356,7 +356,9 @@ class ExportController implements ControllerProviderInterface {
 				$pdf->SetFont('helvetica', '', 13);
 
 				//write the html
-				$pdf->writeHTML($tbl, true, 0, true, 0);
+				if($_GET["selection"] == 'etiquetas' || $_GET["selection"] == 'ambos'){
+					$pdf->writeHTML($tbl, true, 0, true, 0);
+				}
 
 				//add a proper anding to the barcodes list
 				if(substr($barcodesoffallchildren,-4)=='<tr>'){
@@ -368,7 +370,10 @@ class ExportController implements ControllerProviderInterface {
 						'</table>';
 				}
 				$pdf->SetFont('helvetica', '', 13);
-				$pdf->writeHTML($tbl, true, 0, true, 0);
+				
+				if($_GET["selection"] == 'barras' || $_GET["selection"] == 'ambos'){
+					$pdf->writeHTML($tbl, true, 0, true, 0);
+				}
 			}
 			else{
 				$pdf->Write(0, 'class is empty', '', 0, 'L', true, 0, false, false, 0);
