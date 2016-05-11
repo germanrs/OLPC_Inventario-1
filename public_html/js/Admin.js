@@ -554,8 +554,10 @@ $("#checkallboxes").click(function(){
 
 //get all the selected items and delete them
 $( "#deleteSelected" ).on('click', function(){
-	$("#openModal2").css("opacity", "1");
-	$("#openModal2").css("pointer-events", "auto");
+	if (getCheckedBoxes('checkbox')!=null) {
+		$("#openModal2").css("opacity", "1");
+		$("#openModal2").css("pointer-events", "auto");
+	}
 });
 
 $("#confirmDelete").on("click", function(){
