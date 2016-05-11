@@ -321,7 +321,7 @@ class ExportController implements ControllerProviderInterface {
 					//Implement the barcodes into a table
 					$barcodesoffallchildren.= '<td width="214"><div><small>'.
 												((strlen($child['fullname'])>22)?substr($child['fullname'],0,22).'...':$child['fullname']).
-												"<br>". $class['name'].'</small></div><tcpdf method="write1DBarcode" params="'.$params.'" /></td>';
+												"<br>". str_replace('Seccion ','',$class['name']).'</small></div><tcpdf method="write1DBarcode" params="'.$params.'" /></td>';
 					
 					if($teller % 24 == 0 && $total != $teller){
 						$barcodesoffallchildren.= '</tr></table><table cellspacing="0" cellpadding="1" border="1"  style="text-align: center; page-break-before: always;" ><tr>';		
@@ -370,7 +370,7 @@ class ExportController implements ControllerProviderInterface {
 						'</table>';
 				}
 				$pdf->SetFont('helvetica', '', 13);
-				
+
 				if($_GET["selection"] == 'barras' || $_GET["selection"] == 'ambos'){
 					$pdf->writeHTML($tbl, true, 0, true, 0);
 				}
