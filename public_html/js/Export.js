@@ -17,6 +17,11 @@ $( "#DownloadBarcodes" ).click(function() {
     $("#openModal").css("pointer-events", "auto");
 }); 
 
+$( "#CloseAddModal" ).click(function() {
+    $("#openModal").css("opacity", "0");
+    $("#openModal").css("pointer-events", "none");
+});
+
 //the function to let the accordion work
 $(document).ready(function() {
     function close_accordion_section() {
