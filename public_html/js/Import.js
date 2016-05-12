@@ -35,7 +35,7 @@ $('.Pais').on('input', function(){
               var option = document.createElement('option');
 
               // Set the value using the item in the JSON array.
-              option.text = item.id;
+              
               option.value = item.name;
 
               // Add the <option> element to the <datalist>.
@@ -83,7 +83,7 @@ $('.Departamento').on('input', function(){
                 var option = document.createElement('option');
 
                 // Set the value using the item in the JSON array.
-                option.text = item.id;
+                
                 option.value = item.name;
 
                 // Add the <option> element to the <datalist>.
@@ -215,7 +215,7 @@ function SetData(input, datalist){
           var option = document.createElement('option');
 
           // Set the value using the item in the JSON array.
-          option.text = item.id;
+          
           option.value = item.name;
 
 

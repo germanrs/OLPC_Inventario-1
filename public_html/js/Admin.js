@@ -130,7 +130,7 @@ function SetData(input, datalist){
 	        	// Create a new <option> element.
 	          	var option = document.createElement('option');
 				// Set the value using the item in the JSON array.
-				option.text = item.id;
+				
 				option.setAttribute("data", item.id);
 				option.value = item.name;
 				// Add the <option> element to the <datalist>.
@@ -182,7 +182,7 @@ function GetUsersdata(input, datalist) {
       
       jsonOptions.forEach(function(item) {
 	      var option = document.createElement('option');
-	      option.text = item.id;
+	      
 	      option.value = item.name;
 	      dataList.appendChild(option);
       }); 
