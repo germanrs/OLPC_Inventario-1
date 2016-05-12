@@ -236,7 +236,13 @@ class AjaxController implements ControllerProviderInterface {
 	 * @return All posible laptop models
 	 */
 	public function model(Application $app) {
-		var_dump($_POST);
+
+		// check if user is already logged in
+		if (!$app['session']->get('user') || !($app['db.people']->fetchAdminPerson($app['session']->get('user')))) {
+
+			//redirect to login page if user is not logged id
+			return $app->redirect($app['url_generator']->generate('Auth.Login')); 
+		}
 		
 
 		//fetch all models from the db
@@ -255,7 +261,13 @@ class AjaxController implements ControllerProviderInterface {
 	 * @return string A blob of HTML
 	 */
 	public function people(Application $app) {
-		
+		// check if user is already logged in
+		if (!$app['session']->get('user') || !($app['db.people']->fetchAdminPerson($app['session']->get('user')))) {
+
+			//redirect to login page if user is not logged id
+			return $app->redirect($app['url_generator']->generate('Auth.Login')); 
+		}
+
 		$data = $app['db.people']->fetchAll();
 		echo json_encode($data);
 		return $app['twig']->render('Ajax/Dump.twig');	
@@ -267,6 +279,12 @@ class AjaxController implements ControllerProviderInterface {
 	 * @return string A blob of HTML
 	 */
 	public function status(Application $app) {
+        // check if user is already logged in
+		if (!$app['session']->get('user') || !($app['db.people']->fetchAdminPerson($app['session']->get('user')))) {
+
+			//redirect to login page if user is not logged id
+			return $app->redirect($app['url_generator']->generate('Auth.Login')); 
+		}
 		
 		$data = $app['db.statuses']->fetchAll();
 		echo json_encode($data);
@@ -279,6 +297,12 @@ class AjaxController implements ControllerProviderInterface {
 	 * @return string A blob of HTML
 	 */
 	public function places(Application $app) {
+        // check if user is already logged in
+		if (!$app['session']->get('user') || !($app['db.people']->fetchAdminPerson($app['session']->get('user')))) {
+
+			//redirect to login page if user is not logged id
+			return $app->redirect($app['url_generator']->generate('Auth.Login')); 
+		}
 		
 		$data = $app['db.places']->fetchAllschools();
 		echo json_encode($data);
@@ -291,6 +315,12 @@ class AjaxController implements ControllerProviderInterface {
 	 * @return string A blob of HTML
 	 */
 	public function placescountries(Application $app) {
+        // check if user is already logged in
+		if (!$app['session']->get('user') || !($app['db.people']->fetchAdminPerson($app['session']->get('user')))) {
+
+			//redirect to login page if user is not logged id
+			return $app->redirect($app['url_generator']->generate('Auth.Login')); 
+		}
 		$data = $app['db.places']->fetchcountry();
 		echo json_encode($data);			
 		return $app['twig']->render('Ajax/Dump.twig');	
@@ -303,6 +333,12 @@ class AjaxController implements ControllerProviderInterface {
 	 * @return string A blob of HTML
 	 */
 	public function placesstates(Application $app) {
+        // check if user is already logged in
+		if (!$app['session']->get('user') || !($app['db.people']->fetchAdminPerson($app['session']->get('user')))) {
+
+			//redirect to login page if user is not logged id
+			return $app->redirect($app['url_generator']->generate('Auth.Login')); 
+		}
 		if(isset($_POST['action'])){
 			
 			$obj = json_decode($_POST['action'], true);
@@ -319,6 +355,12 @@ class AjaxController implements ControllerProviderInterface {
 	 * @return string A blob of HTML
 	 */
 	public function placescitys(Application $app) {
+        // check if user is already logged in
+		if (!$app['session']->get('user') || !($app['db.people']->fetchAdminPerson($app['session']->get('user')))) {
+
+			//redirect to login page if user is not logged id
+			return $app->redirect($app['url_generator']->generate('Auth.Login')); 
+		}
 		if(isset($_POST['action'])){
 			$obj = json_decode($_POST['action'], true);
 			$id = $app['db.places']->getPlaceByName($obj['name']);
@@ -339,6 +381,12 @@ class AjaxController implements ControllerProviderInterface {
 	}
 
 	public function placesturnos(Application $app) {
+        // check if user is already logged in
+		if (!$app['session']->get('user') || !($app['db.people']->fetchAdminPerson($app['session']->get('user')))) {
+
+			//redirect to login page if user is not logged id
+			return $app->redirect($app['url_generator']->generate('Auth.Login')); 
+		}
 		if(isset($_POST['action'])){
 			$obj = json_decode($_POST['action'], true);
 			$cityid = $app['db.places']->getCityByName($obj['Ciudad']);
@@ -350,6 +398,12 @@ class AjaxController implements ControllerProviderInterface {
 	}
 
 	public function placesgrados(Application $app) {
+        // check if user is already logged in
+		if (!$app['session']->get('user') || !($app['db.people']->fetchAdminPerson($app['session']->get('user')))) {
+
+			//redirect to login page if user is not logged id
+			return $app->redirect($app['url_generator']->generate('Auth.Login')); 
+		}
 		if(isset($_POST['action'])){
 			$obj = json_decode($_POST['action'], true);
 
@@ -363,6 +417,12 @@ class AjaxController implements ControllerProviderInterface {
 	}
 
 	public function placesseccions(Application $app) {
+        // check if user is already logged in
+		if (!$app['session']->get('user') || !($app['db.people']->fetchAdminPerson($app['session']->get('user')))) {
+
+			//redirect to login page if user is not logged id
+			return $app->redirect($app['url_generator']->generate('Auth.Login')); 
+		}
 		if(isset($_POST['action'])){
 			$obj = json_decode($_POST['action'], true);
 			$cityid = $app['db.places']->getCityByName($obj['Ciudad']);
@@ -382,6 +442,12 @@ class AjaxController implements ControllerProviderInterface {
 	 * @return string A blob of HTML
 	 */
 	public function fetchCity(Application $app) {
+        // check if user is already logged in
+		if (!$app['session']->get('user') || !($app['db.people']->fetchAdminPerson($app['session']->get('user')))) {
+
+			//redirect to login page if user is not logged id
+			return $app->redirect($app['url_generator']->generate('Auth.Login')); 
+		}
 		if(isset($_POST['action'])){
 			$obj = json_decode($_POST['action'], true);
 			$data = $app['db.places']->fetchAll($obj['id']);
@@ -396,6 +462,12 @@ class AjaxController implements ControllerProviderInterface {
 	 * @return string A blob of HTML
 	 */
 	public function profiles(Application $app) {
+        // check if user is already logged in
+		if (!$app['session']->get('user') || !($app['db.people']->fetchAdminPerson($app['session']->get('user')))) {
+
+			//redirect to login page if user is not logged id
+			return $app->redirect($app['url_generator']->generate('Auth.Login')); 
+		}
 		
 		$data = $app['db.profiles']->fetchAll();
 		echo json_encode($data);
@@ -408,6 +480,12 @@ class AjaxController implements ControllerProviderInterface {
 	 * @return string A blob of HTML
 	 */
 	public function grade(Application $app) {
+        // check if user is already logged in
+		if (!$app['session']->get('user') || !($app['db.people']->fetchAdminPerson($app['session']->get('user')))) {
+
+			//redirect to login page if user is not logged id
+			return $app->redirect($app['url_generator']->generate('Auth.Login')); 
+		}
 		$data = $app['db.place_types']->fetchAllgrades();
 		echo json_encode($data);
 		return $app['twig']->render('Ajax/Dump.twig');	
@@ -419,6 +497,12 @@ class AjaxController implements ControllerProviderInterface {
 	 * @return string A blob of HTML
 	 */
 	public function place_type(Application $app) {
+        // check if user is already logged in
+		if (!$app['session']->get('user') || !($app['db.people']->fetchAdminPerson($app['session']->get('user')))) {
+
+			//redirect to login page if user is not logged id
+			return $app->redirect($app['url_generator']->generate('Auth.Login')); 
+		}
 		$data = $app['db.place_types']->fetchAll();
 		echo json_encode($data);
 		return $app['twig']->render('Ajax/Dump.twig');	
@@ -430,6 +514,12 @@ class AjaxController implements ControllerProviderInterface {
 	 * @return string A blob of HTML
 	 */
 	public function ancestor(Application $app) {
+        // check if user is already logged in
+		if (!$app['session']->get('user') || !($app['db.people']->fetchAdminPerson($app['session']->get('user')))) {
+
+			//redirect to login page if user is not logged id
+			return $app->redirect($app['url_generator']->generate('Auth.Login')); 
+		}
 		$data = $app['db.places']->fetchAll();
 		echo json_encode($data);
 		return $app['twig']->render('Ajax/Dump.twig');	
@@ -441,6 +531,12 @@ class AjaxController implements ControllerProviderInterface {
 	 * @return string A blob of HTML
 	 */
 	public function getList(Application $app) {
+        // check if user is already logged in
+		if (!$app['session']->get('user') || !($app['db.people']->fetchAdminPerson($app['session']->get('user')))) {
+
+			//redirect to login page if user is not logged id
+			return $app->redirect($app['url_generator']->generate('Auth.Login')); 
+		}
 		$peoplearray = array();
 		if(isset($_POST['action'])){
 			$obj = json_decode($_POST['action'], true);
@@ -570,7 +666,7 @@ class AjaxController implements ControllerProviderInterface {
 	 * @return return a statement of the proces
 	 */
 	public function addlaptop(Application $app) {
-
+        
 		// check if user is already logged in
 		if (!$app['session']->get('user') || !($app['db.people']->fetchAdminPerson($app['session']->get('user')))) {
 
@@ -663,6 +759,12 @@ class AjaxController implements ControllerProviderInterface {
 	 * @return string A blob of HTML
 	 */
 	public function editlaptop(Application $app) {
+        // check if user is already logged in
+		if (!$app['session']->get('user') || !($app['db.people']->fetchAdminPerson($app['session']->get('user')))) {
+
+			//redirect to login page if user is not logged id
+			return $app->redirect($app['url_generator']->generate('Auth.Login')); 
+		}
 		if(isset($_POST['action'])){
 			$obj = json_decode($_POST['action'], true);
 			try {
@@ -697,6 +799,12 @@ class AjaxController implements ControllerProviderInterface {
 	 * @return string A blob of HTML
 	 */
 	public function deletelaptop(Application $app) {
+        // check if user is already logged in
+		if (!$app['session']->get('user') || !($app['db.people']->fetchAdminPerson($app['session']->get('user')))) {
+
+			//redirect to login page if user is not logged id
+			return $app->redirect($app['url_generator']->generate('Auth.Login')); 
+		}
 		if(isset($_POST['action'])){
 			$obj = json_decode($_POST['action'], true);
 			try {
@@ -715,6 +823,12 @@ class AjaxController implements ControllerProviderInterface {
 	 * @return returns the id of a laptop
 	 */
 	public function getidoflaptop(Application $app) {
+        // check if user is already logged in
+		if (!$app['session']->get('user') || !($app['db.people']->fetchAdminPerson($app['session']->get('user')))) {
+
+			//redirect to login page if user is not logged id
+			return $app->redirect($app['url_generator']->generate('Auth.Login')); 
+		}
 
 		//if the value is set, return the id of the user.
 		if(isset($_POST['action'])){
@@ -743,6 +857,12 @@ class AjaxController implements ControllerProviderInterface {
 	 * @return string A blob of HTML
 	 */
 	public function addperson(Application $app) {
+        // check if user is already logged in
+		if (!$app['session']->get('user') || !($app['db.people']->fetchAdminPerson($app['session']->get('user')))) {
+
+			//redirect to login page if user is not logged id
+			return $app->redirect($app['url_generator']->generate('Auth.Login')); 
+		}
 		if(isset($_POST['action'])){
 			$obj = json_decode($_POST['action'], true);
 			$place="";
@@ -927,6 +1047,12 @@ class AjaxController implements ControllerProviderInterface {
 	 * @return string A blob of HTML
 	 */
 	public function editperson(Application $app) {
+        // check if user is already logged in
+		if (!$app['session']->get('user') || !($app['db.people']->fetchAdminPerson($app['session']->get('user')))) {
+
+			//redirect to login page if user is not logged id
+			return $app->redirect($app['url_generator']->generate('Auth.Login')); 
+		}
 		if(isset($_POST['action'])){
 			$obj = json_decode($_POST['action'], true);
 			$place="";
@@ -1112,6 +1238,12 @@ class AjaxController implements ControllerProviderInterface {
 	 * @return string A blob of HTML
 	 */
 	public function deleteperson(Application $app) {
+        // check if user is already logged in
+		if (!$app['session']->get('user') || !($app['db.people']->fetchAdminPerson($app['session']->get('user')))) {
+
+			//redirect to login page if user is not logged id
+			return $app->redirect($app['url_generator']->generate('Auth.Login')); 
+		}
 		if(isset($_POST['action'])){
 			$obj = json_decode($_POST['action'], true);
 			try {
@@ -1134,6 +1266,12 @@ class AjaxController implements ControllerProviderInterface {
 	 * @return string A blob of HTML
 	 */
 	public function getidofperson(Application $app) {
+        // check if user is already logged in
+		if (!$app['session']->get('user') || !($app['db.people']->fetchAdminPerson($app['session']->get('user')))) {
+
+			//redirect to login page if user is not logged id
+			return $app->redirect($app['url_generator']->generate('Auth.Login')); 
+		}
 		if(isset($_POST['action'])){
 			$obj = json_decode($_POST['action'], true);
 			try {
@@ -1151,6 +1289,12 @@ class AjaxController implements ControllerProviderInterface {
 	 * @return string A blob of HTML
 	 */
 	public function addplace(Application $app) {
+        // check if user is already logged in
+		if (!$app['session']->get('user') || !($app['db.people']->fetchAdminPerson($app['session']->get('user')))) {
+
+			//redirect to login page if user is not logged id
+			return $app->redirect($app['url_generator']->generate('Auth.Login')); 
+		}
 
 		if(isset($_POST['action'])){
 			$obj = json_decode($_POST['action'], true);
@@ -1219,6 +1363,12 @@ class AjaxController implements ControllerProviderInterface {
 	 * @return string A blob of HTML
 	 */
 	public function editplace(Application $app) {
+        // check if user is already logged in
+		if (!$app['session']->get('user') || !($app['db.people']->fetchAdminPerson($app['session']->get('user')))) {
+
+			//redirect to login page if user is not logged id
+			return $app->redirect($app['url_generator']->generate('Auth.Login')); 
+		}
 		if(isset($_POST['action'])){
 			try{
 				$obj = json_decode($_POST['action'], true);
@@ -1248,6 +1398,17 @@ class AjaxController implements ControllerProviderInterface {
 	 * @return string A blob of HTML
 	 */
 	public function deleteplace(Application $app) {
+        // check if user is already logged in
+		if (!$app['session']->get('user') || !($app['db.people']->fetchAdminPerson($app['session']->get('user')))) {
+
+			//redirect to login page if user is not logged id
+			return $app->redirect($app['url_generator']->generate('Auth.Login')); 
+		}
+
+		if ($app['db.people']->fetchAdminPerson($app['session']->get('user'))[0]['access_level']<499){
+			return $app->redirect($app['url_generator']->generate('Auth.Login')); 
+		}
+
 		if(isset($_POST['action'])){
 			$obj = json_decode($_POST['action'], true);
 			try {
@@ -1281,6 +1442,12 @@ class AjaxController implements ControllerProviderInterface {
 	 * @return string A blob of HTML
 	 */
 	public function getidofplace(Application $app) {
+        // check if user is already logged in
+		if (!$app['session']->get('user') || !($app['db.people']->fetchAdminPerson($app['session']->get('user')))) {
+
+			//redirect to login page if user is not logged id
+			return $app->redirect($app['url_generator']->generate('Auth.Login')); 
+		}
 		if(isset($_POST['action'])){
 			$obj = json_decode($_POST['action'], true);
 			try {
@@ -1293,6 +1460,12 @@ class AjaxController implements ControllerProviderInterface {
 	}
 
 	public function getuserbyid(Application $app) {
+        // check if user is already logged in
+		if (!$app['session']->get('user') || !($app['db.people']->fetchAdminPerson($app['session']->get('user')))) {
+
+			//redirect to login page if user is not logged id
+			return $app->redirect($app['url_generator']->generate('Auth.Login')); 
+		}
 		if(isset($_POST['action'])){
 			$obj = json_decode($_POST['action'], true);
 			try {
@@ -1310,6 +1483,12 @@ class AjaxController implements ControllerProviderInterface {
 	 * @return string A blob of HTML
 	 */
 	public function massassignment(Application $app) {
+        // check if user is already logged in
+		if (!$app['session']->get('user') || !($app['db.people']->fetchAdminPerson($app['session']->get('user')))) {
+
+			//redirect to login page if user is not logged id
+			return $app->redirect($app['url_generator']->generate('Auth.Login')); 
+		}
 		if(isset($_POST['action'])){
 			$obj = json_decode($_POST['action'], true);
 			try {
@@ -1333,6 +1512,12 @@ class AjaxController implements ControllerProviderInterface {
 	 * @return string A blob of HTML
 	 */
 	public function getdataforplacestable(Application $app) {
+        // check if user is already logged in
+		if (!$app['session']->get('user') || !($app['db.people']->fetchAdminPerson($app['session']->get('user')))) {
+
+			//redirect to login page if user is not logged id
+			return $app->redirect($app['url_generator']->generate('Auth.Login')); 
+		}
 		if(isset($_POST['action'])){
 			$obj = json_decode($_POST['action'], true);
 			try {
@@ -1369,6 +1554,17 @@ class AjaxController implements ControllerProviderInterface {
 	}
 
 	public function getdataforuserstable(Application $app){
+		// check if user is already logged in
+		if (!$app['session']->get('user') || !($app['db.people']->fetchAdminPerson($app['session']->get('user')))) {
+
+			//redirect to login page if user is not logged id
+			return $app->redirect($app['url_generator']->generate('Auth.Login')); 
+		}
+
+		if ($app['db.people']->fetchAdminPerson($app['session']->get('user'))[0]['access_level']<499){
+			return $app->redirect($app['url_generator']->generate('Auth.Login')); 
+		}
+
 		$data ='';
 		//var_dump($app['session']->get('user'));
 		$data = $app['db.users']->getUsers($app['session']->get('user')['ID']);
@@ -1382,6 +1578,17 @@ class AjaxController implements ControllerProviderInterface {
 	 * @return string A blob of HTML
 	 */
 	public function getusersdata(Application $app) {
+        // check if user is already logged in
+		if (!$app['session']->get('user') || !($app['db.people']->fetchAdminPerson($app['session']->get('user')))) {
+
+			//redirect to login page if user is not logged id
+			return $app->redirect($app['url_generator']->generate('Auth.Login')); 
+		}
+
+		if ($app['db.people']->fetchAdminPerson($app['session']->get('user'))[0]['access_level']<499){
+			return $app->redirect($app['url_generator']->generate('Auth.Login')); 
+		}
+
 		if(isset($_POST['action'])){
 			$obj = json_decode($_POST['action'], true);
 			$data = $app['db.people']->fetchAllusersbyfirstletter($obj['name']);
@@ -1392,6 +1599,17 @@ class AjaxController implements ControllerProviderInterface {
 
 
 	public function getusersinfo(Application $app) {
+        // check if user is already logged in
+		if (!$app['session']->get('user') || !($app['db.people']->fetchAdminPerson($app['session']->get('user')))) {
+
+			//redirect to login page if user is not logged id
+			return $app->redirect($app['url_generator']->generate('Auth.Login')); 
+		}
+
+		if ($app['db.people']->fetchAdminPerson($app['session']->get('user'))[0]['access_level']<499){
+			return $app->redirect($app['url_generator']->generate('Auth.Login')); 
+		}
+
 		if(isset($_POST['action'])){
 			$obj = json_decode($_POST['action'], true);
 			$data = false;
@@ -1421,6 +1639,17 @@ class AjaxController implements ControllerProviderInterface {
 	}
 
 	public function validateUser(Application $app){
+		// check if user is already logged in
+		if (!$app['session']->get('user') || !($app['db.people']->fetchAdminPerson($app['session']->get('user')))) {
+
+			//redirect to login page if user is not logged id
+			return $app->redirect($app['url_generator']->generate('Auth.Login')); 
+		}
+
+		if ($app['db.people']->fetchAdminPerson($app['session']->get('user'))[0]['access_level']<499){
+			return $app->redirect($app['url_generator']->generate('Auth.Login')); 
+		}
+
 		if(isset($_POST['action'])) {
 			$obj = json_decode($_POST['action'], true);
 			$data = false;
@@ -1436,6 +1665,17 @@ class AjaxController implements ControllerProviderInterface {
 	}
 
 	public function deleteUser(Application $app) {
+        // check if user is already logged in
+		if (!$app['session']->get('user') || !($app['db.people']->fetchAdminPerson($app['session']->get('user')))) {
+
+			//redirect to login page if user is not logged id
+			return $app->redirect($app['url_generator']->generate('Auth.Login')); 
+		}
+
+		if ($app['db.people']->fetchAdminPerson($app['session']->get('user'))[0]['access_level']<499){
+			return $app->redirect($app['url_generator']->generate('Auth.Login')); 
+		}
+
 		if(isset($_POST['action'])){
 			$obj = json_decode($_POST['action'], true);
 			try {
@@ -1449,12 +1689,34 @@ class AjaxController implements ControllerProviderInterface {
 	}
 
 	public function persons(Application $app) {
+        // check if user is already logged in
+		if (!$app['session']->get('user') || !($app['db.people']->fetchAdminPerson($app['session']->get('user')))) {
+
+			//redirect to login page if user is not logged id
+			return $app->redirect($app['url_generator']->generate('Auth.Login')); 
+		}
+
+		if ($app['db.people']->fetchAdminPerson($app['session']->get('user'))[0]['access_level']<499){
+			return $app->redirect($app['url_generator']->generate('Auth.Login')); 
+		}
+
 		$data = $app['db.people']->fetchAll();
 		echo json_encode($data);
 		return $app['twig']->render('Ajax/Dump.twig');	
 	}
 
 	public function addUser(Application $app) {
+        // check if user is already logged in
+		if (!$app['session']->get('user') || !($app['db.people']->fetchAdminPerson($app['session']->get('user')))) {
+
+			//redirect to login page if user is not logged id
+			return $app->redirect($app['url_generator']->generate('Auth.Login')); 
+		}
+
+		if ($app['db.people']->fetchAdminPerson($app['session']->get('user'))[0]['access_level']<499){
+			return $app->redirect($app['url_generator']->generate('Auth.Login')); 
+		}
+
 		if (isset($_POST['action'])) {
 			$obj = json_decode($_POST['action'], true);
 			$userid = $app['db.people']->getPerson($obj['person']);	
@@ -1474,6 +1736,17 @@ class AjaxController implements ControllerProviderInterface {
 	}
 
 	public function editUser(Application $app) {
+        // check if user is already logged in
+		if (!$app['session']->get('user') || !($app['db.people']->fetchAdminPerson($app['session']->get('user')))) {
+
+			//redirect to login page if user is not logged id
+			return $app->redirect($app['url_generator']->generate('Auth.Login')); 
+		}
+
+		if ($app['db.people']->fetchAdminPerson($app['session']->get('user'))[0]['access_level']<499){
+			return $app->redirect($app['url_generator']->generate('Auth.Login')); 
+		}
+
 		if(isset($_POST['action'])){
 			$obj = json_decode($_POST['action'], true);
 			try {

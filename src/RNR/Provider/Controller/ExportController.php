@@ -243,9 +243,14 @@ class ExportController implements ControllerProviderInterface {
 			$teller =1;
 			$tellernamen = 1;
 			$total = count($class['data']);
-
 			//get the correct full name of the class
 			foreach ($class['data'] as $child) {
+				$child['fullname']= str_replace('ñ', 'n', $child['fullname']);//é
+				$child['fullname']= str_replace('é', 'e', $child['fullname']);
+				$child['fullname']= str_replace('á', 'a', $child['fullname']);
+				$child['fullname']= str_replace('í', 'i', $child['fullname']);
+
+
 				$classname = '';
 				$place_type_id='';
 				switch (true) {
@@ -354,23 +359,30 @@ class ExportController implements ControllerProviderInterface {
 				}
 				//set the font
 				$pdf->SetFont('helvetica', '', 13);
-
 				//write the html
 				if($_GET["selection"] == 'etiquetas' || $_GET["selection"] == 'ambos'){
 					$pdf->writeHTML($tbl, true, 0, true, 0);
 				}
-
 				//add a proper anding to the barcodes list
 				if(substr($barcodesoffallchildren,-4)=='<tr>'){
+					$tbl = substr($barcodesoffallchildren,0,-4).'</table>';
+				}
+				else if(substr($barcodesoffallchildren,-8)==' /></td>'){
 					$tbl = $barcodesoffallchildren.					    
 						'</tr></table>';
 				}
 				else{
-					$tbl = $barcodesoffallchildren.					    
-						'</table>';
+					$tbl = $barcodesoffallchildren.	'</table>';
 				}
-				$pdf->SetFont('helvetica', '', 13);
+				/*var_dump(substr_count($tbl, '<td'));
+				var_dump(substr_count($tbl, '</td>'));
+				var_dump(substr_count($tbl, '<tr'));
+				var_dump(substr_count($tbl, '</tr>'));
+				var_dump(substr_count($tbl, '<table'));
+				var_dump(substr_count($tbl, '</table>'));
 
+				var_dump(substr($tbl,-300);*/
+				$pdf->SetFont('helvetica', '', 13);
 				if($_GET["selection"] == 'barras' || $_GET["selection"] == 'ambos'){
 					$pdf->writeHTML($tbl, true, 0, true, 0);
 				}
