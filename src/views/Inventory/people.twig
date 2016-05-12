@@ -15,7 +15,7 @@
 <div class="menu-right">
 	<div class="top-menu">
 	<h1><a href="{{ path('Inventory.people') }}">Propietario</a></h1>
-	<a class="button" id="openAddModal"  role="button">agregar</a>
+	<a class="button" id="openAddModal"  role="button">Agregar</a>
 	<p class="text-muted">
         <em>{{ numItems }} registros</em>
     </p>
@@ -26,7 +26,7 @@
 				{{ form_widget(filterform.searchstring, { 'attr': {'class': 'form-control'} }) }}
 				<input type="hidden" id="filterform__token" name="filterform[_token]" value="45072b220b3b190f6f6d863b5cd2a0d55f523c54" />
 				{{ form_widget(filterform._token) }}
-				<input type="submit" class="btn btn-primary pull-right" value="Filter" />
+				<input type="submit" class="btn btn-primary pull-right" value="Filtrar" />
 
 			</form>
 	</div>
@@ -44,10 +44,10 @@
 				Apellido
 			</th>
 			<th>
-				Región
+				Departamento
 			</th>
 			<th>
-				city
+				Municipio
 			</th>
 			<th>
 				Escuela
@@ -56,10 +56,10 @@
 				Turno
 			</th>
 			<th>
-				Grade
+				Grado
 			</th>
 			<th>
-				Seccion
+				Sección
 			</th>
 			<th>
 				Perfil
@@ -104,7 +104,7 @@
 		{% endfor %}
 	</table>
 	<a class="button" id="EditSelectedPeople" role="button">Editar seleccionados</a>
-	<a class="button" id="DeleteSelectedPeople" role="button">Eliminar Seleccionados</a>
+	<a class="button" id="DeleteSelectedPeople" role="button">Eliminar seleccionados</a>
 	<div class="center">
 		<div class="pages">
 			{% include  'pagination.twig' %}
