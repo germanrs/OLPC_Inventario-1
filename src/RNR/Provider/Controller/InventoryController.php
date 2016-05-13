@@ -52,7 +52,11 @@ class InventoryController implements ControllerProviderInterface {
 			->get('/massassignment/', array($this, 'massassignment'))
 			->method('GET|POST')
 			->bind('Inventory.MassAssignment');
-			
+		
+		$controllers
+			->get('/WhereIsMyLaptop/', array($this, 'WhereIsMyLaptop'))
+			->method('GET|POST')
+			->bind('Inventory.WhereIsMyLaptop');	
 
 		// Return ControllerCollection
 		return $controllers;

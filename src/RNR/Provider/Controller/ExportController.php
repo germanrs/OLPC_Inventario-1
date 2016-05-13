@@ -245,10 +245,13 @@ class ExportController implements ControllerProviderInterface {
 			$total = count($class['data']);
 			//get the correct full name of the class
 			foreach ($class['data'] as $child) {
-				$child['fullname']= str_replace('ñ', 'n', $child['fullname']);//é
+				$child['fullname']= str_replace('ñ', 'n', $child['fullname']);
 				$child['fullname']= str_replace('é', 'e', $child['fullname']);
 				$child['fullname']= str_replace('á', 'a', $child['fullname']);
 				$child['fullname']= str_replace('í', 'i', $child['fullname']);
+				$child['fullname']= str_replace('ó', 'o', $child['fullname']);
+
+
 
 
 				$classname = '';
@@ -537,7 +540,7 @@ class ExportController implements ControllerProviderInterface {
 
 					        //if teller = 38, jump to 41, this is because of the design of the excel file
 					        if($teller== 38){
-					        	$teller = 41;
+					        	$teller = 42;
 					        }
 						}
 

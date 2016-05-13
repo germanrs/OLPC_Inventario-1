@@ -779,8 +779,8 @@ function editperson(datainput){
   var $Ciudad = table.rows[index].cells[6].innerHTML;
   var $Schoolname = table.rows[index].cells[7].innerHTML;
   var $Turno = table.rows[index].cells[8].innerHTML;
-  var $Seccion = table.rows[index].cells[9].innerHTML;
-  var $grade = table.rows[index].cells[10].innerHTML;
+  var $Seccion = table.rows[index].cells[10].innerHTML;
+  var $grade = table.rows[index].cells[9].innerHTML;
   var $profdescription = table.rows[index].cells[11].innerHTML;
   var $DocumentID = table.rows[index].cells[12].innerHTML;
   var $birth_date = table.rows[index].cells[13].innerHTML;

@@ -226,6 +226,12 @@ class AjaxController implements ControllerProviderInterface {
 			->method('GET|POST')
 			->bind('Ajax.validateUser');
 
+		$controllers
+			->get('/LookUpLaptops/', array($this, 'LookUpLaptops'))
+			->method('GET|POST')
+			->bind('Ajax.LookUpLaptops');
+
+
 		// Return ControllerCollection
 		return $controllers;
 	}
@@ -1772,6 +1778,189 @@ class AjaxController implements ControllerProviderInterface {
 		}
 		return $app['twig']->render('Ajax/Dump.twig');	
 	}
+
+	public function LookUpLaptops(Application $app) {
+        // check if user is already logged in
+		if (!$app['session']->get('user') || !($app['db.people']->fetchAdminPerson($app['session']->get('user')))) {
+
+			//redirect to login page if user is not logged id
+			return $app->redirect($app['url_generator']->generate('Auth.Login')); 
+		}
+
+		if(isset($_POST['action'])){
+			$obj = json_decode($_POST['action'], true);
+			$wherearethelaptops = array();
+			$pieces = explode(";", $obj['data']);
+			$item['owner_place'] = "";
+			$item['asigned_place'] = "";
+			foreach ($pieces as $serial) {
+				if(strlen($serial)==11){
+					$item = $app['db.laptops']->fetchListLaptop($serial);
+					if(!empty($item)){
+						$datadump= $app['db.performs']->fetchAllByPersonId($item[0]['owner']);
+						$datadump = $app['db.places_dependencies']->fetchAllAncestorsFromSchool($datadump[0]['place_id']);
+						$laptop['Seccion'] = '';
+						$laptop['Turno'] = '';
+						$laptop['grade'] = '';
+						$laptop['region'] ='';
+						$laptop['city'] ='';
+						$laptop['Schoolname'] ='';
+
+						if(!empty($datadump)){
+							foreach ($datadump as $data) {
+								$place_type_id=0;
+								if(!empty($data)){
+									if(2==$data['place_type_id']){
+										$laptop['region'] = $data['name'];
+									}
+									else if(3==$data['place_type_id']){
+										$laptop['city'] = $data['name'];
+									}
+									else if(4==$data['place_type_id']){
+										$laptop['Schoolname'] = $data['name'];
+									}
+									else if(12==$data['place_type_id']){
+										$laptop['Turno'] = $data['name'];
+									}
+									else if(11==$data['place_type_id']){
+										$laptop['Seccion'] = $data['name'];
+									}
+									else if(5==$data['place_type_id'] ||
+										6==$data['place_type_id'] ||
+										7==$data['place_type_id'] ||
+										8==$data['place_type_id'] ||
+										9==$data['place_type_id'] ||
+										10==$data['place_type_id'] ||
+										13==$data['place_type_id'] ||
+										14==$data['place_type_id'] ||
+										16==$data['place_type_id'] ||
+										17==$data['place_type_id'] ||
+										18==$data['place_type_id']){
+										$laptop['grade'] = $data['name'];
+									}
+								}
+							}
+						}
+
+						$place='';
+						if(!empty($laptop['region'])){
+							$place .= $laptop['region'];
+							if(!empty($laptop['city'])){
+								$place .= ' : '.$laptop['city'];
+								if(!empty($laptop['Schoolname'])){
+									$place .= ' : '.$laptop['Schoolname'];
+									if(!empty($laptop['Turno'])){
+										$place .= ' : '.$laptop['Turno'];
+										if(!empty($laptop['grade'])){
+											$place .= ' : '.$laptop['grade'];
+											if(!empty($laptop['Seccion'])){
+												$place .= ' : '.$laptop['Seccion'];
+											}
+										}
+									}
+								}
+							}
+						}
+
+						$item[0]['owner_place'] =$place;
+
+						$datadump= $app['db.performs']->fetchAllByPersonId($item[0]['asigned']);
+						if(!empty($datadump)){
+							$datadump = $app['db.places_dependencies']->fetchAllAncestorsFromSchool($datadump[0]['place_id']);
+							$laptop['Seccion'] = '';
+							$laptop['Turno'] = '';
+							$laptop['grade'] = '';
+							$laptop['region'] ='';
+							$laptop['city'] ='';
+							$laptop['Schoolname'] ='';
+
+							if(!empty($datadump)){
+								foreach ($datadump as $data) {
+									$place_type_id=0;
+									if(!empty($data)){
+										if(2==$data['place_type_id']){
+											$laptop['region'] = $data['name'];
+										}
+										else if(3==$data['place_type_id']){
+											$laptop['city'] = $data['name'];
+										}
+										else if(4==$data['place_type_id']){
+											$laptop['Schoolname'] = $data['name'];
+										}
+										else if(12==$data['place_type_id']){
+											$laptop['Turno'] = $data['name'];
+										}
+										else if(11==$data['place_type_id']){
+											$laptop['Seccion'] = $data['name'];
+										}
+										else if(5==$data['place_type_id'] ||
+											6==$data['place_type_id'] ||
+											7==$data['place_type_id'] ||
+											8==$data['place_type_id'] ||
+											9==$data['place_type_id'] ||
+											10==$data['place_type_id'] ||
+											13==$data['place_type_id'] ||
+											14==$data['place_type_id'] ||
+											16==$data['place_type_id'] ||
+											17==$data['place_type_id'] ||
+											18==$data['place_type_id']){
+											$laptop['grade'] = $data['name'];
+										}
+									}
+								}
+								$place='';
+								if(!empty($laptop['region'])){
+									$place .= $laptop['region'];
+									if(!empty($laptop['city'])){
+										$place .= ' : '.$laptop['city'];
+										if(!empty($laptop['Schoolname'])){
+											$place .= ' : '.$laptop['Schoolname'];
+											if(!empty($laptop['Turno'])){
+												$place .= ' : '.$laptop['Turno'];
+												if(!empty($laptop['grade'])){
+													$place .= ' : '.$laptop['grade'];
+													if(!empty($laptop['Seccion'])){
+														$place .= ' : '.$laptop['Seccion'];
+													}
+												}
+											}
+										}
+									}
+								}
+								$item[0]['asigned_place'] = $place;
+							
+								}
+						}
+						
+						$item[0]['asigned'] = $app['db.people']->FindPeopleById($item[0]['asigned']);
+						$item[0]['owner'] = $app['db.people']->FindPeopleById($item[0]['owner']);
+					}
+					else{
+						$item[0]['serial_number'] = $serial;
+						$item[0]['owner'] = 'No encontrado';
+					}
+
+					if(empty($item[0]['owner_place'])){
+						$item[0]['owner_place'] ='';
+					}
+					if(empty($item[0]['asigned_place'])){
+						$item[0]['asigned_place'] ='';
+					}
+					if(empty($item[0]['asigned'])){
+						$item[0]['asigned'] ='';
+					}
+					if(empty($item[0]['description'])){
+						$item[0]['description'] ='';
+					}
+
+					array_push($wherearethelaptops, $item);
+				}
+			}
+			echo json_encode($wherearethelaptops);
+			
+		}
+		return $app['twig']->render('Ajax/Dump.twig');	
+	}	
 	
 }
 

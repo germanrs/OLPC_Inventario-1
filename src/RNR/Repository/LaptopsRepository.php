@@ -252,5 +252,15 @@ class LaptopsRepository extends \Knp\Repository {
 				INNER JOIN performs on performs.person_id = people.id 
 				where performs.place_id = '.$placeID);
 	}
+
+	public function fetchListLaptop($serial) {
+	    return $this->db->fetchAll(
+				'SELECT laptops.serial_number, laptops.owner_id as owner, laptops.assignee_id as asigned, statuses.description FROM `laptops` 
+				Inner join statuses on statuses.id = laptops.status_id 
+				WHERE serial_number='. $this->db->quote($serial, \PDO::PARAM_STR));
+	}
+
+
+	
 }
 
